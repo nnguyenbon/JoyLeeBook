@@ -1,0 +1,64 @@
+﻿-- series_id: 1 - Mai An Tiem (The Legend of Mai An Tiem) - 1 chapter
+-- series_id: 2 - The Clever Boy - 1 chapter
+-- series_id: 3 - Monarch of Time - 5 chapter
+-- series_id: 4 - Shadow Slave - 5 chapter
+-- series_id: 5 - The Tale of Coconut Skull - 1 chapter
+-- series_id: 6 - Dungeon Diver: Stealing A Monster’s Power - 7 chapter
+-- series_id: 7 - Embers Ad Infinitum - 50 chapter
+-- series_id: 8 - Evolving infinitely from ground zero - 4 chapter
+-- series_id: 9 - Goddess Medical Doctor - 14 chapter
+-- series_id: 10 - Harry Potter and the Sorcerer’s Stone - 17 chapter
+-- series_id: 11 - Infinite Mana In The Apocalypse - 10 chapter
+-- series_id: 12 - The Legend of Sơn Tinh and Thủy Tinh - 1 chapter
+-- series_id: 13 - Supreme Magus - 37 chapter
+-- series_id: 14 - Tensei Shitara Slime Datta Ken (WN) - 9 chapter
+-- series_id: 15 - The Legend of Saint Gióng - 1 chapter
+-- series_id: 16 - The Epic of Leviathan (A Mutant's Ascension) - 10 chapter
+-- series_id: 17 - The Legendary Mechanic - 50 chapter
+-- series_id: 18 - The Mech Touch - 50 chapter
+-- series_id: 19 - The World of Otome Games is Tough For Mobs - 21 chapter (start from 0 to 20)
+
+-- genre_id: 1 - Action
+-- genre_id: 2 - Adventure
+-- genre_id: 3 - Adult
+-- genre_id: 4 - Comedy
+-- genre_id: 5 - Drama
+-- genre_id: 6 - Eastern
+-- genre_id: 7 - Fantasy
+-- genre_id: 8 - Folklore
+-- genre_id: 9 - Game
+-- genre_id: 10 - Gender Bender
+-- genre_id: 11 - Harem
+-- genre_id: 12 - Historical
+-- genre_id: 13 - Horror
+-- genre_id: 14 - Isekai
+-- genre_id: 15 - Josei
+-- genre_id: 16 - Legend
+-- genre_id: 17 - Magic
+-- genre_id: 18 - Magical Realism
+-- genre_id: 19 - Manhua
+-- genre_id: 20 - Martial
+-- genre_id: 21 - Martial Arts
+-- genre_id: 22 - Mature
+-- genre_id: 23 - Mecha
+-- genre_id: 24 - Mystery
+-- genre_id: 25 - Mythology
+-- genre_id: 26 - Psychological
+-- genre_id: 27 - Reincarnation
+-- genre_id: 28 - Romance
+-- genre_id: 29 - School Life
+-- genre_id: 30 - Sci-fi
+-- genre_id: 31 - Seinen
+-- genre_id: 32 - Shoujo
+-- genre_id: 33 - Shoujo Ai
+-- genre_id: 34 - Shounen
+-- genre_id: 35 - Shounen Ai
+-- genre_id: 36 - Slice of Life
+-- genre_id: 37 - Sports
+-- genre_id: 38 - Supernatural
+-- genre_id: 39 - System
+-- genre_id: 40 - Tragedy
+-- genre_id: 41 - Video Games
+-- genre_id: 42 - Wuxia
+-- genre_id: 43 - Xianxia
+-- genre_id: 44 - Xuanhuan
