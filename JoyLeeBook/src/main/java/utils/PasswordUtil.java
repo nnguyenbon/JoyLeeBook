@@ -2,6 +2,16 @@ package utils;
 
 import org.mindrot.jbcrypt.BCrypt;
 
+/**
+ * Utility class for handling password hashing and verification using BCrypt.
+ * This class provides methods to hash a plain-text password and verify it against
+ * a stored hashed password.
+ *
+ * BCrypt is a strong hashing function that includes automatic salting and is resistant
+ * to rainbow table attacks, making it suitable for securely storing passwords.
+ *
+ * @author HaiDD-dev
+ */
 public class PasswordUtil {
 
     /**
