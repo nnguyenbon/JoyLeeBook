@@ -15,7 +15,7 @@ public class Series {
     private int authorId;
     private String seriesTitle;
     private String status;
-    private String summary;
+    private String summary; // is description in the database
     private String coverImageUrl;
     private Date createdAt;
 
@@ -32,7 +32,7 @@ public class Series {
         this.authorId = authorId;
         this.seriesTitle = seriesTitle;
         this.status = status;
-        this.summary = summary;
+        this.summary = summary; // is description in the database
         this.coverImageUrl = coverImageUrl;
         this.createdAt = new Date();
     }
