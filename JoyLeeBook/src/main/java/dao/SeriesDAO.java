@@ -4,19 +4,19 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.Genre;
 import model.Series;
 
 /**
  * DAO class for handling database operations related to Series entity. Provides
- * methods to insert, update, delete, and retrieve chapter records from the
+ * methods to insert, update, delete, and retrieve Series records from the
  * database.
  *
- * Assumes the Chapter table has columns: user_id (PK), role_name, username,
- * email, password.
+ * Assumes the Series table has columns: series_id (PK), author_name,
+ * series_title, status, description, cover_image_url, created_at.
  *
  * @author Trunguyen
  */
@@ -39,33 +39,31 @@ public class SeriesDAO {
      * @return List of Series objects.
      */
     public List<Series> getAllSeries() throws SQLException {
-        List<Series> list = new ArrayList<>();
+        List<Series> listSeries = new ArrayList<>();
         String sql = "SELECT * FROM Series";
         try (PreparedStatement stmt = connection.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
-
             while (rs.next()) {
-                Series s = extractSeriesFromResultSet(rs);
-                list.add(s);
+                Series series = extractSeriesFromResultSet(rs);
+                listSeries.add(series);
             }
-
         }
-        return list;
+        return listSeries;
     }
 
     /**
      * Retrieves a specific series by its ID.
      *
-     * @param id The series ID.
+     * @param series_id The series ID.
      * @return Series object if found, otherwise null.
      */
-    public Series getSeriesById(int id) throws SQLException {
+    public Series getSeriesById(int series_id) throws SQLException {
         String sql = "SELECT * FROM Series WHERE series_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-
-            stmt.setInt(1, id);
-            ResultSet rs = stmt.executeQuery();
-            if (rs.next()) {
-                return extractSeriesFromResultSet(rs);
+            stmt.setInt(1, series_id);
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return extractSeriesFromResultSet(rs);
+                }
             }
         }
         return null;
@@ -78,17 +76,15 @@ public class SeriesDAO {
      * @return true if insertion is successful, false otherwise.
      */
     public boolean insertSeries(Series series) throws SQLException {
-        String sql = "INSERT INTO Series (author_id, series_title, status, summary, cover_image_url, created_at) "
-                + "VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Series (author_name, series_title, status, description, cover_image_url) "
+                + "VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-            stmt.setInt(1, series.getAuthorId());
+            stmt.setString(1, series.getAuthorName());
             stmt.setString(2, series.getSeriesTitle());
             stmt.setString(3, series.getStatus());
-            stmt.setString(4, series.getSummary());
+            stmt.setString(4, series.getDescription());
             stmt.setString(5, series.getCoverImageUrl());
-            stmt.setTimestamp(6, new Timestamp(series.getCreatedAt().getTime()));
-
             return stmt.executeUpdate() > 0;
         }
     }
@@ -100,14 +96,14 @@ public class SeriesDAO {
      * @return true if update is successful, false otherwise.
      */
     public boolean updateSeries(Series series) throws SQLException {
-        String sql = "UPDATE Series SET author_id = ?, series_title = ?, status = ?, summary = ?, cover_image_url = ? "
+        String sql = "UPDATE Series SET author_name= ?, series_title = ?, status = ?, description = ?, cover_image_url = ? "
                 + "WHERE series_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-            stmt.setInt(1, series.getAuthorId());
+            stmt.setString(1, series.getAuthorName());
             stmt.setString(2, series.getSeriesTitle());
             stmt.setString(3, series.getStatus());
-            stmt.setString(4, series.getSummary());
+            stmt.setString(4, series.getDescription());
             stmt.setString(5, series.getCoverImageUrl());
             stmt.setInt(6, series.getSeriesId());
 
@@ -118,54 +114,107 @@ public class SeriesDAO {
     /**
      * Deletes a series by its ID.
      *
-     * @param id The ID of the series to delete.
+     * @param series_id The ID of the series to delete.
      * @return true if deletion is successful, false otherwise.
      */
-    public boolean deleteSeries(int id) throws SQLException {
+    public boolean deleteSeries(int series_id) throws SQLException {
         String sql = "DELETE FROM Series WHERE series_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 
-            stmt.setInt(1, id);
+            stmt.setInt(1, series_id);
             return stmt.executeUpdate() > 0;
         }
     }
 
-    // /**
-    //  * Retrieves all series authored by a specific author.
-    //  *
-    //  * @param authorId The author ID.
-    //  * @return List of Series by the author.
-    //  */
-    // public List<Series> getSeriesByAuthorId(int authorId) throws SQLException {
-    //     List<Series> list = new ArrayList<>();
-    //     String sql = "SELECT * FROM Series WHERE author_id = ?";
-    //     try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-    //         stmt.setInt(1, authorId);
-    //         ResultSet rs = stmt.executeQuery();
-    //         while (rs.next()) {
-    //             list.add(extractSeriesFromResultSet(rs));
-    //         }
-    //     }
-    //     return list;
-    // }
-    // /**
-    //  * Searches for series by a partial title match.
-    //  *
-    //  * @param keyword Keyword to search in series titles.
-    //  * @return List of Series matching the keyword.
-    //  */
-    // public List<Series> searchSeries(String keyword) throws SQLException {
-    //     List<Series> list = new ArrayList<>();
-    //     String sql = "SELECT * FROM Series WHERE series_title LIKE ?";
-    //     try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-    //         stmt.setString(1, "%" + keyword + "%");
-    //         ResultSet rs = stmt.executeQuery();
-    //         while (rs.next()) {
-    //             list.add(extractSeriesFromResultSet(rs));
-    //         }
-    //     }
-    //     return list;
-    // }
+    /**
+     * Searches for series by a partial title match.
+     *
+     * @param keyword Keyword to search in series titles.
+     * @return List of Series matching the keyword.
+     */
+    public List<Series> searchSeries(String keyword) throws SQLException {
+        List<Series> list = new ArrayList<>();
+        String sql = "SELECT * FROM Series WHERE series_title LIKE ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, "%" + keyword + "%");
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    list.add(extractSeriesFromResultSet(rs));
+                }
+            }
+        }
+        return list;
+    }
+
+    /**
+     * Checks if a series title is available (i.e., not already used in the
+     * database).
+     *
+     * @param seriesTitle The title of the series to check.
+     * @return true if the title is not used (available), false if it already
+     * exists.
+     * @throws SQLException If a database access error occurs.
+     */
+    public boolean checkTitleSeries(String seriesTitle) throws SQLException {
+        String sql = "SELECT * FROM Series WHERE series_title = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, seriesTitle);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return !rs.next(); // true if the title is not used (available)
+            }
+        }
+    }
+
+    /**
+     * Get genre by series id.
+     *
+     * @param seriesId id of series.
+     * @return list of genre object.
+     * @throws SQLException If a database access error occurs.
+     */
+    public List<Genre> getGenresBySeriesId(int seriesId) throws SQLException {
+        List<Genre> genres = new ArrayList<>();
+        String sql = """
+        SELECT g.genre_id, g.genre_name
+        FROM Genre g
+        JOIN Categories c ON g.genre_id = c.genre_id
+        WHERE c.series_id = ?
+        """;
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, seriesId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    Genre genre = new Genre();
+                    genre.setGenreId(rs.getInt("genre_id"));
+                    genre.setGenreName(rs.getString("genre_name"));
+                    genres.add(genre);
+                }
+            }
+        }
+        return genres;
+    }
+
+    /**
+     * get Total chapter of series.
+     *
+     * @param seriesId id of series.
+     * @return the number of chapters of a series
+     * @throws SQLException
+     */
+    public int getTotalChaptersBySeriesId(int seriesId) throws SQLException {
+        String sql = "SELECT COUNT(*) AS total_chapters FROM Chapter WHERE series_id = ?";
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, seriesId);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt("total_chapters");
+                }
+            }
+        }
+        return 0;
+    }
+
     /**
      * Helper method to map a ResultSet row to a Series object.
      *
@@ -176,12 +225,14 @@ public class SeriesDAO {
     private Series extractSeriesFromResultSet(ResultSet rs) throws SQLException {
         Series s = new Series();
         s.setSeriesId(rs.getInt("series_id"));
-        s.setAuthorId(rs.getInt("author_id"));
+        s.setAuthorName(rs.getString("author_name"));
         s.setSeriesTitle(rs.getString("series_title"));
         s.setStatus(rs.getString("status"));
-        s.setSummary(rs.getString("summary"));
+        s.setDescription(rs.getString("description"));
         s.setCoverImageUrl(rs.getString("cover_image_url"));
         s.setCreatedAt(rs.getTimestamp("created_at"));
+        s.setGenres(getGenresBySeriesId(s.getSeriesId()));
+        s.setTotalChapters(getTotalChaptersBySeriesId(s.getSeriesId()));
         return s;
     }
 }

@@ -15,10 +15,10 @@ import model.User;
 
 /**
  * DAO class for handling database operations related to User entity. Provides
- * methods to insert, update, delete, and retrieve chapter records from the
+ * methods to insert, update, delete, and retrieve Users records from the
  * database.
  *
- * Assumes the Chapter table has columns: user_id (PK), role_name, username,
+ * Assumes the Users table has columns: user_id (PK), role_name, username,
  * email, password.
  *
  * @author Trunguyen
@@ -36,25 +36,6 @@ public class UserDAO {
         this.connection = connection;
     }
 
-    // /**
-    //  * Check user login credentials.
-    //  *
-    //  * @param username username
-    //  * @param password password
-    //  * @return User object if login is successful, otherwise null.
-    //  */
-    // public User checkLogin(String username, String password) throws SQLException {
-    //     String sql = "SELECT * FROM Users WHERE username = ? AND password = ?";
-    //     try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-    //         pstmt.setString(1, username);
-    //         pstmt.setString(2, password);
-    //         ResultSet rs = pstmt.executeQuery();
-    //         if (rs.next()) {
-    //             return extractUserFromResultSet(rs);
-    //         }
-    //     }
-    //     return null;
-    // }
     /**
      * Get all users from the database.
      *
@@ -74,19 +55,19 @@ public class UserDAO {
     /**
      * Get a user by their ID.
      *
-     * @param id User ID
+     * @param user_id User ID
      * @return User object if found, otherwise null.
      */
-    public User getUserById(int id) throws SQLException {
+    public User getUserById(int user_id) throws SQLException {
         String sql = "SELECT * FROM Users WHERE user_id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
-            ResultSet rs = pstmt.executeQuery();
-            if (rs.next()) {
-                return extractUserFromResultSet(rs);
+            pstmt.setInt(1, user_id);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return extractUserFromResultSet(rs);
+                }
             }
         }
-
         return null;
     }
 
@@ -99,10 +80,10 @@ public class UserDAO {
     public boolean insertUser(User user) throws SQLException {
         String sql = "INSERT INTO Users(role_name, username, email, password) VALUES (?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(4, user.getRoleName());
-            pstmt.setString(1, user.getUsername());
-            pstmt.setString(2, user.getEmail());
-            pstmt.setString(3, user.getPassword());
+            pstmt.setString(1, user.getRoleName());
+            pstmt.setString(2, user.getUsername());
+            pstmt.setString(3, user.getEmail());
+            pstmt.setString(4, user.getPassword());
             return pstmt.executeUpdate() > 0;
         }
     }
@@ -114,12 +95,13 @@ public class UserDAO {
      * @return true if update is successful, false otherwise.
      */
     public boolean updateUser(User user) throws SQLException {
-        String sql = "UPDATE Users SET role_name = ?, username = ?, email = ?, password = ? WHERE id = ?;";
+        String sql = "UPDATE Users SET role_name = ?, username = ?, email = ?, password = ? WHERE user_id = ?;";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(4, user.getRoleName());
-            pstmt.setString(1, user.getUsername());
-            pstmt.setString(2, user.getEmail());
-            pstmt.setString(3, user.getPassword());
+            pstmt.setString(1, user.getRoleName());
+            pstmt.setString(2, user.getUsername());
+            pstmt.setString(3, user.getEmail());
+            pstmt.setString(4, user.getPassword());
+            pstmt.setInt(5, user.getUserId());
             return pstmt.executeUpdate() > 0;
         }
     }
@@ -127,14 +109,72 @@ public class UserDAO {
     /**
      * Delete a user from the database by ID.
      *
-     * @param id The user ID to delete.
+     * @param user_id The user ID to delete.
      * @return true if delete is successful, false otherwise.
      */
-    public boolean deleteUser(int id) throws SQLException {
-        String sql = "DELETE FROM Users WHERE id = ?;";
+    public boolean deleteUser(int user_id) throws SQLException {
+        String sql = "DELETE FROM Users WHERE user_id = ?;";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, id);
+            pstmt.setInt(1, user_id);
             return pstmt.executeUpdate() > 0;
+        }
+    }
+
+    /**
+     * Check user login credentials.
+     *
+     * @param username username
+     * @param password password
+     * @return User object if login is successful, otherwise null.
+     */
+    public User checkLogin(String username, String password) throws SQLException {
+        String sql = "SELECT * FROM Users WHERE username = ? AND password = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            pstmt.setString(2, password);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return extractUserFromResultSet(rs);
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Checks if a user name is available (i.e., not already used in the
+     * database).
+     *
+     * @param userName The user name of the User to check.
+     * @return true if the user name is not used (available), false if it
+     * already exists.
+     * @throws SQLException If a database access error occurs.
+     */
+    public boolean checkUserName(String userName) throws SQLException {
+        String sql = "SELECT * FROM Users WHERE username = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, userName);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return !rs.next();
+            }
+        }
+    }
+
+    /**
+     * Checks if a email is available (i.e., not already used in the database).
+     *
+     * @param email The email of the User to check.
+     * @return true if the email is not used (available), false if it already
+     * exists.
+     * @throws SQLException If a database access error occurs.
+     */
+    public boolean checkEmail(String email) throws SQLException {
+        String sql = "SELECT * FROM Users WHERE email = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, email);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                return !rs.next();
+            }
         }
     }
 
