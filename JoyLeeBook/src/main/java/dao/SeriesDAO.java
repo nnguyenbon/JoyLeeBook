@@ -7,6 +7,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
+import model.Chapter;
 import model.Genre;
 import model.Series;
 
@@ -173,25 +174,21 @@ public class SeriesDAO {
      * @throws SQLException If a database access error occurs.
      */
     public List<Genre> getGenresBySeriesId(int seriesId) throws SQLException {
-        List<Genre> genres = new ArrayList<>();
-        String sql = """
-        SELECT g.genre_id, g.genre_name
-        FROM Genre g
-        JOIN Categories c ON g.genre_id = c.genre_id
-        WHERE c.series_id = ?
-        """;
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setInt(1, seriesId);
-            try (ResultSet rs = stmt.executeQuery()) {
-                while (rs.next()) {
-                    Genre genre = new Genre();
-                    genre.setGenreId(rs.getInt("genre_id"));
-                    genre.setGenreName(rs.getString("genre_name"));
-                    genres.add(genre);
-                }
-            }
-        }
-        return genres;
+        GenreDAO genreDAO = new GenreDAO();
+        return genreDAO.getGenresBySeriesId(seriesId);
+    }
+
+    /**
+     * Get all Chapter by Series id.
+     *
+     * @param seriesId id of series.
+     * @return list of chapter object.
+     * @throws SQLException If a database access error occurs.
+     */
+    public List<Chapter> getAllChaptersBySeriesId(int seriesId) throws SQLException {
+        ChapterDAO chapterDAO = new ChapterDAO(connection);
+        return chapterDAO.getAllChaptersBySeriesId(seriesId);
+
     }
 
     /**
