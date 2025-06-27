@@ -165,27 +165,6 @@ public class SeriesDAO {
     }
 
     /**
-     * get Total chapter of series.
-     *
-     * @param seriesId id of series.
-     * @return the number of chapters of a series
-     * @throws SQLException
-     */
-    public int getTotalChaptersBySeriesId(int seriesId) throws SQLException {
-        String sql = "SELECT COUNT(*) AS total_chapters FROM Chapter WHERE series_id = ?";
-
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setInt(1, seriesId);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return rs.getInt("total_chapters");
-                }
-            }
-        }
-        return 0;
-    }
-
-    /**
      * Helper method to map a ResultSet row to a Series object.
      *
      * @param rs The ResultSet containing data from the Series table.
