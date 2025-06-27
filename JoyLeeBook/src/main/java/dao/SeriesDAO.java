@@ -7,8 +7,6 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
 
-import model.Chapter;
-import model.Genre;
 import model.Series;
 
 /**
@@ -44,7 +42,7 @@ public class SeriesDAO {
         String sql = "SELECT * FROM Series";
         try (PreparedStatement stmt = connection.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
-                Series series = extractSeriesFromResultSet(rs);
+                Series series = mappingSeriesFromResultSet(rs);
                 listSeries.add(series);
             }
         }
@@ -63,7 +61,7 @@ public class SeriesDAO {
             stmt.setInt(1, series_id);
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return extractSeriesFromResultSet(rs);
+                    return mappingSeriesFromResultSet(rs);
                 }
             }
         }
@@ -140,7 +138,7 @@ public class SeriesDAO {
             stmt.setString(1, "%" + keyword + "%");
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    list.add(extractSeriesFromResultSet(rs));
+                    list.add(mappingSeriesFromResultSet(rs));
                 }
             }
         }
@@ -164,31 +162,6 @@ public class SeriesDAO {
                 return !rs.next(); // true if the title is not used (available)
             }
         }
-    }
-
-    /**
-     * Get genre by series id.
-     *
-     * @param seriesId id of series.
-     * @return list of genre object.
-     * @throws SQLException If a database access error occurs.
-     */
-    public List<Genre> getGenresBySeriesId(int seriesId) throws SQLException {
-        GenreDAO genreDAO = new GenreDAO();
-        return genreDAO.getGenresBySeriesId(seriesId);
-    }
-
-    /**
-     * Get all Chapter by Series id.
-     *
-     * @param seriesId id of series.
-     * @return list of chapter object.
-     * @throws SQLException If a database access error occurs.
-     */
-    public List<Chapter> getAllChaptersBySeriesId(int seriesId) throws SQLException {
-        ChapterDAO chapterDAO = new ChapterDAO(connection);
-        return chapterDAO.getAllChaptersBySeriesId(seriesId);
-
     }
 
     /**
@@ -219,7 +192,7 @@ public class SeriesDAO {
      * @return A Series object populated from the ResultSet.
      * @throws SQLException If accessing the ResultSet fails.
      */
-    private Series extractSeriesFromResultSet(ResultSet rs) throws SQLException {
+    private Series mappingSeriesFromResultSet(ResultSet rs) throws SQLException {
         Series s = new Series();
         s.setSeriesId(rs.getInt("series_id"));
         s.setAuthorName(rs.getString("author_name"));
@@ -228,7 +201,6 @@ public class SeriesDAO {
         s.setDescription(rs.getString("description"));
         s.setCoverImageUrl(rs.getString("cover_image_url"));
         s.setCreatedAt(rs.getTimestamp("created_at"));
-        s.setGenres(getGenresBySeriesId(s.getSeriesId()));
         s.setTotalChapters(getTotalChaptersBySeriesId(s.getSeriesId()));
         return s;
     }
