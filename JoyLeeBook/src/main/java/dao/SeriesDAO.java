@@ -180,7 +180,6 @@ public class SeriesDAO {
         s.setDescription(rs.getString("description"));
         s.setCoverImageUrl(rs.getString("cover_image_url"));
         s.setCreatedAt(rs.getTimestamp("created_at"));
-        s.setTotalChapters(getTotalChaptersBySeriesId(s.getSeriesId()));
         return s;
     }
 }

@@ -137,4 +137,24 @@ public class ChapterDAO {
             ps.executeUpdate();
         }
     }
+
+    /**
+     * Counts the total number of chapters in a specific series.
+     *
+     * @param seriesId The ID of the series to count chapters for.
+     * @return The total number of chapters.
+     * @throws SQLException If a database access error occurs.
+     */
+    public int getTotalChaptersBySeriesId(int seriesId) throws SQLException {
+        String sql = "SELECT COUNT(*) FROM Chapter WHERE series_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, seriesId);
+            try (ResultSet rs = ps.executeQuery();) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
+    }
 }
