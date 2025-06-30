@@ -6,21 +6,22 @@ package model;
 
 import java.util.Date;
 import java.util.List;
+
 /**
  *
  * @author PC
  */
 public class Series {
+
     private int seriesId;
-    private int authorId;
+    private String authorName;
     private String seriesTitle;
     private String status;
-    private String summary;
+    private String description;
     private String coverImageUrl;
     private Date createdAt;
 
     // Additional fields for joined data
-    private String authorName;
     private List<Genre> genres;
     private int totalChapters;
 
@@ -28,11 +29,11 @@ public class Series {
     public Series() {
     }
 
-    public Series(int authorId, String seriesTitle, String status, String summary, String coverImageUrl) {
-        this.authorId = authorId;
+    public Series(String authorName, String seriesTitle, String status, String description, String coverImageUrl) {
+        this.authorName = authorName;
         this.seriesTitle = seriesTitle;
         this.status = status;
-        this.summary = summary;
+        this.description = description;
         this.coverImageUrl = coverImageUrl;
         this.createdAt = new Date();
     }
@@ -44,14 +45,6 @@ public class Series {
 
     public void setSeriesId(int seriesId) {
         this.seriesId = seriesId;
-    }
-
-    public int getAuthorId() {
-        return authorId;
-    }
-
-    public void setAuthorId(int authorId) {
-        this.authorId = authorId;
     }
 
     public String getSeriesTitle() {
@@ -70,12 +63,12 @@ public class Series {
         this.status = status;
     }
 
-    public String getSummary() {
-        return summary;
+    public void setDescription(String description) {
+        this.description = description;
     }
 
-    public void setSummary(String summary) {
-        this.summary = summary;
+    public String getDescription() {
+        return this.description;
     }
 
     public String getCoverImageUrl() {
