@@ -25,10 +25,20 @@ public class GenreDAO {
     // connection = (Connection) DBConnection.getConnection();
     // }
 
+    /**
+     *
+     * @param connection
+     */
+
     public GenreDAO(Connection connection) {
         this.connection = connection;
     }
 
+    /**
+     *
+     * @return
+     * @throws SQLException
+     */
     public ArrayList<Genre> getAll() throws SQLException {
         ArrayList<Genre> genres = new ArrayList<>();
         String sql = "SELECT * FROM Genres";
@@ -47,27 +57,12 @@ public class GenreDAO {
         return genres;
     }
 
-    public ArrayList<Genre> getAllGenresOfSeries(int seriesId) throws SQLException {
-        ArrayList<Genre> genres = new ArrayList<>();
-        String sql = "SELECT g.genre_id, g.genre_name FROM Genres g JOIN Categories c ON g.genre_id = c.genre_id and c.series_id = ?";
-        try (
-                PreparedStatement ps = connection.prepareStatement(sql);) {
-            ps.setInt(1, seriesId);
-            try (
-                    ResultSet rs = ps.executeQuery();) {
-                while (rs.next()) {
-                    Genre genre = new Genre();
-                    genre.setGenreId(rs.getInt("genre_id"));
-                    genre.setGenreName(rs.getString("genre_name"));
-                    genres.add(genre);
-                }
-            }
-        } catch (SQLException e) {
-            throw e;
-        }
-        return genres;
-    }
-
+    /**
+     *
+     * @param id
+     * @return
+     * @throws SQLException
+     */
     public Genre getGenreById(int id) throws SQLException {
         String sql = "SELECT * FROM Genres WHERE genre_id = ?";
         try (
@@ -88,6 +83,12 @@ public class GenreDAO {
         return null;
     }
 
+    /**
+     *
+     * @param genre
+     * @return
+     * @throws SQLException
+     */
     public int insertGenre(Genre genre) throws SQLException {
         String sql = "INSERT INTO Genres Values (?)";
         // Connection conn = (Connection) DBConnection.getConnection();
@@ -111,34 +112,11 @@ public class GenreDAO {
         }
     }
 
-    public String insertGenreOfSeries(Genre iGenre, int series_id) throws SQLException {
-        // Connection conn = (Connection) DBConnection.getConnection();
-        try {
-            ArrayList<Genre> genresOfSeries = getAllGenresOfSeries(series_id);
-            for (Genre genre : genresOfSeries) {
-                if (iGenre.getGenreName().equalsIgnoreCase(genre.getGenreName()))
-                    return "This genre is exist in this series";
-            }
-            int genre_id = insertGenre(iGenre);
-            if (genre_id == -1) {
-                return "Fail to insert";
-            }
-            try (
-                    PreparedStatement ps = connection.prepareStatement("INSERT INTO Categories Values (?,?)");) {
-                ps.setInt(1, genre_id);
-                ps.setInt(2, series_id);
-                if (ps.executeUpdate() > 0) {
-                    return "Insert Successfully";
-                } else {
-                    return "Fail to insert";
-                }
-            }
-        } catch (SQLException e) {
-            throw e;
-        }
-        // return "Fail to insert";
-    }
-
+    /**
+     *
+     * @param genre
+     * @throws SQLException
+     */
     public void updateGenre(Genre genre) throws SQLException {
         String sql = "UPDATE Genres SET genre_name = ? WHERE genre_id = ?";
         // Connection conn = (Connection) DBConnection.getConnection();
@@ -152,6 +130,11 @@ public class GenreDAO {
         }
     }
 
+    /**
+     *
+     * @param id
+     * @throws SQLException
+     */
     public void deleteGenre(int id) throws SQLException {
         String sql = "DELETE FROM Genres WHERE genre_id = ?";
         // Connection conn = (Connection) DBConnection.getConnection();
@@ -164,6 +147,12 @@ public class GenreDAO {
         }
     }
 
+    /**
+     *
+     * @param name
+     * @return
+     * @throws SQLException
+     */
     public int checkDuplicatesName(String name)
             throws SQLException {
         String sql = "SELECT genre_id FROM Genres WHERE genre_name = ?";

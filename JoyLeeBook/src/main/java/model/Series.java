@@ -25,10 +25,20 @@ public class Series {
     private List<Genre> genres;
     private int totalChapters;
 
-    // Constructors
+    /**
+     *
+     */
     public Series() {
     }
 
+    /**
+     *
+     * @param authorName
+     * @param seriesTitle
+     * @param status
+     * @param description
+     * @param coverImageUrl
+     */
     public Series(String authorName, String seriesTitle, String status, String description, String coverImageUrl) {
         this.authorName = authorName;
         this.seriesTitle = seriesTitle;
@@ -38,75 +48,146 @@ public class Series {
         this.createdAt = new Date();
     }
 
-    // Getters and Setters
+    /**
+     *
+     * @return
+     */
     public int getSeriesId() {
         return seriesId;
     }
 
+    /**
+     *
+     * @param seriesId
+     */
     public void setSeriesId(int seriesId) {
         this.seriesId = seriesId;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getSeriesTitle() {
         return seriesTitle;
     }
 
+    /**
+     *
+     * @param seriesTitle
+     */
     public void setSeriesTitle(String seriesTitle) {
         this.seriesTitle = seriesTitle;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getStatus() {
         return status;
     }
 
+    /**
+     *
+     * @param status
+     */
     public void setStatus(String status) {
         this.status = status;
     }
 
+    /**
+     *
+     * @param description
+     */
     public void setDescription(String description) {
         this.description = description;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getDescription() {
         return this.description;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getCoverImageUrl() {
         return coverImageUrl;
     }
 
+    /**
+     *
+     * @param coverImageUrl
+     */
     public void setCoverImageUrl(String coverImageUrl) {
         this.coverImageUrl = coverImageUrl;
     }
 
+    /**
+     *
+     * @return
+     */
     public Date getCreatedAt() {
         return createdAt;
     }
 
+    /**
+     *
+     * @param createdAt
+     */
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getAuthorName() {
         return authorName;
     }
 
+    /**
+     *
+     * @param authorName
+     */
     public void setAuthorName(String authorName) {
         this.authorName = authorName;
     }
 
+    /**
+     *
+     * @return
+     */
     public List<Genre> getGenres() {
         return genres;
     }
 
+    /**
+     *
+     * @param genres
+     */
     public void setGenres(List<Genre> genres) {
         this.genres = genres;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getTotalChapters() {
         return totalChapters;
     }
 
+    /**
+     *
+     * @param totalChapters
+     */
     public void setTotalChapters(int totalChapters) {
         this.totalChapters = totalChapters;
     }

@@ -8,22 +8,24 @@ package model;
  *
  * @author PC
  */
-public class Genre {
+public class Category {
     private int genreId;
-    private String genreName;
+    private int seriesId;
 
     /**
      *
      */
-    public Genre() {
+    public Category() {
     }
 
     /**
      *
-     * @param genreName
+     * @param genreId
+     * @param seriesId
      */
-    public Genre(String genreName) {
-        this.genreName = genreName;
+    public Category(int genreId, int seriesId) {
+        this.genreId = genreId;
+        this.seriesId = seriesId;
     }
 
     /**
@@ -46,15 +48,15 @@ public class Genre {
      *
      * @return
      */
-    public String getGenreName() {
-        return genreName;
+    public int getSeriesId() {
+        return seriesId;
     }
 
     /**
      *
-     * @param genreName
+     * @param seriesId
      */
-    public void setGenreName(String genreName) {
-        this.genreName = genreName;
+    public void setSeriesId(int seriesId) {
+        this.seriesId = seriesId;
     }
 }
