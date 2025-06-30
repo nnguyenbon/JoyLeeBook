@@ -20,10 +20,19 @@ public class Chapter {
     // Additional fields for joined data
     private String seriesTitle;
 
-    // Constructors
+    /**
+     *
+     */
     public Chapter() {
     }
 
+    /**
+     *
+     * @param seriesId
+     * @param chapterIndex
+     * @param chapterTitle
+     * @param content
+     */
     public Chapter(int seriesId, int chapterIndex, String chapterTitle, String content) {
         this.seriesId = seriesId;
         this.chapterIndex = chapterIndex;
@@ -32,59 +41,114 @@ public class Chapter {
         this.createdAt = new Date();
     }
 
-    // Getters and Setters
+    /**
+     *
+     * @return
+     */
     public int getChapterId() {
         return chapterId;
     }
 
+    /**
+     *
+     * @param chapterId
+     */
     public void setChapterId(int chapterId) {
         this.chapterId = chapterId;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getSeriesId() {
         return seriesId;
     }
 
+    /**
+     *
+     * @param seriesId
+     */
     public void setSeriesId(int seriesId) {
         this.seriesId = seriesId;
     }
 
+    /**
+     *
+     * @return
+     */
     public int getChapterIndex() {
         return chapterIndex;
     }
 
+    /**
+     *
+     * @param chapterIndex
+     */
     public void setChapterIndex(int chapterIndex) {
         this.chapterIndex = chapterIndex;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getChapterTitle() {
         return chapterTitle;
     }
 
+    /**
+     *
+     * @param chapterTitle
+     */
     public void setChapterTitle(String chapterTitle) {
         this.chapterTitle = chapterTitle;
     }
 
+    /**
+     *
+     * @return
+     */
     public Date getCreatedAt() {
         return createdAt;
     }
 
+    /**
+     *
+     * @param createdAt
+     */
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getContent() {
         return content;
     }
 
+    /**
+     *
+     * @param content
+     */
     public void setContent(String content) {
         this.content = content;
     }
 
+    /**
+     *
+     * @return
+     */
     public String getSeriesTitle() {
         return seriesTitle;
     }
 
+    /**
+     *
+     * @param seriesTitle
+     */
     public void setSeriesTitle(String seriesTitle) {
         this.seriesTitle = seriesTitle;
     }

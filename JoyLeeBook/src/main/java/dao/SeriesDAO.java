@@ -36,6 +36,7 @@ public class SeriesDAO {
      * Retrieves all series records from the database.
      *
      * @return List of Series objects.
+     * @throws java.sql.SQLException
      */
     public List<Series> getAllSeries() throws SQLException {
         List<Series> listSeries = new ArrayList<>();
@@ -54,6 +55,7 @@ public class SeriesDAO {
      *
      * @param series_id The series ID.
      * @return Series object if found, otherwise null.
+     * @throws java.sql.SQLException
      */
     public Series getSeriesById(int series_id) throws SQLException {
         String sql = "SELECT * FROM Series WHERE series_id = ?";
@@ -73,6 +75,7 @@ public class SeriesDAO {
      *
      * @param series The Series object to add.
      * @return true if insertion is successful, false otherwise.
+     * @throws java.sql.SQLException
      */
     public boolean insertSeries(Series series) throws SQLException {
         String sql = "INSERT INTO Series (author_name, series_title, status, description, cover_image_url) "
@@ -93,6 +96,7 @@ public class SeriesDAO {
      *
      * @param series The updated Series object.
      * @return true if update is successful, false otherwise.
+     * @throws java.sql.SQLException
      */
     public boolean updateSeries(Series series) throws SQLException {
         String sql = "UPDATE Series SET author_name= ?, series_title = ?, status = ?, description = ?, cover_image_url = ? "
@@ -115,6 +119,7 @@ public class SeriesDAO {
      *
      * @param series_id The ID of the series to delete.
      * @return true if deletion is successful, false otherwise.
+     * @throws java.sql.SQLException
      */
     public boolean deleteSeries(int series_id) throws SQLException {
         String sql = "DELETE FROM Series WHERE series_id = ?";
@@ -126,16 +131,21 @@ public class SeriesDAO {
     }
 
     /**
-     * Searches for series by a partial title match.
+     * Searches for series by a partial title or author match.
      *
      * @param keyword Keyword to search in series titles.
      * @return List of Series matching the keyword.
+     * @throws java.sql.SQLException
      */
     public List<Series> searchSeries(String keyword) throws SQLException {
         List<Series> list = new ArrayList<>();
-        String sql = "SELECT * FROM Series WHERE series_title LIKE ?";
+        String sql = "SELECT * FROM Series WHERE series_title LIKE ? OR author_name LIKE ?";
+
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            stmt.setString(1, "%" + keyword + "%");
+            String searchPattern = "%" + keyword + "%";
+            stmt.setString(1, searchPattern);
+            stmt.setString(2, searchPattern);
+
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
                     list.add(mappingSeriesFromResultSet(rs));
