@@ -5,6 +5,8 @@
 package model;
 
 import java.util.Date;
+import java.util.Objects;
+
 /**
  *
  * @author PC
@@ -152,4 +154,38 @@ public class Chapter {
     public void setSeriesTitle(String seriesTitle) {
         this.seriesTitle = seriesTitle;
     }
+
+    /*
+     * Overrides the equals method to compare Chapter objects based on chapterId.
+     * This is useful for checking if two Chapter objects represent the same
+     * chapter.
+     * 
+     * @param obj the object to compare with
+     * 
+     * @return true if the chapterId of both objects is the same, false otherwise
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        Chapter chapter = (Chapter) obj;
+        return chapterId == chapter.chapterId;
+    }
+
+    /*
+     * Overrides the hashCode method to generate a hash code based on chapterId.
+     * This is important for using Chapter objects in hash-based collections like
+     * HashMap or HashSet
+     * 
+     * @return the hash code of the chapterId
+     * 
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(chapterId);
+    }
+
 }
