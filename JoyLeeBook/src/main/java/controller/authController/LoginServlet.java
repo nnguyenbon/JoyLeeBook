@@ -70,7 +70,7 @@ public class LoginServlet extends HttpServlet {
         if (session != null && session.getAttribute("username") != null) {
             response.sendRedirect(request.getContextPath() + "/index.jsp");
         } else {
-            request.getRequestDispatcher("/views/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/authorization/login.jsp").forward(request, response);
         }
     }
 
@@ -102,16 +102,16 @@ public class LoginServlet extends HttpServlet {
                 response.addCookie(userCookie);
                 String role = user.getRoleName();
                 if ("admin".equals(role)) {
-                    response.sendRedirect(request.getContextPath() + "/views/admindashboard.jsp");
+                    response.sendRedirect(request.getContextPath() + "/views/chapter/adminListChapter.jsp");
                 } else if ("user".equals(role)) {
                     response.sendRedirect(request.getContextPath() + "/index.jsp");
                 } else {
                     request.setAttribute("errorMessage", "Vai trò người dùng không hợp lệ.");
-                    request.getRequestDispatcher("/views/login.jsp").forward(request, response);
+                    request.getRequestDispatcher("/views/authorization/login.jsp").forward(request, response);
                 }
             } else {
                 request.setAttribute("errorMessage", "Invalid username or password.");
-                request.getRequestDispatcher("/views/login.jsp").forward(request, response);
+                request.getRequestDispatcher("/views/authorization/login.jsp").forward(request, response);
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();

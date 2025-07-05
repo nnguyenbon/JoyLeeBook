@@ -70,7 +70,7 @@ public class ForwardChapterServlet extends HttpServlet {
 
             if (chapter == null) {
                 request.setAttribute("errorMessage", "Chapter with ID " + chapterId + " not found.");
-                request.getRequestDispatcher("error.jsp").forward(request, response);
+                request.getRequestDispatcher("/views/error.jsp").forward(request, response);
                 return;
             }
 
@@ -80,11 +80,11 @@ public class ForwardChapterServlet extends HttpServlet {
                 Chapter nextChapter = list.get(indexChapter + 1);
                 request.setAttribute("nextChapter", nextChapter);
             }
-            request.getRequestDispatcher("readChapter.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/chapter/readChapter.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("errorMessage", "An error occurred while processing your request.");
-            request.getRequestDispatcher("error.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/error.jsp").forward(request, response);
         }
     }
 
