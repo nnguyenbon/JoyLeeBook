@@ -5,6 +5,9 @@
 
 package controller.chapterController;
 
+import dao.ChapterDAO;
+import dao.SeriesDAO;
+import db.DBConnection;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,6 +15,8 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import model.Chapter;
 
 /**
  *
@@ -29,18 +34,28 @@ public class ReadChapterServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ReadChapterServlet</title>");  
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ReadChapterServlet at " + request.getContextPath () + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+        try {
+            // Check id if user operate with url
+            String chapterIdParam = request.getParameter("chapterId");
+            String seriesIdParam = request.getParameter("seriesId");
+            if (chapterIdParam == null || chapterIdParam.isEmpty() 
+                    || seriesIdParam == null || seriesIdParam.isEmpty()) {
+                response.sendRedirect(request.getContextPath() + "/error.jsp");
+                return;
+            }
+
+            SeriesDAO seriesDAO = new SeriesDAO(DBConnection.getConnection());
+            ChapterDAO chapterDAO = new ChapterDAO(DBConnection.getConnection());
+
+            int chapterId = Integer.parseInt(request.getParameter("chapterId"));
+            int seriesId = Integer.parseInt(request.getParameter("seriesId"));
+            
+            Chapter chapter = chapterDAO.getChapterById(chapterId);
+            ArrayList<Chapter> listChapter = chapterDAO.getAllChaptersBySeriesId(seriesId);
+            request.setAttribute("chapter", chapter);
+            request.setAttribute("chapterList", listChapter);
+            request.getRequestDispatcher("/views/chapter/readChapter.jsp").forward(request, response);
+        } catch (Exception e) {
         }
     } 
 

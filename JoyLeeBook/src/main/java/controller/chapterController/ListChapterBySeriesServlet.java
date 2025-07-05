@@ -2,9 +2,11 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
  */
-
 package controller.chapterController;
 
+import dao.ChapterDAO;
+import dao.SeriesDAO;
+import db.DBConnection;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,41 +14,58 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
+import model.Chapter;
 
 /**
- *  Servlet show the Chapter list of Series for admin operations
+ * Servlet show the Chapter list of Series for admin operations
+ *
  * @author PC
  */
-@WebServlet(name="ListChapterBySeriesServlet", urlPatterns={"/chapterList"})
+@WebServlet(name = "ListChapterBySeriesServlet", urlPatterns = {"/chapterList"})
 public class ListChapterBySeriesServlet extends HttpServlet {
-   
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
+
+    /**
+     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
+     * methods.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ListChapterBySeriesServlet</title>");  
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ListChapterBySeriesServlet at " + request.getContextPath () + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
+            throws ServletException, IOException {
+        try {
+            // Check id if user operate with url
+            String chapterIdParam = request.getParameter("chapterId");
+            String seriesIdParam = request.getParameter("seriesId");
+            if (chapterIdParam == null || chapterIdParam.isEmpty() 
+                    || seriesIdParam == null || seriesIdParam.isEmpty()) {
+                response.sendRedirect(request.getContextPath() + "/error.jsp");
+                return;
+            }
+
+            SeriesDAO seriesDAO = new SeriesDAO(DBConnection.getConnection());
+            ChapterDAO chapterDAO = new ChapterDAO(DBConnection.getConnection());
+
+            int chapterId = Integer.parseInt(request.getParameter("chapterId"));
+            int seriesId = Integer.parseInt(request.getParameter("seriesId"));
+            
+            Chapter chapter = chapterDAO.getChapterById(chapterId);
+            ArrayList<Chapter> listChapter = chapterDAO.getAllChaptersBySeriesId(seriesId);
+            request.setAttribute("chapter", chapter);
+            request.setAttribute("chapterList", listChapter);
+            request.getRequestDispatcher("/views/chapter/adminListChapter.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-    } 
+    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    /**
      * Handles the HTTP <code>GET</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -54,12 +73,13 @@ public class ListChapterBySeriesServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
-    } 
+    }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
+     *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
@@ -67,12 +87,13 @@ public class ListChapterBySeriesServlet extends HttpServlet {
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override
