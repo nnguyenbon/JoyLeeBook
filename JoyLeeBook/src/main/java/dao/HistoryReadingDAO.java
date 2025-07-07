@@ -13,7 +13,7 @@ import java.sql.SQLException;
 import java.util.Optional;
 
 /**
- *
+ * not done yet
  * @author PC
  */
 public class HistoryReadingDAO {
