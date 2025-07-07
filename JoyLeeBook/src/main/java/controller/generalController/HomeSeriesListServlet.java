@@ -55,7 +55,7 @@ public class HomeSeriesListServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Cannot get the Series List.");
-            request.getRequestDispatcher("/views/error.jsp").forward(request, response);
+            request.getRequestDispatcher("views/error.jsp").forward(request, response);
         }
     }
 
