@@ -1,15 +1,11 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package model;
 
+import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 /**
- *
- * @author PC
+ * Represents a series with its core information, such as title, author,
+ * status, description, and related metadata like genres and chapters.
  */
 public class Series {
 
@@ -22,23 +18,20 @@ public class Series {
     private Date createdAt;
 
     // Additional fields for joined data
-    private List<Genre> genres;
+    private ArrayList<Genre> genres;
+    private ArrayList<Chapter> chapter;
     private int totalChapters;
     private Date latestChapterDate;
 
     /**
-     *
+     * Default constructor for the Series class.
      */
     public Series() {
     }
 
     /**
-     *
-     * @param authorName
-     * @param seriesTitle
-     * @param status
-     * @param description
-     * @param coverImageUrl
+     * Constructs a Series object with specified author name, title, status,
+     * description, and cover image URL. Sets the creation date to the current time.
      */
     public Series(String authorName, String seriesTitle, String status, String description, String coverImageUrl) {
         this.authorName = authorName;
@@ -50,150 +43,145 @@ public class Series {
     }
 
     /**
-     *
-     * @return
+     * Returns the unique ID of the series.
      */
     public int getSeriesId() {
         return seriesId;
     }
 
     /**
-     *
-     * @param seriesId
+     * Sets the unique ID for the series.
      */
     public void setSeriesId(int seriesId) {
         this.seriesId = seriesId;
     }
 
     /**
-     *
-     * @return
+     * Returns the title of the series.
      */
     public String getSeriesTitle() {
         return seriesTitle;
     }
 
     /**
-     *
-     * @param seriesTitle
+     * Sets the title of the series.
      */
     public void setSeriesTitle(String seriesTitle) {
         this.seriesTitle = seriesTitle;
     }
 
     /**
-     *
-     * @return
+     * Returns the current status of the series, such as ongoing or completed.
      */
     public String getStatus() {
         return status;
     }
 
     /**
-     *
-     * @param status
+     * Sets the status of the series.
      */
     public void setStatus(String status) {
         this.status = status;
     }
 
     /**
-     *
-     * @param description
+     * Sets the description of the series.
      */
     public void setDescription(String description) {
         this.description = description;
     }
 
     /**
-     *
-     * @return
+     * Returns the description of the series.
      */
     public String getDescription() {
         return this.description;
     }
 
     /**
-     *
-     * @return
+     * Returns the URL of the cover image.
      */
     public String getCoverImageUrl() {
         return coverImageUrl;
     }
 
     /**
-     *
-     * @param coverImageUrl
+     * Sets the URL of the cover image.
      */
     public void setCoverImageUrl(String coverImageUrl) {
         this.coverImageUrl = coverImageUrl;
     }
 
     /**
-     *
-     * @return
+     * Returns the creation date of the series record.
      */
     public Date getCreatedAt() {
         return createdAt;
     }
 
     /**
-     *
-     * @param createdAt
+     * Sets the creation date of the series record.
      */
     public void setCreatedAt(Date createdAt) {
         this.createdAt = createdAt;
     }
 
     /**
-     *
-     * @return
+     * Returns the name of the author of the series.
      */
     public String getAuthorName() {
         return authorName;
     }
 
     /**
-     *
-     * @param authorName
+     * Sets the author's name of the series.
      */
     public void setAuthorName(String authorName) {
         this.authorName = authorName;
     }
 
     /**
-     *
-     * @return
+     * Returns the list of genres associated with the series.
      */
-    public List<Genre> getGenres() {
+    public ArrayList<Genre> getGenres() {
         return genres;
     }
 
     /**
-     *
-     * @param genres
+     * Sets the list of genres associated with the series.
      */
-    public void setGenres(List<Genre> genres) {
+    public void setGenres(ArrayList<Genre> genres) {
         this.genres = genres;
     }
 
     /**
-     *
-     * @return
+     * Returns the total number of chapters in the series.
      */
     public int getTotalChapters() {
         return totalChapters;
     }
 
     /**
-     *
-     * @param totalChapters
+     * Sets the total number of chapters in the series.
      */
     public void setTotalChapters(int totalChapters) {
         this.totalChapters = totalChapters;
     }
 
     /**
+<<<<<<< HEAD
+     * Returns the list of chapters belonging to the series.
+     */
+    public ArrayList<Chapter> getChapter() {
+        return chapter;
+    }
+
+    /**
+     * Sets the list of chapters for the series.
+     */
+    public void setChapter(ArrayList<Chapter> chapter) {
+        this.chapter = chapter;
+=======
      * 
      * @return
      */
@@ -207,5 +195,6 @@ public class Series {
      */
     public void setLatestChapterDate(Date latestChapterDate) {
         this.latestChapterDate = latestChapterDate;
+>>>>>>> 988c95e51b19c9334bc6c4bf21e5b3ac9ce40372
     }
 }
