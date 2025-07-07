@@ -58,15 +58,15 @@ public class ReadChapterServlet extends HttpServlet {
             // Set attributes and forward to JSP
             request.setAttribute("chapter", chapter);
             request.setAttribute("chapterList", listChapter);
-            request.getRequestDispatcher("/views/chapter/readChapter.jsp").forward(request, response);
+            request.getRequestDispatcher("views/chapter/readChapter.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             // Redirect to error page if parameters are not valid integers
-            response.sendRedirect(request.getContextPath() + "/error.jsp");
+            response.sendRedirect("views/error.jsp");
         } catch (Exception e) {
             // Log exception and forward to error view
             e.printStackTrace();
             request.setAttribute("error", "Cannot get the Chapter Information.");
-            request.getRequestDispatcher("/views/error.jsp").forward(request, response);
+            request.getRequestDispatcher("views/error.jsp").forward(request, response);
         }
     }
 

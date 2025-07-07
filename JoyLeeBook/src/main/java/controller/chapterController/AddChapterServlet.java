@@ -42,7 +42,7 @@ public class AddChapterServlet extends HttpServlet {
             // Check id if user operate with url
             String idParam = request.getParameter("seriesId");
             if (idParam == null || idParam.isEmpty()) {
-                response.sendRedirect(request.getContextPath() + "/error.jsp");
+                request.getRequestDispatcher("/views/error.jsp").forward(request, response);
                 return;
             }
 
@@ -81,7 +81,7 @@ public class AddChapterServlet extends HttpServlet {
             if (seriesIdParam == null || chapterIndexParam == null || chapterTitle == null || content == null
                     || seriesIdParam.isEmpty() || chapterIndexParam.isEmpty() || chapterTitle.isEmpty() || content.isEmpty()) {
                 request.setAttribute("error", "All fields are required.");
-                request.getRequestDispatcher("/views/addChapterForm.jsp").forward(request, response);
+                request.getRequestDispatcher("/views/addChapter.jsp").forward(request, response);
                 return;
             }
 
@@ -97,12 +97,12 @@ public class AddChapterServlet extends HttpServlet {
             chapterDAO.insertChapter(newChapter);
 
             // Redirect to the chapter list or series detail page
-            response.sendRedirect(request.getContextPath() + "/seriesDetail?seriesId=" + seriesId);
+            response.sendRedirect(request.getContextPath() + "/adminListChapter?seriesId=" + seriesId);
         } catch (NumberFormatException e) {
             // Handle number format errors from parsing integers
             e.printStackTrace();
             request.setAttribute("error", "Invalid chapter index or series ID.");
-            request.getRequestDispatcher("/views/addChapterForm.jsp").forward(request, response);
+            request.getRequestDispatcher("/views/addChapter.jsp").forward(request, response);
         } catch (Exception e) {
             // Handle any other exception
             e.printStackTrace();

@@ -21,6 +21,7 @@ public class Series {
     private ArrayList<Genre> genres;
     private ArrayList<Chapter> chapter;
     private int totalChapters;
+    private Date latestChapterDate;
 
     /**
      * Default constructor for the Series class.
@@ -168,6 +169,7 @@ public class Series {
     }
 
     /**
+<<<<<<< HEAD
      * Returns the list of chapters belonging to the series.
      */
     public ArrayList<Chapter> getChapter() {
@@ -179,5 +181,20 @@ public class Series {
      */
     public void setChapter(ArrayList<Chapter> chapter) {
         this.chapter = chapter;
+=======
+     * 
+     * @return
+     */
+    public Date getLatestChapterDate() {
+        return latestChapterDate;
+    }
+
+    /**
+     * 
+     * @param latestChapterDate
+     */
+    public void setLatestChapterDate(Date latestChapterDate) {
+        this.latestChapterDate = latestChapterDate;
+>>>>>>> 988c95e51b19c9334bc6c4bf21e5b3ac9ce40372
     }
 }

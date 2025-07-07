@@ -40,7 +40,7 @@ public class ListChapterBySeriesServlet extends HttpServlet {
             String seriesIdParam = request.getParameter("seriesId");
 
             if (seriesIdParam == null || seriesIdParam.isEmpty()) {
-                response.sendRedirect(request.getContextPath() + "views/error.jsp");
+                response.sendRedirect("views/error.jsp");
                 return;
             }
 
@@ -50,7 +50,7 @@ public class ListChapterBySeriesServlet extends HttpServlet {
 
             request.setAttribute("chapterList", chapterList);
             request.setAttribute("seriesId", seriesId);
-            request.getRequestDispatcher("/views/chapter/adminListChapter.jsp").forward(request, response);
+            request.getRequestDispatcher("views/chapter/adminListChapter.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();

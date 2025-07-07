@@ -55,11 +55,11 @@ public class ViewSeriesInfoServlet extends HttpServlet {
             series.setGenres(listGenre);
 
             request.setAttribute("series", series);
-            request.getRequestDispatcher("/views/series/viewInfo.jsp").forward(request, response);
+            request.getRequestDispatcher("views/series/viewInfo.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Cannot get the Series Information.");
-            request.getRequestDispatcher("/views/error.jsp").forward(request, response);
+            request.getRequestDispatcher("views/error.jsp").forward(request, response);
         }
     }
 
