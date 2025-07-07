@@ -63,7 +63,7 @@ public class UserDAO {
      * @throws java.sql.SQLException
      */
     public User isValidUser(String username, String password) throws SQLException {
-        String sql = "SELECT * FROM Users WHERE username = ? AND user_passoword = ?";
+        String sql = "SELECT * FROM Users WHERE username = ? AND user_password = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, username);
             pstmt.setString(2, password);
