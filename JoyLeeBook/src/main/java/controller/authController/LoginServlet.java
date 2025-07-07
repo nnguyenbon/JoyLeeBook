@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import java.security.MessageDigest;
 import model.User;
 
 /**
@@ -26,32 +27,6 @@ import model.User;
  */
 @WebServlet(name = "LoginServlet", urlPatterns = { "/login" })
 public class LoginServlet extends HttpServlet {
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     * 
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet LoginServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet LoginServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
     // + sign on the left to edit the code.">
@@ -102,11 +77,11 @@ public class LoginServlet extends HttpServlet {
                 response.addCookie(userCookie);
                 String role = user.getRoleName();
                 if ("admin".equals(role)) {
-                    response.sendRedirect(request.getContextPath() + "/views/chapter/adminListChapter.jsp");
+                    response.sendRedirect(request.getContextPath() + "/views/chapter/adminDashboard.jsp");
                 } else if ("user".equals(role)) {
                     response.sendRedirect(request.getContextPath() + "/index.jsp");
                 } else {
-                    request.setAttribute("errorMessage", "Vai trò người dùng không hợp lệ.");
+                    request.setAttribute("errorMessage", "Invalid role");
                     request.getRequestDispatcher("/views/authorization/login.jsp").forward(request, response);
                 }
             } else {
