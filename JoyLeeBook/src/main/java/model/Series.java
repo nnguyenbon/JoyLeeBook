@@ -181,7 +181,9 @@ public class Series {
      */
     public void setChapter(ArrayList<Chapter> chapter) {
         this.chapter = chapter;
-=======
+    }
+    
+    /*
      * 
      * @return
      */
@@ -195,6 +197,5 @@ public class Series {
      */
     public void setLatestChapterDate(Date latestChapterDate) {
         this.latestChapterDate = latestChapterDate;
->>>>>>> 988c95e51b19c9334bc6c4bf21e5b3ac9ce40372
     }
 }

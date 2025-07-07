@@ -42,7 +42,7 @@ public class AddChapterServlet extends HttpServlet {
             // Check id if user operate with url
             String idParam = request.getParameter("seriesId");
             if (idParam == null || idParam.isEmpty()) {
-                request.getRequestDispatcher("/views/error.jsp").forward(request, response);
+                request.getRequestDispatcher("views/error.jsp").forward(request, response);
                 return;
             }
 
@@ -55,7 +55,7 @@ public class AddChapterServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Cannot get the Series Id.");
-            request.getRequestDispatcher("/views/error.jsp").forward(request, response);
+            request.getRequestDispatcher("views/error.jsp").forward(request, response);
         }
     }
 
@@ -81,7 +81,7 @@ public class AddChapterServlet extends HttpServlet {
             if (seriesIdParam == null || chapterIndexParam == null || chapterTitle == null || content == null
                     || seriesIdParam.isEmpty() || chapterIndexParam.isEmpty() || chapterTitle.isEmpty() || content.isEmpty()) {
                 request.setAttribute("error", "All fields are required.");
-                request.getRequestDispatcher("/views/addChapter.jsp").forward(request, response);
+                request.getRequestDispatcher("views/addChapter.jsp").forward(request, response);
                 return;
             }
 
@@ -102,12 +102,12 @@ public class AddChapterServlet extends HttpServlet {
             // Handle number format errors from parsing integers
             e.printStackTrace();
             request.setAttribute("error", "Invalid chapter index or series ID.");
-            request.getRequestDispatcher("/views/addChapter.jsp").forward(request, response);
+            request.getRequestDispatcher("views/addChapter.jsp").forward(request, response);
         } catch (Exception e) {
             // Handle any other exception
             e.printStackTrace();
             request.setAttribute("error", "An error occurred while adding the chapter.");
-            request.getRequestDispatcher("/views/error.jsp").forward(request, response);
+            request.getRequestDispatcher("views/error.jsp").forward(request, response);
         }
     }
 
