@@ -35,70 +35,6 @@ public class AddSeriesServlet extends HttpServlet {
     }
 
     /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     *
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
-        // Set the content type of the response
-        response.setContentType("text/html;charset=UTF-8");
-
-        // Retrieve parameters from the request
-        String authorName = request.getParameter("authorName");
-        String seriesTitle = request.getParameter("seriesTitle");
-        String seriesStatus = request.getParameter("seriesStatus");
-        String seriesDescription = request.getParameter("seriesDescription");
-        String seriesCoverImageURL = request.getParameter("seriesCoverImageURL");
-
-        // Validate input parameters
-        if (isValidString(authorName)) {
-            request.setAttribute("error", "Author name cannot be empty");
-            request.getRequestDispatcher("/WEB-INF/views/series/add.jsp").forward(request, response);
-            return;
-        }
-
-        if (isValidString(seriesTitle)) {
-            request.setAttribute("error", "Series title cannot be empty");
-            request.getRequestDispatcher("/WEB-INF/views/series/add.jsp").forward(request, response);
-            return;
-        }
-
-        if (isValidInteger(Integer.valueOf(seriesStatus))) {
-            request.setAttribute("error", "Series status cannot be empty");
-            request.getRequestDispatcher("/WEB-INF/views/series/add.jsp").forward(request, response);
-            return;
-        }
-
-        if (isValidString(seriesDescription)) {
-            request.setAttribute("error", "Series description cannot be empty");
-            request.getRequestDispatcher("/WEB-INF/views/series/add.jsp").forward(request, response);
-            return;
-        }
-
-        if (isValidString(seriesCoverImageURL)) {
-            request.setAttribute("error", "Series cover image URL cannot be empty");
-            request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
-            return;
-        }
-
-        // Create a new Series object and insert it into the database
-        Series series = new Series(authorName, seriesTitle, seriesStatus, seriesDescription, seriesCoverImageURL);
-        boolean success = seriesDAO.insertSeries(series);
-
-        // Check if the insertion was successful
-        if (success) {
-            request.setAttribute("message", "Series added successfully");
-            response.sendRedirect(request.getContextPath() + "/adminDashboard");
-        } else {
-            request.setAttribute("error", "An error occurred while adding the series");
-            request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
-        }
-    }
-
-    /**
      * Handles the HTTP <code>GET</code> method.
      *
      * @param request  servlet request
@@ -109,7 +45,7 @@ public class AddSeriesServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            processRequest(request, response);
+            request.sendRedirect("/views/series/addSeries.jsp");
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -126,9 +62,60 @@ public class AddSeriesServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            processRequest(request, response);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
+            // Retrieve parameters from the request
+            String authorName = request.getParameter("authorName");
+            String seriesTitle = request.getParameter("seriesTitle");
+            String seriesStatus = request.getParameter("seriesStatus");
+            String seriesDescription = request.getParameter("seriesDescription");
+            String seriesCoverImageURL = request.getParameter("seriesCoverImageURL");
+    
+            // Validate input parameters
+            if (isValidString(authorName)) {
+                request.setAttribute("error", "Author name cannot be empty");
+                request.getRequestDispatcher("/views/series/addSeries.jsp").forward(request, response);
+                return;
+            }
+    
+            if (isValidString(seriesTitle)) {
+                request.setAttribute("error", "Series title cannot be empty");
+                request.getRequestDispatcher("/views/series/addSeries.jsp").forward(request, response);
+                return;
+            }
+    
+            if (isValidInteger(Integer.valueOf(seriesStatus))) {
+                request.setAttribute("error", "Series status cannot be empty");
+                request.getRequestDispatcher("/views/series/addSeries.jsp").forward(request, response);
+                return;
+            }
+    
+            if (isValidString(seriesDescription)) {
+                request.setAttribute("error", "Series description cannot be empty");
+                request.getRequestDispatcher("/views/series/addSeries.jsp").forward(request, response);
+                return;
+            }
+    
+            if (isValidString(seriesCoverImageURL)) {
+                request.setAttribute("error", "Series cover image URL cannot be empty");
+                request.getRequestDispatcher("/views/series/addSeries.jsp").forward(request, response);
+                return;
+            }
+    
+            // Create a new Series object and insert it into the database
+            Series series = new Series(authorName, seriesTitle, seriesStatus, seriesDescription, seriesCoverImageURL);
+            boolean success = seriesDAO.insertSeries(series);
+    
+            // Check if the insertion was successful
+            if (success) {
+                request.setAttribute("message", "Series added successfully");
+                response.sendRedirect("/views/adminDashboard");
+            } else {
+                request.setAttribute("error", "An error occurred while adding the series");
+                request.getRequestDispatcher("/views/series/addSeries.jsp").forward(request, response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Cannot add the Series Information.");
+            request.getRequestDispatcher("/views/error.jsp").forward(request, response);
         }
     }
 
