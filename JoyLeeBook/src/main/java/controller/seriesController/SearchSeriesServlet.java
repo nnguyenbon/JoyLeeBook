@@ -44,23 +44,26 @@ public class SearchSeriesServlet extends HttpServlet {
      * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
-        // Set the content type of the response
-        response.setContentType("text/html;charset=UTF-8");
-
-        // Retrieve the search query from the request
-        String searchQuery = request.getParameter("searchQuery");
-        List<Series> seriesList;
-
-        // If searchQuery is not null or empty, search for series; otherwise, get all series
-        if (searchQuery != null && !searchQuery.isEmpty()) {
-            seriesList = seriesDAO.searchSeries(searchQuery);
-        } else {
-            seriesList = seriesDAO.getAllSeries();
+        try {
+            // Retrieve the search query from the request
+            String searchQuery = request.getParameter("searchQuery");
+            List<Series> seriesList;
+    
+            // If searchQuery is not null or empty, search for series; otherwise, get all series
+            if (searchQuery != null && !searchQuery.isEmpty()) {
+                seriesList = seriesDAO.searchSeries(searchQuery);
+            } else {
+                seriesList = seriesDAO.getAllSeries();
+            }
+    
+            // Set the series list as a request attribute and forward to the index page
+            request.setAttribute("seriesList", seriesList);
+            request.getRequestDispatcher("/views/series/searchSeries.jsp").forward(request, response);
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Cannot get the Series Information.");
+            request.getRequestDispatcher("/views/error.jsp").forward(request, response);
         }
-
-        // Set the series list as a request attribute and forward to the index page
-        request.setAttribute("seriesList", seriesList);
-        request.getRequestDispatcher("index.jsp").forward(request, response);
     }
 
     /**
