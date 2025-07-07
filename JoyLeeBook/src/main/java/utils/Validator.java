@@ -18,8 +18,12 @@ public class Validator {
      * @param value the integer to validate
      * @return true if the integer is valid, false otherwise
      */
-    public static boolean isValidInteger(Integer value) {
-        return value != null && value > 0;
+    public static boolean isValidInteger(String value) {
+        try {
+            return Integer.parseInt(value) > 0;
+        } catch (NumberFormatException e) {
+            return false;
+        }
     }
 
     /**
@@ -34,5 +38,16 @@ public class Validator {
         }
         String emailRegex = "^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\\.[a-zA-Z]{2,}$";
         return email.matches(emailRegex);
+    }
+
+    /**
+     * Validates if the given phone is in a valid format.
+     *
+     * @param phone the phone number to validate
+     * @return true if the phone number is valid, false otherwise
+     */
+    public static boolean isValidPhoneNumber(String phone) {
+        String phoneRegex = "^\\d{10,11}$"; // 10–11 chữ số
+        return phone != null && phone.matches(phoneRegex);
     }
 }
