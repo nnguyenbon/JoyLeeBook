@@ -24,6 +24,7 @@ public class Series {
     // Additional fields for joined data
     private List<Genre> genres;
     private int totalChapters;
+    private Date latestChapterDate;
 
     /**
      *
@@ -190,5 +191,21 @@ public class Series {
      */
     public void setTotalChapters(int totalChapters) {
         this.totalChapters = totalChapters;
+    }
+
+    /**
+     * 
+     * @return
+     */
+    public Date getLatestChapterDate() {
+        return latestChapterDate;
+    }
+
+    /**
+     * 
+     * @param latestChapterDate
+     */
+    public void setLatestChapterDate(Date latestChapterDate) {
+        this.latestChapterDate = latestChapterDate;
     }
 }

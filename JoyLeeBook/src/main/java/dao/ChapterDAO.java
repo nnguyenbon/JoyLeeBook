@@ -1,6 +1,7 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -157,4 +158,23 @@ public class ChapterDAO {
         }
         return 0;
     }
+    /**
+     * Get latest date chapter of Series
+     * @param seriesId id of series
+     * @return latest date or null
+     * @throws SQLException If a database access error occurs.
+     */
+    public Date getLatestDate(int seriesId) throws SQLException {
+        String sql = "SELECT MAX(created_at) as latestDate FROM Chapters WHERE series_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, seriesId);
+            try (ResultSet rs = ps.executeQuery();) {
+                if (rs.next()) {
+                    return rs.getDate("latestDate");
+                }
+            }
+        }
+        return null;
+    }
+
 }
