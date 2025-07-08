@@ -6,7 +6,6 @@
 package controller.authController;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 import java.sql.SQLException;
 
 import dao.UserDAO;
@@ -18,7 +17,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.security.MessageDigest;
 import model.User;
 
 /**
