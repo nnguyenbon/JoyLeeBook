@@ -21,7 +21,7 @@ CREATE TABLE [dbo].[Users] (
 	[role_name] NVARCHAR(15) NOT NULL,
 	[username] NVARCHAR(15) UNIQUE NOT NULL,
     [email] NVARCHAR(100) UNIQUE NOT NULL,
-	[user_password] NVARCHAR(40) NOT NULL
+	[user_password] NVARCHAR(32) NOT NULL
 ) 
 
 CREATE TABLE [dbo].[Genres] (

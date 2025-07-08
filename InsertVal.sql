@@ -1,10 +1,10 @@
 ﻿INSERT INTO [dbo].[Users] ([role_name], [username], [email], [user_password])
 VALUES
-('admin', 'superuser', 'super@example.com', '8e67bb26b358e2ed20fe552ed6fb832f397a507d'),
-('reader', 'mark_olson', 'mark.o@example.com', 'b17ed46f751a079d79037b77666daf7449e4eb7c'),
-('reader', 'lisa_ray', 'lisa.r@example.com', '7c279d2f007d418599e7784ed5b0b265ced5208c'),
-('reader', 'dave_chen', 'dave.c@example.com', 'c2807d985275d7a718e05e50c4a6b35f15389748'),
-('reader', 'emily_jones', 'emily.j@example.com', 'b7d38505a64542d4338c130efcde595f48e6f9f9');
+('admin', 'superuser', 'super@example.com', '0baea2f0ae20150db78f58cddac442a9'),
+('reader', 'mark_olson', 'mark.o@example.com', 'a141d11fc645b624aa0c94a2cf3f5f5e'),
+('reader', 'lisa_ray', 'lisa.r@example.com', 'd43e93e3e2e19c6234dcdabcefcb63c0'),
+('reader', 'dave_chen', 'dave.c@example.com', 'a62ac1015e2ba0dcbc52a291fcb3e1c7'),
+('reader', 'emily_jones', 'emily.j@example.com', '30575326bc3d34ae258602ab1d41046f');
 
 INSERT INTO [dbo].[Genres] ([genre_name])
 VALUES

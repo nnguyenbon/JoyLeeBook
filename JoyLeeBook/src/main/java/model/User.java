@@ -1,8 +1,12 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
 package model;
 
 /**
- * Represents a user in the system.
- * A user has a role, username, email, and password.
+ *
+ * @author PC
  */
 public class User {
     private int userId;
@@ -12,19 +16,17 @@ public class User {
     private String password;
 
     /**
-     * Default constructor.
-     * Creates an empty User object.
+     *
      */
     public User() {
     }
 
     /**
-     * Constructs a User object with the specified role, username, email, and password.
      *
-     * @param roleName The role assigned to the user (e.g., admin, member).
-     * @param username The user's username.
-     * @param email The user's email address.
-     * @param password The user's password.
+     * @param roleName
+     * @param username
+     * @param email
+     * @param password
      */
     public User(String roleName, String username, String email, String password) {
         this.roleName = roleName;
@@ -34,90 +36,80 @@ public class User {
     }
 
     /**
-     * Returns the user's ID.
      *
-     * @return The user ID.
+     * @return
      */
     public int getUserId() {
         return userId;
     }
 
     /**
-     * Sets the user's ID.
      *
-     * @param userId The user ID to set.
+     * @param userId
      */
     public void setUserId(int userId) {
         this.userId = userId;
     }
 
     /**
-     * Returns the user's role name.
      *
-     * @return The role name.
+     * @return
      */
     public String getRoleName() {
         return roleName;
     }
 
     /**
-     * Sets the user's role name.
      *
-     * @param roleName The role name to set.
+     * @param roleName
      */
     public void setRoleName(String roleName) {
         this.roleName = roleName;
     }
 
     /**
-     * Returns the username.
      *
-     * @return The username.
+     * @return
      */
     public String getUsername() {
         return username;
     }
 
     /**
-     * Sets the username.
      *
-     * @param username The username to set.
+     * @param username
      */
     public void setUsername(String username) {
         this.username = username;
     }
 
     /**
-     * Returns the user's email address.
      *
-     * @return The email address.
+     * @return
      */
     public String getEmail() {
         return email;
     }
 
     /**
-     * Sets the user's email address.
      *
-     * @param email The email address to set.
+     * @param email
      */
     public void setEmail(String email) {
         this.email = email;
     }
 
     /**
-     * Returns the user's password.
      *
-     * @return The password.
+     * @return
      */
     public String getPassword() {
         return password;
     }
 
     /**
-     * Sets the user's password.
      *
-     * @param password The password to set.
+     * @param password
      */
     public void setPassword(String password) {
         this.password = password;
