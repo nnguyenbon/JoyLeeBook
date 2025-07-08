@@ -17,7 +17,6 @@ import model.User;
  * DAO class for handling database operations related to User entity. Provides
  * methods to insert, update, delete, and retrieve Users records from the
  * database.
- *
  * Assumes the Users table has columns: user_id (PK), role_name, username,
  * email, password.
  *
@@ -148,38 +147,35 @@ public class UserDAO {
     }
 
     /**
-     * Checks if a user name is available (i.e., not already used in the
-     * database).
+     * Checks if a username is a duplicate in the database.
      *
-     * @param userName The user name of the User to check.
-     * @return true if the user name is not used (available), false if it
-     * already exists.
+     * @param username The username to check for duplicates.
+     * @return true if the username already exists, false otherwise.
      * @throws SQLException If a database access error occurs.
      */
-    public boolean checkUserName(String userName) throws SQLException {
+    public boolean isDuplicateUsername(String username) throws SQLException {
         String sql = "SELECT * FROM Users WHERE username = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, userName);
+            pstmt.setString(1, username);
             try (ResultSet rs = pstmt.executeQuery()) {
-                return !rs.next();
+                return rs.next();
             }
         }
     }
 
     /**
-     * Checks if a email is available (i.e., not already used in the database).
+     * Checks if an email is a duplicate in the database.
      *
-     * @param email The email of the User to check.
-     * @return true if the email is not used (available), false if it already
-     * exists.
+     * @param email The email to check for duplicates.
+     * @return true if the email already exists, false otherwise.
      * @throws SQLException If a database access error occurs.
      */
-    public boolean checkEmail(String email) throws SQLException {
+    public boolean isDuplicateEmail(String email) throws SQLException {
         String sql = "SELECT * FROM Users WHERE email = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, email);
             try (ResultSet rs = pstmt.executeQuery()) {
-                return !rs.next();
+                return rs.next();
             }
         }
     }
