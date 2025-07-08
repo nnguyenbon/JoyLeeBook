@@ -5,7 +5,7 @@
          errorPage=""
          isErrorPage="false" %>
 
-<%@ page import="java.util.ArrayList, model.Series" %>
+<%@ page import="java.util.List, model.Series" %>
 
 <%
     /*
@@ -14,7 +14,7 @@
     */
     
     String[] pageTypeArray = ((String) request.getRequestURI()).split("/");
-    String pageType = pageTypeArray.length > 3 ? pageTypeArray[pageTypeArray.length - 2] : "home";
+    String pageType = pageTypeArray[pageTypeArray.length - 1].replace(".jsp", "");
 
     request.setAttribute("pageType", pageType);
 
@@ -37,37 +37,61 @@
         <main class="main-main d-flex align-items-center justify-content-center">
             <div class="content m-5 d-flex flex-column align-items-center justify-content-center">
                 <div class="header-main w-100 p-3 d-flex align-items-center justify-content-center text-white">
-                    <h3>Last Released</h3>
+                    <h3>LAST RELEASED</h3>
                 </div>
 
                 <div class="body-main w-100 pt-5 pb-4 ps-5 pe-5 d-flex align-items-center justify-content-center">
-                    <%
-                        ArrayList<Series> series = new ArrayList<>();
-                        
-                        for (Series story : series) {
-                    %>
                     <div class="story">
-                        <img class="w-100" src="${story.getCoverImageUrl()}" alt="">
-                        <h6 class="w-100 p-2">${story.getSeriesTitle()}</h6>
+                        <img class="w-100" src="/infor_test/test_img.jpg" alt="">
+                        <h6 class="w-100 p-2">Komi Can't Communicate</h6>
                         <div class="lasted-chapter d-flex align-items-center justify-content-evenly">
-                            <p class="chapter-volumn">Ch. ${story.getTotalChapters()}</p>
-                            <p class="lasted-time"><i>${story.getCreatedAt()} ago</i></p>
+                            <p class="chapter-volumn">Ch. 11</p>
+                            <p class="lasted-time"><i>9m ago</i></p>
                         </div>
                     </div>
+                    <%
+                        int MAXIMUM_SERIES_IN_PAGE = 20;
 
+                        List<Series> seriesList = (List<Series>) request.getAttribute("seriesList");
+                        int seriesListSize = seriesList.size();
+
+                        int currentPage = request.getParameter("page") == null 
+                                || request.getParameter("page").equals("1") ? 1 : Integer.parseInt(request.getParameter("page"));
+                                
+                                
+                        for (int i = (currentPage - 1) * MAXIMUM_SERIES_IN_PAGE; i < currentPage * MAXIMUM_SERIES_IN_PAGE; i++) {
+                    %>
+                    <div class="story">
+                        <img class="w-100" src="<%= seriesList.get(i).getCoverImageUrl() %>" alt="">
+                        <h6 class="w-100 p-2"><%= seriesList.get(i).getSeriesTitle()%></h6>
+                        <div class="lasted-chapter d-flex align-items-center justify-content-evenly">
+                            <p class="chapter-volumn">Ch. <%= seriesList.get(i).getTotalChapters() %></p>
+                            <p class="lasted-time"><i><%= seriesList.get(i).getLatestChapterDate() %> ago</i></p>
+                        </div>
+                    </div>
                     <% }%>
                 </div>
 
-                <%
-                    int totalSeries = series.size();
-                    String currentPage = request.getParameter("page") != null && request.getParameter("page").matches("\\d+") ? (String) request.getParameter("page") : "1" ;
-                    
+                <% 
+                    int MAXIMUM_PAGE_NUMBER = seriesListSize / MAXIMUM_SERIES_IN_PAGE;
+                    int nextPage = currentPage + 1 > MAXIMUM_PAGE_NUMBER ? MAXIMUM_PAGE_NUMBER : currentPage + 1;
                     
                 %>
                 <div id="page-navigation"
                      class="page-navigation w-100 pb-4 d-flex align-items-center justify-content-center">
+
+                    <% if (currentPage >= 2) { %>
+                    <a href="/?page=<%= currentPage - 1 %>" class="page-number d-flex align-items-center justify-content-center"><</a>
+                    <a name="<%= currentPage - 1 %>" href="/?page=<%= currentPage - 1 %>" class="page-number d-flex align-items-center justify-content-center"><%= currentPage - 1 %></a>
+                    <% }%>
+
+                    <a name="${currentPage}" class="page-number page-number-active d-flex align-items-center justify-content-center"><%= currentPage %></a>
+
+                    <% if (currentPage < MAXIMUM_PAGE_NUMBER) { %>
+                    <a name="<%= currentPage + 1 %>" href="/?page=<%= currentPage + 1 %>" class="page-number d-flex align-items-center justify-content-center"><%= currentPage + 1 %></a>
+                    <a href="/?page=<%= currentPage + 1 %>" class="page-number d-flex align-items-center justify-content-center">></a>
+                    <% }%>
                 </div>
-                <%%>
             </div>
         </main>
 

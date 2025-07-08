@@ -8,7 +8,6 @@
     /*
     Note:
     pageType: Name of folder contained main page
-    authenticationType: Name of sub-page included (Login/Register)
     */
     
     String[] pageTypeArray = ((String) request.getRequestURI()).split("/");

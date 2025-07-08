@@ -13,7 +13,7 @@
     pageContext.setAttribute("display", "d-flex");
     pageContext.setAttribute("justify", "justify-content-between");
 
-    if (pageType.equals("authentication")) {
+    if (pageType.equals("login") || pageType.equals("register")) {
         pageContext.setAttribute("display", "d-none");
         pageContext.setAttribute("justify", "justify-content-center text-center");
     }
@@ -22,7 +22,7 @@
 
 <footer class="main-footer text-white">
     <div class="description-footer pt-2 pb-4 ps-2 pe-2 text-center">
-        <h5 class="w-50 mx-auto m-3">ABOUT US</h5>
+        <h5 class="w-50 mx-auto m-3"><b>ABOUT US</b></h5>
         <p class="w-50 mx-auto">JoyLeeBook is a Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
             eiusmod tempor incididunt
             ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris

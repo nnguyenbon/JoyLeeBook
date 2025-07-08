@@ -152,6 +152,10 @@ body {
 }
 
 /* =========================================================== MAIN =========================================================== */
+.full-read-content {
+    width: 70%;
+}
+
 .content {
     width: 60%;
     min-width: 450px;
@@ -160,10 +164,6 @@ body {
 /* =================================== HOME/DASHBOARD =================================== */
 .header-main {
     background-color: var(--light-blue-gray);
-}
-
-.header-main>h3 {
-    text-transform: uppercase;
 }
 
 .body-main {
@@ -223,7 +223,7 @@ body {
     background-color: var(--blue-gray);
 }
 
-/* =================================== AUTHENTICATION =================================== */
+/* =================================== LOGIN/REGISTER =================================== */
 .register-layout, .login-layout {
     padding: 3rem 0;
 }
@@ -293,6 +293,55 @@ body {
 .sub-authentication-layout p:nth-child(2) {
     position: relative;
     top: 1.2rem;
+}
+
+/* =========================================================== VIEW INFO =========================================================== */
+.series-content {
+    min-width: 650px;
+    background-color: var(--superlight-blue-gray);
+}
+
+.layout-title {
+    font-size: 1.5em;
+    color: white;
+    background-color: var(--light-blue-gray);
+}
+
+.series-infor {}
+
+.cover-image {
+    width: 30%;
+    min-width: 200px;
+    object-fit: cover;
+    object-position: center;
+}
+
+.series-infor-content {
+    width: 70%;
+    min-width: 200px;
+}
+
+.series-infor-content label {
+    min-width: 80px;
+}
+
+.update-time {
+    opacity: .7;
+}
+
+.series-infor-author {}
+
+.series-infor-status {}
+
+.series-infor-genre {}
+
+.favourite-btn {
+    color: white;
+    font-weight: bold;
+    border: none;
+    border-radius: 25px;
+    background-color: var(--green);
+    outline: none;
 }
 
 /* =========================================================== FOOTER =========================================================== */

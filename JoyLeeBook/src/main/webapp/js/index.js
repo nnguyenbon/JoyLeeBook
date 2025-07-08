@@ -3,7 +3,7 @@ const userProfile = document.getElementById('user-profile')
 
 
 window.addEventListener('load', () => {
-    pageNavigation(3, 3, 5)
+//    pageNavigation(3, 3, 5)
 
     displayElement({
         name: menu,
@@ -17,14 +17,10 @@ window.addEventListener('load', () => {
         isShow: false
     })
 
-    document.addEventListener("contextmenu", function (e) {
-        e.preventDefault();
-    });
+//    document.addEventListener("contextmenu", function (e) {
+//        e.preventDefault();
+//    });
 
-
-    document.getElementById("sub-authentication-layout")?.addEventListener("mouseover", function () {
-        console.log(123)
-    })
 })
 
 
