@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dao;
 
 import java.sql.Connection;
@@ -17,45 +13,57 @@ import model.Category;
 import model.Genre;
 
 /**
- *
- * @author PC
+ * Data Access Object for handling operations related to the Categories table.
+ * This class manages the relationship between series and genres.
  */
 public class CategoryDAO {
 
+    private final Connection connection;
+
     /**
+     * Constructor to initialize CategoryDAO with a database connection.
      *
-     * @param seriesId
-     * @param genreIds
-     * @throws SQLException
+     * @param connection Active SQL connection to be used in DAO methods.
+     */
+    public CategoryDAO(Connection connection) {
+        this.connection = connection;
+    }
+
+    /**
+     * Adds multiple category relationships to the database.
+     * Each category links a series with a genre.
+     *
+     * @param seriesId The ID of the series to associate genres with.
+     * @param genreIds A list of genre IDs to be associated with the series.
+     * @throws SQLException If a database access error occurs.
      */
     public void addCategories(int seriesId, List<Integer> genreIds) throws SQLException {
         String sql = "INSERT INTO Categories (series_id, genre_id) VALUES (?, ?)";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             for (int genreId : genreIds) {
                 ps.setInt(1, seriesId);
                 ps.setInt(2, genreId);
                 ps.addBatch();
             }
             ps.executeBatch();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(CategoryDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     /**
+     * Retrieves a list of genres associated with a specific series.
      *
-     * @param seriesId
-     * @return
-     * @throws SQLException
+     * @param seriesId The ID of the series.
+     * @return A list of Genre objects linked to the series.
+     * @throws SQLException If a database access error occurs.
      */
-    public List<Genre> getGenresBySeriesId(int seriesId) throws SQLException {
-        List<Genre> genres = new ArrayList<>();
-        String sql = "SELECT g.genre_id, g.genre_name FROM Genres g " +
-                     "JOIN Categories c ON g.genre_id = c.genre_id " +
-                     "WHERE c.series_id = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+    public ArrayList<Genre> getGenresBySeriesId(int seriesId) throws SQLException {
+        ArrayList<Genre> genres = new ArrayList<>();
+        String sql = "SELECT g.genre_id, g.genre_name FROM Genres g "
+                + "JOIN Categories c ON g.genre_id = c.genre_id "
+                + "WHERE c.series_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, seriesId);
             ResultSet rs = ps.executeQuery();
             while (rs.next()) {
@@ -64,26 +72,25 @@ public class CategoryDAO {
                 genre.setGenreName(rs.getString("genre_name"));
                 genres.add(genre);
             }
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(CategoryDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return genres;
     }
 
     /**
+     * Deletes all category associations for a given series.
      *
-     * @param seriesId
-     * @throws SQLException
+     * @param seriesId The ID of the series whose categories should be removed.
+     * @throws SQLException If a database access error occurs.
      */
     public void deleteBySeriesId(int seriesId) throws SQLException {
         String sql = "DELETE FROM Categories WHERE series_id = ?";
-        try (Connection conn = DBConnection.getConnection();
-             PreparedStatement ps = conn.prepareStatement(sql)) {
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, seriesId);
             ps.executeUpdate();
-        } catch (ClassNotFoundException ex) {
-            Logger.getLogger(CategoryDAO.class.getName()).log(Level.SEVERE, null, ex);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }
-

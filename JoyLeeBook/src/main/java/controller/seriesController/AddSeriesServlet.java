@@ -1,78 +1,128 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
-
 package controller.seriesController;
 
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.sql.SQLException;
+
+import dao.SeriesDAO;
+import db.DBConnection;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.Series;
+import static utils.Validator.isValidInteger;
+import static utils.Validator.isValidString;
 
 /**
+ * Servlet to handle adding a new series.
  *
- * @author PC
+ * @author HaiDD-dev
  */
-@WebServlet(name="AddSeriesServlet", urlPatterns={"/addSeries"})
+@WebServlet(name = "AddSeriesServlet", urlPatterns = { "/addSeries" })
 public class AddSeriesServlet extends HttpServlet {
-   
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet AddSeriesServlet</title>");  
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet AddSeriesServlet at " + request.getContextPath () + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    } 
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
+    private SeriesDAO seriesDAO;
+
+    @Override
+    public void init() {
+        try {
+            seriesDAO = new SeriesDAO(DBConnection.getConnection());
+        } catch (SQLException | ClassNotFoundException e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    /**
      * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
+     *
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        processRequest(request, response);
-    } 
+            throws ServletException, IOException {
+        try {
+            response.sendRedirect("views/series/addSeries.jsp");
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 
-    /** 
+    /**
      * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
+     *
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        processRequest(request, response);
+            throws ServletException, IOException {
+        try {
+            // Retrieve parameters from the request
+            String authorName = request.getParameter("authorName");
+            String seriesTitle = request.getParameter("seriesTitle");
+            String seriesStatus = request.getParameter("seriesStatus");
+            String seriesDescription = request.getParameter("seriesDescription");
+            String seriesCoverImageURL = request.getParameter("seriesCoverImageURL");
+
+            // Validate input parameters
+            if (isValidString(authorName)) {
+                request.setAttribute("error", "Author name cannot be empty");
+                request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
+                return;
+            }
+
+            if (isValidString(seriesTitle)) {
+                request.setAttribute("error", "Series title cannot be empty");
+                request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
+                return;
+            }
+
+            if (isValidInteger(seriesStatus)) {
+                request.setAttribute("error", "Series status cannot be empty");
+                request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
+                return;
+            }
+
+            if (isValidString(seriesDescription)) {
+                request.setAttribute("error", "Series description cannot be empty");
+                request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
+                return;
+            }
+
+            if (isValidString(seriesCoverImageURL)) {
+                request.setAttribute("error", "Series cover image URL cannot be empty");
+                request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
+                return;
+            }
+
+            // Create a new Series object and insert it into the database
+            Series series = new Series(authorName, seriesTitle, seriesStatus, seriesDescription, seriesCoverImageURL);
+            boolean success = seriesDAO.insertSeries(series);
+
+            // Check if the insertion was successful
+            if (success) {
+                request.setAttribute("message", "Series added successfully");
+                response.sendRedirect("views/adminDashboard");
+            } else {
+                request.setAttribute("error", "An error occurred while adding the series");
+                request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Cannot add the Series Information.");
+            request.getRequestDispatcher("views/error.jsp").forward(request, response);
+        }
     }
 
-    /** 
+    /**
      * Returns a short description of the servlet.
+     *
      * @return a String containing servlet description
      */
     @Override
