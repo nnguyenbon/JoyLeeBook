@@ -73,7 +73,6 @@ public class ChapterDAO {
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, chapterId);
             try (ResultSet rs = ps.executeQuery()) {
-
                 if (rs.next()) {
                     Chapter chapter = new Chapter();
                     chapter.setChapterId(rs.getInt("chapter_id"));
@@ -156,5 +155,47 @@ public class ChapterDAO {
             }
         }
         return 0;
+    }
+
+    public Chapter getNextChapter(int seriesId, int chapterIndex) throws SQLException {
+        String sql = "SELECT TOP 1 * FROM Chapter WHERE series_id = ? AND chapter_index > ? ORDER BY chapter_index ";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, seriesId);
+            ps.setInt(2, chapterIndex);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Chapter chapter = new Chapter();
+                    chapter.setChapterId(rs.getInt("chapter_id"));
+                    chapter.setSeriesId(rs.getInt("series_id"));
+                    chapter.setChapterIndex(rs.getInt("chapter_index"));
+                    chapter.setChapterTitle(rs.getString("chapter_title"));
+                    chapter.setCreatedAt(rs.getTimestamp("created_at"));
+                    chapter.setContent(rs.getString("content"));
+                    return chapter;
+                }
+            }
+        }
+        return null;
+    }
+
+    public Chapter getPreviousChapter(int seriesId, int chapterIndex) throws SQLException {
+        String sql = "SELECT TOP 1 * FROM Chapter WHERE series_id = ? AND chapter_index < ? ORDER BY chapter_index DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, seriesId);
+            ps.setInt(2, chapterIndex);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Chapter chapter = new Chapter();
+                    chapter.setChapterId(rs.getInt("chapter_id"));
+                    chapter.setSeriesId(rs.getInt("series_id"));
+                    chapter.setChapterIndex(rs.getInt("chapter_index"));
+                    chapter.setChapterTitle(rs.getString("chapter_title"));
+                    chapter.setCreatedAt(rs.getTimestamp("created_at"));
+                    chapter.setContent(rs.getString("content"));
+                    return chapter;
+                }
+            }
+        }
+        return null;
     }
 }

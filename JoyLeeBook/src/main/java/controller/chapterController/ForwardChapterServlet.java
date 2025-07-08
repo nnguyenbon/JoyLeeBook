@@ -6,7 +6,6 @@ package controller.chapterController;
 
 import java.io.IOException;
 import java.io.PrintWriter;
-import java.util.List;
 
 import dao.ChapterDAO;
 import db.DBConnection;
@@ -74,12 +73,8 @@ public class ForwardChapterServlet extends HttpServlet {
                 return;
             }
 
-            List<Chapter> list = chapterDAO.getAllChaptersBySeriesId(chapter.getSeriesId());
-            int indexChapter = list.indexOf(chapter);
-            if (indexChapter != -1 && indexChapter < list.size() - 1) {
-                Chapter nextChapter = list.get(indexChapter + 1);
-                request.setAttribute("nextChapter", nextChapter);
-            }
+            Chapter nextChapter = chapterDAO.getNextChapter(chapter.getSeriesId(), chapter.getChapterIndex());
+            request.setAttribute("nextChaper", nextChapter);
             request.getRequestDispatcher("/views/chapter/readChapter.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
