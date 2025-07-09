@@ -1,83 +1,99 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
-
 package controller.chapterController;
 
+import dao.ChapterDAO;
+import db.DBConnection;
 import java.io.IOException;
-import java.io.PrintWriter;
+import java.util.ArrayList;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.Chapter;
 
 /**
- *  Servlet show the Chapter list of Series for admin operations
- * @author PC
+ * Servlet that displays the list of chapters belonging to a specific series.
+ * Used for admin operations to manage chapters of a series.
+ * Retrieves chapter list by series ID and forwards to a JSP view.
+ * 
+ * URL pattern: /chapterList
+ * 
+ * Author: PC
  */
-@WebServlet(name="ListChapterBySeriesServlet", urlPatterns={"/chapterList"})
+@WebServlet(name = "ListChapterBySeriesServlet", urlPatterns = {"/chapterList"})
 public class ListChapterBySeriesServlet extends HttpServlet {
-   
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+
+    /**
+     * Processes both GET and POST requests.
+     * Retrieves the list of chapters based on the series ID passed as a request parameter.
+     * If successful, forwards to the admin chapter list JSP.
+     * If an error occurs, forwards to the error JSP page.
+     *
+     * @param request  The HTTP request object.
+     * @param response The HTTP response object.
+     * @throws ServletException If a servlet-specific error occurs.
+     * @throws IOException If an I/O error occurs.
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ListChapterBySeriesServlet</title>");  
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ListChapterBySeriesServlet at " + request.getContextPath () + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    } 
+            throws ServletException, IOException {
+        try {
+            String seriesIdParam = request.getParameter("seriesId");
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
-     * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+            if (seriesIdParam == null || seriesIdParam.isEmpty()) {
+                response.sendRedirect("views/error.jsp");
+                return;
+            }
+
+            int seriesId = Integer.parseInt(seriesIdParam);
+            ChapterDAO chapterDAO = new ChapterDAO(DBConnection.getConnection());
+            ArrayList<Chapter> chapterList = chapterDAO.getAllChaptersBySeriesId(seriesId);
+
+            request.setAttribute("chapterList", chapterList);
+            request.setAttribute("seriesId", seriesId);
+            request.getRequestDispatcher("views/chapter/adminListChapter.jsp").forward(request, response);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Cannot get Chapter List.");
+            request.getRequestDispatcher("views/error.jsp").forward(request, response);
+        }
+    }
+
+    /**
+     * Handles the HTTP GET method by calling processRequest().
+     *
+     * @param request  The HTTP request object.
+     * @param response The HTTP response object.
+     * @throws ServletException If a servlet-specific error occurs.
+     * @throws IOException If an I/O error occurs.
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        processRequest(request, response);
-    } 
-
-    /** 
-     * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
+            throws ServletException, IOException {
         processRequest(request, response);
     }
 
-    /** 
-     * Returns a short description of the servlet.
-     * @return a String containing servlet description
+    /**
+     * Handles the HTTP POST method by calling processRequest().
+     *
+     * @param request  The HTTP request object.
+     * @param response The HTTP response object.
+     * @throws ServletException If a servlet-specific error occurs.
+     * @throws IOException If an I/O error occurs.
+     */
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    /**
+     * Returns a short description of this servlet.
+     *
+     * @return A string containing servlet description.
      */
     @Override
     public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
+        return "Servlet that handles displaying chapter list for a given series ID in admin view";
+    }
 }

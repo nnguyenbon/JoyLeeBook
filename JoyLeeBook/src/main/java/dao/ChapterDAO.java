@@ -1,11 +1,11 @@
 package dao;
 
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 import model.Chapter;
 
@@ -40,8 +40,8 @@ public class ChapterDAO {
      * @return a list of chapter objects belonging to the specified series.
      * @throws SQLException If a database access error occurs.
      */
-    public List<Chapter> getAllChaptersBySeriesId(int seriesId) throws SQLException {
-        List<Chapter> list = new ArrayList<>();
+    public ArrayList<Chapter> getAllChaptersBySeriesId(int seriesId) throws SQLException {
+        ArrayList<Chapter> list = new ArrayList<>();
         String sql = "SELECT * FROM Chapter WHERE series_id = ? ORDER BY chapter_index ASC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, seriesId);
@@ -155,6 +155,26 @@ public class ChapterDAO {
             }
         }
         return 0;
+    }
+
+    /**
+     * Get latest date chapter of Series
+     * 
+     * @param seriesId id of series
+     * @return latest date or null
+     * @throws SQLException If a database access error occurs.
+     */
+    public Date getLatestDate(int seriesId) throws SQLException {
+        String sql = "SELECT MAX(created_at) as latestDate FROM Chapters WHERE series_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, seriesId);
+            try (ResultSet rs = ps.executeQuery();) {
+                if (rs.next()) {
+                    return rs.getDate("latestDate");
+                }
+            }
+        }
+        return null;
     }
 
     public Chapter getNextChapter(int seriesId, int chapterIndex) throws SQLException {

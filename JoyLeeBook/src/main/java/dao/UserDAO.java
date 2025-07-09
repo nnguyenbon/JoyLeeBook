@@ -54,29 +54,6 @@ public class UserDAO {
     }
 
     /**
-     * Check if a user with the given username and password exists in the
-     * database.
-     *
-     * @param username The username to check.
-     * @param password The password to check.
-     * @return User object if found, otherwise null.
-     * @throws java.sql.SQLException
-     */
-    public User isValidUser(String username, String password) throws SQLException {
-        String sql = "SELECT * FROM Users WHERE username = ? AND user_password = ?";
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, username);
-            pstmt.setString(2, password);
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
-                    return extractUserFromResultSet(rs);
-                }
-            }
-        }
-        return null;
-    }
-
-    /**
      * Get a user by their ID.
      *
      * @param user_id User ID

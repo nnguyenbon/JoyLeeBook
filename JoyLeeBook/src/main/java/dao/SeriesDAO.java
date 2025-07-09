@@ -13,7 +13,6 @@ import model.Series;
  * DAO class for handling database operations related to Series entity. Provides
  * methods to insert, update, delete, and retrieve Series records from the
  * database.
- *
  * Assumes the Series table has columns: series_id (PK), author_name,
  * series_title, status, description, cover_image_url, created_at.
  *
@@ -25,8 +24,6 @@ public class SeriesDAO {
 
     /**
      * Constructor to initialize SeriesDAO with a database connection.
-     *
-     * @param connection Active SQL connection to be used in DAO methods.
      */
     public SeriesDAO(Connection connection) {
         this.connection = connection;
@@ -36,7 +33,6 @@ public class SeriesDAO {
      * Retrieves all series records from the database.
      *
      * @return List of Series objects.
-     * @throws java.sql.SQLException
      */
     public List<Series> getAllSeries() throws SQLException {
         List<Series> listSeries = new ArrayList<>();
@@ -55,7 +51,6 @@ public class SeriesDAO {
      *
      * @param series_id The series ID.
      * @return Series object if found, otherwise null.
-     * @throws java.sql.SQLException
      */
     public Series getSeriesById(int series_id) throws SQLException {
         String sql = "SELECT * FROM Series WHERE series_id = ?";
@@ -75,7 +70,6 @@ public class SeriesDAO {
      *
      * @param series The Series object to add.
      * @return true if insertion is successful, false otherwise.
-     * @throws java.sql.SQLException
      */
     public boolean insertSeries(Series series) throws SQLException {
         String sql = "INSERT INTO Series (author_name, series_title, status, description, cover_image_url) "
@@ -96,7 +90,6 @@ public class SeriesDAO {
      *
      * @param series The updated Series object.
      * @return true if update is successful, false otherwise.
-     * @throws java.sql.SQLException
      */
     public boolean updateSeries(Series series) throws SQLException {
         String sql = "UPDATE Series SET author_name= ?, series_title = ?, status = ?, description = ?, cover_image_url = ? "
@@ -119,7 +112,6 @@ public class SeriesDAO {
      *
      * @param series_id The ID of the series to delete.
      * @return true if deletion is successful, false otherwise.
-     * @throws java.sql.SQLException
      */
     public boolean deleteSeries(int series_id) throws SQLException {
         String sql = "DELETE FROM Series WHERE series_id = ?";
@@ -135,7 +127,6 @@ public class SeriesDAO {
      *
      * @param keyword Keyword to search in series titles.
      * @return List of Series matching the keyword.
-     * @throws java.sql.SQLException
      */
     public List<Series> searchSeries(String keyword) throws SQLException {
         List<Series> list = new ArrayList<>();
@@ -161,7 +152,7 @@ public class SeriesDAO {
      *
      * @param seriesTitle The title of the series to check.
      * @return true if the title is not used (available), false if it already
-     * exists.
+     *         exists.
      * @throws SQLException If a database access error occurs.
      */
     public boolean checkTitleSeries(String seriesTitle) throws SQLException {
@@ -171,6 +162,42 @@ public class SeriesDAO {
             try (ResultSet rs = stmt.executeQuery()) {
                 return !rs.next(); // true if the title is not used (available)
             }
+        }
+    }
+
+    /**
+     * Saves a series to the user's library.
+     * This method inserts a record into the UserLibraries table linking a user
+     * 
+     * @param seriesId The ID of the series to save.
+     * @param userId   The ID of the user saving the series.
+     * @return true if the series is successfully saved, false otherwise.
+     * @throws SQLException If a database access error occurs.
+     */
+    public boolean saveSeries(int seriesId, int userId) throws SQLException {
+        String sql = "INSERT INTO UserLibraries (user_id, series_id) VALUES (?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setInt(2, seriesId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    /**
+     * Deletes a saved series from the user's library.
+     * This method removes a record from the UserLibraries table for a specific
+     * 
+     * @param seriesId The ID of the series to delete from the user's library.
+     * @param userId   The ID of the user whose saved series is being deleted.
+     * @return true if the series is successfully deleted, false otherwise.
+     * @throws SQLException If a database access error occurs.
+     */
+    public boolean deleteSavedSeries(int seriesId, int userId) throws SQLException {
+        String sql = "DELETE FROM UserLibraries WHERE user_id = ? AND series_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setInt(2, seriesId);
+            return stmt.executeUpdate() > 0;
         }
     }
 
