@@ -12,8 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import model.Series;
 import dao.SeriesDAO;
 
-import static utils.Validator.isValidInteger;
-import static utils.Validator.isValidString;
+import utils.Validator;
 
 /**
  * Servlet to handle adding a new series.
@@ -70,31 +69,31 @@ public class AddSeriesServlet extends HttpServlet {
             String seriesCoverImageURL = request.getParameter("seriesCoverImageURL");
     
             // Validate input parameters
-            if (isValidString(authorName)) {
+            if (Validator.isValidString(authorName)) {
                 request.setAttribute("error", "Author name cannot be empty");
                 request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
                 return;
             }
     
-            if (isValidString(seriesTitle)) {
+            if (Validator.isValidString(seriesTitle)) {
                 request.setAttribute("error", "Series title cannot be empty");
                 request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
                 return;
             }
     
-            if (isValidInteger(Integer.valueOf(seriesStatus))) {
+            if (Validator.isValidInteger(seriesStatus)) {
                 request.setAttribute("error", "Series status cannot be empty");
                 request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
                 return;
             }
     
-            if (isValidString(seriesDescription)) {
+            if (Validator.isValidString(seriesDescription)) {
                 request.setAttribute("error", "Series description cannot be empty");
                 request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
                 return;
             }
     
-            if (isValidString(seriesCoverImageURL)) {
+            if (Validator.isValidString(seriesCoverImageURL)) {
                 request.setAttribute("error", "Series cover image URL cannot be empty");
                 request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
                 return;

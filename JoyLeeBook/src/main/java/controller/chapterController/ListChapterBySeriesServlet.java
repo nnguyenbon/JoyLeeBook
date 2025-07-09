@@ -10,6 +10,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Chapter;
+import utils.Validator;
 
 /**
  * Servlet that displays the list of chapters belonging to a specific series.
@@ -39,7 +40,7 @@ public class ListChapterBySeriesServlet extends HttpServlet {
         try {
             String seriesIdParam = request.getParameter("seriesId");
 
-            if (seriesIdParam == null || seriesIdParam.isEmpty()) {
+            if (Validator.isValidString(seriesIdParam)) {
                 response.sendRedirect("views/error.jsp");
                 return;
             }

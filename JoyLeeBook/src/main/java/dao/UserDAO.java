@@ -72,6 +72,26 @@ public class UserDAO {
         }
         return null;
     }
+    
+    /**
+     * Get a user by their username.
+     *
+     * @param username Username
+     * @return User object if found, otherwise null.
+     * @throws java.sql.SQLException
+     */
+    public User getUserByName(String username) throws SQLException {
+        String sql = "SELECT * FROM Users WHERE username = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    return extractUserFromResultSet(rs);
+                }
+            }
+        }
+        return null;
+    }
 
     /**
      * Insert a new user into the database.

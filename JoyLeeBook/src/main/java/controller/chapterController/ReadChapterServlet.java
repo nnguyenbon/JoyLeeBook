@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Chapter;
+import utils.Validator;
 
 /**
  * Servlet for handling requests to read a specific chapter in a series.
@@ -38,8 +39,8 @@ public class ReadChapterServlet extends HttpServlet {
             String seriesIdParam = request.getParameter("seriesId");
 
             // Validate parameters
-            if (chapterIdParam == null || chapterIdParam.isEmpty()
-                    || seriesIdParam == null || seriesIdParam.isEmpty()) {
+            if (Validator.isValidString(seriesIdParam) 
+                    || Validator.isValidString(chapterIdParam)) {
                 response.sendRedirect(request.getContextPath() + "/error.jsp");
                 return;
             }

@@ -1,83 +1,75 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
-
 package controller.historyController;
 
-import java.io.IOException;
-import java.io.PrintWriter;
+import dao.HistoryReadingDAO;
+import dao.UserDAO;
+import db.DBConnection;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.HttpServlet;
-import jakarta.servlet.http.HttpServletRequest;
-import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.*;
+import model.HistoryReading;
+import model.User;
+
+import java.io.IOException;
+import java.util.List;
 
 /**
+ * Servlet that handles displaying a user's reading history.
+ * It checks if the user is logged in, retrieves the user's reading history from the database,
+ * and forwards the data to the JSP page for display.
  *
- * @author PC
+ * URL pattern: /history
  */
-@WebServlet(name="ViewHistoryServlet", urlPatterns={"/viewHistory"})
+@WebServlet("/history")
 public class ViewHistoryServlet extends HttpServlet {
-   
-    /** 
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet ViewHistoryServlet</title>");  
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet ViewHistoryServlet at " + request.getContextPath () + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
-    } 
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
-    /** 
-     * Handles the HTTP <code>GET</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+    /**
+     * Handles GET requests for viewing the reading history.
+     * If the user is logged in, retrieves the user's reading history from the database
+     * and forwards it to the history.jsp page. If not logged in, redirects to the login page.
+     *
+     * @param request  The HTTP request object.
+     * @param response The HTTP response object.
+     * @throws ServletException If a servlet-specific error occurs.
+     * @throws IOException If an I/O error occurs.
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        processRequest(request, response);
-    } 
+            throws ServletException, IOException {
 
-    /** 
-     * Handles the HTTP <code>POST</code> method.
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-    throws ServletException, IOException {
-        processRequest(request, response);
+        // Get the current session without creating a new one
+        HttpSession session = request.getSession(false);
+        String username = (session != null) ? (String) session.getAttribute("username") : null;
+
+        // If user is not logged in, redirect to login page
+        if (username == null) {
+            response.sendRedirect("views/authorization/login");
+            return;
+        }
+
+        try {
+            // Retrieve user information using the provided username
+            UserDAO userDAO = new UserDAO(DBConnection.getConnection());
+            User user = userDAO.getUserByName(username);
+
+            // If user is not found, redirect to login
+            if (user == null) {
+                response.sendRedirect("views/authorization/login");
+                return;
+            }
+
+            // Retrieve the list of reading history records for the user
+            HistoryReadingDAO dao = new HistoryReadingDAO(DBConnection.getConnection());
+            List<HistoryReading> historyList = dao.getAllByUser(user.getUserId());
+
+            // Set the history list as a request attribute and forward to JSP page
+            request.setAttribute("historyList", historyList);
+            request.getRequestDispatcher("/views/user/history.jsp").forward(request, response);
+
+        } catch (Exception e) {
+            // Handle unexpected exceptions and forward to the error page
+            e.printStackTrace();
+            request.setAttribute("error", "Cannot get the Chapter Information.");
+            request.getRequestDispatcher("views/error.jsp").forward(request, response);
+        }
     }
-
-    /** 
-     * Returns a short description of the servlet.
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

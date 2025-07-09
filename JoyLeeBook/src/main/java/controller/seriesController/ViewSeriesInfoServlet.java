@@ -14,6 +14,7 @@ import java.util.ArrayList;
 import model.Series;
 import model.Chapter;
 import model.Genre;
+import utils.Validator;
 
 /**
  * This servlet handles requests to view detailed information about a specific
@@ -36,8 +37,8 @@ public class ViewSeriesInfoServlet extends HttpServlet {
         try {
             // Check id if user operate with url
             String idParam = request.getParameter("seriesId");
-            if (idParam == null || idParam.isEmpty()) {
-                response.sendRedirect(request.getContextPath() + "/error.jsp");
+            if (Validator.isValidString(idParam)) {
+                response.sendRedirect("views/error.jsp");
                 return;
             }
 
