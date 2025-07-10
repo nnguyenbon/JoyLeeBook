@@ -18,6 +18,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.User;
+import static utils.Validator.isValidString;
 
 /**
  *
@@ -61,13 +62,25 @@ public class LoginServlet extends HttpServlet {
         String username = request.getParameter("username");
         String password = request.getParameter("password");
 
+        if (!isValidString(username)) {
+            request.setAttribute("error", "Username cannot be empty.");
+            request.getRequestDispatcher("/views/authorization/login.jsp").forward(request, response);
+            return;
+        }
+        if (!isValidString(password)) {
+            request.setAttribute("error", "Password cannot be empty.");
+            request.getRequestDispatcher("/views/authorization/login.jsp").forward(request, response);
+            return;
+        }
+
         try {
             UserDAO userDAO = new UserDAO(DBConnection.getConnection());
-            User user = userDAO.isValidUser(username, password);
+            User user = userDAO.checkLogin(username, password);
             if (user != null) {
                 HttpSession session = request.getSession();
                 session.setAttribute("username", username);
                 session.setAttribute("userRole", user.getRoleName());
+                session.setAttribute("userId", user.getUserId());
                 session.setMaxInactiveInterval(30 * 60);
 
                 Cookie userCookie = new Cookie("rememberedUsername", username);
