@@ -201,6 +201,17 @@ public class SeriesDAO {
         }
     }
 
+    public boolean isSeriesSaved(int seriesId, int userId) throws SQLException {
+        String sql = "SELECT * FROM UserLibraries WHERE user_id = ? AND series_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setInt(2, seriesId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
+            }
+        }
+    }
+
     /**
      * Helper method to map a ResultSet row to a Series object.
      *

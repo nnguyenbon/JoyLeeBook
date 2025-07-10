@@ -6,7 +6,6 @@
 package controller.seriesController;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import dao.SeriesDAO;
 import db.DBConnection;
@@ -35,19 +34,6 @@ public class SaveSeriesServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet SaveSeriesServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet SaveSeriesServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
     }
 
     /**
@@ -61,6 +47,13 @@ public class SaveSeriesServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        try {
+            response.sendRedirect(request.getContextPath() + "/views/series/viewInfo.jsp");
+        } catch (Exception e) {
+            e.printStackTrace();
+            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
+                    "An error occurred while processing your request.");
+        }
     }
 
     /**
@@ -75,11 +68,18 @@ public class SaveSeriesServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
-        if (session == null) {
-            int userId = Integer.parseInt(request.getParameter("user_id"));
+        if (session != null) {
+            int userId = (Integer) session.getAttribute("userId");
             int seriesId = Integer.parseInt(request.getParameter("series_id"));
             try {
                 SeriesDAO seriesDAO = new SeriesDAO(DBConnection.getConnection());
+                boolean isSeriesSaved = seriesDAO.isSeriesSaved(seriesId, userId);
+                if (isSeriesSaved) {
+                    request.setAttribute("errorMessage", "This series is already saved in your library.");
+                    request.setAttribute("seriesId", seriesId);
+                    request.getRequestDispatcher("views/series/viewInfo.jsp").forward(request, response);
+                    return;
+                }
                 boolean isSaved = seriesDAO.saveSeries(seriesId, userId);
                 if (isSaved) {
                     request.getSession().setAttribute("successMessage", "Series saved successfully!");
