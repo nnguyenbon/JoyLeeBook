@@ -153,7 +153,7 @@ public class UserDAO {
      *
      * @param userName The user name of the User to check.
      * @return true if the user name is not used (available), false if it
-     * already exists.
+     *         already exists.
      * @throws SQLException If a database access error occurs.
      */
     public boolean checkUserName(String userName) throws SQLException {
@@ -171,7 +171,7 @@ public class UserDAO {
      *
      * @param email The email of the User to check.
      * @return true if the email is not used (available), false if it already
-     * exists.
+     *         exists.
      * @throws SQLException If a database access error occurs.
      */
     public boolean checkEmail(String email) throws SQLException {

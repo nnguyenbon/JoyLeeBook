@@ -2,8 +2,11 @@ package model;
 
 import java.util.Date;
 
+import java.util.Objects;
+
 /**
- * Represents a single chapter of a series. Includes details such as chapter index,
+ * Represents a single chapter of a series. Includes details such as chapter
+ * index,
  * title, content, creation date, and the associated series information.
  */
 public class Chapter {
@@ -27,10 +30,10 @@ public class Chapter {
      * Constructor that initializes a new Chapter with the given series ID,
      * chapter index, title, and content. Automatically sets the creation date.
      *
-     * @param seriesId The ID of the series this chapter belongs to.
+     * @param seriesId     The ID of the series this chapter belongs to.
      * @param chapterIndex The index or order of the chapter within the series.
      * @param chapterTitle The title of the chapter.
-     * @param content The textual content of the chapter.
+     * @param content      The textual content of the chapter.
      */
     public Chapter(int seriesId, int chapterIndex, String chapterTitle, String content) {
         this.seriesId = seriesId;
@@ -165,4 +168,38 @@ public class Chapter {
     public void setSeriesTitle(String seriesTitle) {
         this.seriesTitle = seriesTitle;
     }
+
+    /*
+     * Overrides the equals method to compare Chapter objects based on chapterId.
+     * This is useful for checking if two Chapter objects represent the same
+     * chapter.
+     * 
+     * @param obj the object to compare with
+     * 
+     * @return true if the chapterId of both objects is the same, false otherwise
+     */
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null || getClass() != obj.getClass())
+            return false;
+        Chapter chapter = (Chapter) obj;
+        return chapterId == chapter.chapterId;
+    }
+
+    /*
+     * Overrides the hashCode method to generate a hash code based on chapterId.
+     * This is important for using Chapter objects in hash-based collections like
+     * HashMap or HashSet
+     * 
+     * @return the hash code of the chapterId
+     * 
+     */
+    @Override
+    public int hashCode() {
+        return Objects.hash(chapterId);
+    }
+
 }
