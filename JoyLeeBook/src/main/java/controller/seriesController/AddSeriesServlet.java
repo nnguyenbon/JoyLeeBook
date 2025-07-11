@@ -70,31 +70,31 @@ public class AddSeriesServlet extends HttpServlet {
             String seriesCoverImageURL = request.getParameter("seriesCoverImageURL");
     
             // Validate input parameters
-            if (isValidString(authorName)) {
+            if (!isValidString(authorName)) {
                 request.setAttribute("error", "Author name cannot be empty");
                 request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
                 return;
             }
     
-            if (isValidString(seriesTitle)) {
+            if (!isValidString(seriesTitle)) {
                 request.setAttribute("error", "Series title cannot be empty");
                 request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
                 return;
             }
-    
-            if (isValidInteger(Integer.valueOf(seriesStatus))) {
+
+            if (!isValidInteger(seriesStatus)) {
                 request.setAttribute("error", "Series status cannot be empty");
                 request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
                 return;
             }
     
-            if (isValidString(seriesDescription)) {
+            if (!isValidString(seriesDescription)) {
                 request.setAttribute("error", "Series description cannot be empty");
                 request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
                 return;
             }
     
-            if (isValidString(seriesCoverImageURL)) {
+            if (!isValidString(seriesCoverImageURL)) {
                 request.setAttribute("error", "Series cover image URL cannot be empty");
                 request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
                 return;

@@ -47,7 +47,25 @@ public class Validator {
      * @return true if the phone number is valid, false otherwise
      */
     public static boolean isValidPhoneNumber(String phone) {
-        String phoneRegex = "^\\d{10,11}$"; // 10–11 chữ số
+        String phoneRegex = "^\\d{10,11}$"; // 10–11 digits
         return phone != null && phone.matches(phoneRegex);
+    }
+
+    public static boolean isValidPassword(String password) {
+        if (password == null) return false;
+
+        // Check password length
+        if (password.length() < 8) return false;
+
+        // Regex breakdown:
+        // (?=.*[A-Z])        → at least one uppercase letter
+        // (?=.*[a-zA-Z])     → at least one letter (uppercase or lowercase)
+        // (?=.*\\d)          → at least one digit
+        // (?=.*[!@#$%^&*()_+=<>?{}\\[\\]-]) → at least one special character
+        // .{8,}              → at least 8 characters (redundant if checked earlier)
+
+        String regex = "^(?=.*[A-Z])(?=.*[a-zA-Z])(?=.*\\d)(?=.*[!@#$%^&*()_+=<>?{}\\[\\]-]).{8,}$";
+
+        return password.matches(regex);
     }
 }
