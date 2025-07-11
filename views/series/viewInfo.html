@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <link rel="stylesheet" href="../../css/styles.css">
+        <title>VIEW INFO</title>
+    </head>
+
+    <body>
+        <header id="header" class="main-header p-3 d-flex align-items-center justify-content-center">
+            <div class="main-context menu-layout">
+                <div class="mobile-header d-flex align-items-center justify-content-between">
+                    <h1 class="logo-header"><a href="/" class="text-white"><i>JoyLeeBook</i></a></h1>
+
+                    <label id="menu-icon" class="menu-icon text-white fa-2x">&#9776;</label>
+                </div>
+
+                <div id="menu" class="menu w-100">
+                    <div class="search-bar pt-3 pb-3 ps-4 pe-3 d-flex align-items-center justify-content-center">
+                        <input class="search-field w-100 me-2" type="text" name="searching" placeholder="Search...">
+                        <button class="search-submit">
+                            <i class="fas fa-search fa-2x"></i>
+                        </button>
+                        <div class="searching"></div>
+                    </div>
+
+                    <!-- Authentication form -->
+                    <div class="user-profile-layout">
+                        <div class="align-items-center justify-content-center">
+                            <i id="user-profile-icon" class="user-profile-icon fas fa-user-circle fa-3x"></i>
+                        </div>
+
+                        <div id="user-profile" class="user-profile mt-2 mb-2 align-items-center justify-content-center">
+                            <a href="#userLibrary"
+                               class="user-library page-hover w-100 p-2 d-flex align-items-center justify-content-center">User
+                                Library</a>
+                            <a href="#historyReading"
+                               class="history-reading page-hover w-100 p-2 d-flex align-items-center justify-content-center">History
+                                Reading</a>
+                            <a href="#logOut" class="log-out page-hover w-100 p-2 d-flex align-items-center justify-content-center">Log
+                                Out</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-main d-flex align-items-center justify-content-center">
+            <div class="series-content m-5 d-flex flex-column align-items-center justify-content-center">
+                <h2 class="layout-title w-100 p-2 text-center">RUN INTO YOU</h2>
+
+                <div class="series-infor p-3 d-flex">
+                    <div class="cover-image me-2">
+                        <img class="w-100 h-100" src="../../infor_test/test_img.jpg" />
+                    </div>
+
+                    <div class="series-infor-content ms-2 gap-4 d-flex flex-column">
+                        <span class="update-time"><i>Updated at 2025-05-27 22:00:10</i></span>
+
+                        <div class="series-infor-author d-flex">
+                            <label><b>Author:</b></label> <div class="ms-5"> Jonathan B. Hollan </div>
+                        </div>
+
+                        <div class="series-infor-status d-flex">
+                            <label><b>Status:</b></label> <div class="ms-5"> On Going </div>
+                        </div>
+
+                        <div class="series-infor-genre d-flex">
+                            <label><b>Genre:</b></label> <div class="ms-5"> Game, Action, Adventure, Romance, Harem, Women's fiction </div>
+                        </div>
+
+                        <button class="favourite-btn p-2" type="submit" name="favouriteBtn">FAVOURITE</button>
+                    </div>
+                </div>
+
+                <div class="sub-content pt-2 pb-4 ps-3 pe-3 d-flex flex-column gap-4">
+                    <h2 class="w-100 p-2 text-center">Summary</h2>
+
+                    <p class="">Lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed non risus. Suspendisse lectus tortor, dignissim sit amet.</p>
+                
+                    <h2 class="w-100 p-2 text-center">Chapter</h2>
+                    
+                    <div class="chapter-list w-100 h-100 d-flex flex-column">
+                        <a class="w-100 pt-2 pb-2 ps-3" href="#">Chapter 1</a>
+                        <a class="w-100 pt-2 pb-2 ps-3" href="#">Chapter 1</a>
+                        <a class="w-100 pt-2 pb-2 ps-3" href="#">Chapter 1</a>
+                        <a class="w-100 pt-2 pb-2 ps-3" href="#">Chapter 1</a>
+                        <a class="w-100 pt-2 pb-2 ps-3" href="#">Chapter 1</a>
+                        <a class="w-100 pt-2 pb-2 ps-3" href="#">Chapter 1</a>
+                        <a class="w-100 pt-2 pb-2 ps-3" href="#">Chapter 1</a>
+                        <a class="w-100 pt-2 pb-2 ps-3" href="#">Chapter 1</a>
+                        <a class="w-100 pt-2 pb-2 ps-3" href="#">Chapter 1</a>
+                        <a class="w-100 pt-2 pb-2 ps-3" href="#">Chapter 1</a>
+
+                    </div>
+                </div>
+            </div>
+        </main>
+
+        <footer class="main-footer text-white">
+            <div class="description-footer pt-2 pb-4 ps-2 pe-2 text-center">
+                <h5 class="w-50 mx-auto m-3"><b>ABOUT US</b></h5>
+                <p class="w-50 mx-auto">JoyLeeBook is a Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                    eiusmod tempor incididunt
+                    ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                    nisi ut
+                    aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                    cillum
+                    dolore
+                    eu fugiat nulla pariatur.</p>
+            </div>
+
+            <div class="main-context social-footer w-100 h-100 p-2 d-flex justify-content-center align-items-center">
+                <div class="left-social-footer w-100 d-flex justify-content-end me-3"></div>
+                <a href="#" class="text-white"><i class="instagram-icon fab fa-instagram fa-2x"></i></a>
+                <a href="#" class="text-white"><i class="facebook-icon fab fa-facebook fa-2x m-3"></i></a>
+                <a href="#" class="text-white"><i class="tiktok-icon fab fa-tiktok fa-2x"></i></a>
+                <div class="right-social-footer w-100 d-flex justify-content-end ms-3">
+                    <!-- View Page -->
+                    <a href="#header" class="d-flex align-items-center justify-content-center"><i class="fas fa-arrow-up fa-md"></i></a>
+                </div>
+            </div>
+        </footer>
+
+        <script src="../../js/index.js"></script>
+    </body>
+
+</html>
