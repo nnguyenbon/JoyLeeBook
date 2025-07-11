@@ -10,6 +10,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.User;
 
 import static utils.Validator.isValidInteger;
 
@@ -47,12 +48,12 @@ public class DeleteChapterServlet extends HttpServlet {
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        try{
-            response.sendRedirect("views/chapter/deleteChapter.jsp");
+        try {
+            request.getRequestDispatcher("/WEB-INF/views/chapter/editChapter.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Cannot redirect to delete chapter page.");
-            request.getRequestDispatcher("views/error.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         }
     }
 
@@ -67,12 +68,19 @@ public class DeleteChapterServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
+            User user = (User) request.getSession().getAttribute("user");
+            if (user == null || !"admin".equalsIgnoreCase(user.getRoleName())) {
+                request.setAttribute("error", "Unauthorized access.");
+                request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
+                return;
+            }
+
             String chapterId = request.getParameter("chapterId");
 
             // Validate chapterId
             if (!isValidInteger(chapterId)) {
                 request.setAttribute("error", "Invalid chapter ID.");
-                request.getRequestDispatcher("views/error.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
                 return;
             }
 
@@ -84,11 +92,14 @@ public class DeleteChapterServlet extends HttpServlet {
             } else {
                 request.setAttribute("error", "Chapter not found or could not be deleted.");
             }
-            request.getRequestDispatcher("views/chapter/deleteChapter.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/chapter/editChapter.jsp").forward(request, response);
 
         } catch (SQLException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            request.setAttribute("error", "A database error occurred while deleting the chapter.");
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         }
+
     }
 
     /**
@@ -98,6 +109,6 @@ public class DeleteChapterServlet extends HttpServlet {
      */
     @Override
     public String getServletInfo() {
-        return "Short description";
+        return "Handles deletion of chapter records.";
     }
 }
