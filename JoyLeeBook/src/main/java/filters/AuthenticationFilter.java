@@ -2,12 +2,13 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Filter.java to edit this template
  */
-package com.joyleebook.filters;
+package filters;
 
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+
 import jakarta.servlet.Filter;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.FilterConfig;
@@ -23,12 +24,12 @@ import jakarta.servlet.http.HttpSession;
  *
  * @author KHAI TOAN
  */
-@WebFilter(filterName = "AuthenticationFilter", urlPatterns = {"/adminDashboard.jsp", "/user/*"})
+@WebFilter(filterName = "AuthenticationFilter", urlPatterns = { "/adminDashboard.jsp", "/user/*" })
 public class AuthenticationFilter implements Filter {
 
     private static final boolean debug = true;
 
-    // The filter configuration object we are associated with.  If
+    // The filter configuration object we are associated with. If
     // this value is null, this filter instance is not currently
     // configured.
     private FilterConfig filterConfig = null;
@@ -48,20 +49,20 @@ public class AuthenticationFilter implements Filter {
         // For example, a logging filter might log items on the request object,
         // such as the parameters.
         /*
-	for (Enumeration en = request.getParameterNames(); en.hasMoreElements(); ) {
-	    String name = (String)en.nextElement();
-	    String values[] = request.getParameterValues(name);
-	    int n = values.length;
-	    StringBuffer buf = new StringBuffer();
-	    buf.append(name);
-	    buf.append("=");
-	    for(int i=0; i < n; i++) {
-	        buf.append(values[i]);
-	        if (i < n-1)
-	            buf.append(",");
-	    }
-	    log(buf.toString());
-	}
+         * for (Enumeration en = request.getParameterNames(); en.hasMoreElements(); ) {
+         * String name = (String)en.nextElement();
+         * String values[] = request.getParameterValues(name);
+         * int n = values.length;
+         * StringBuffer buf = new StringBuffer();
+         * buf.append(name);
+         * buf.append("=");
+         * for(int i=0; i < n; i++) {
+         * buf.append(values[i]);
+         * if (i < n-1)
+         * buf.append(",");
+         * }
+         * log(buf.toString());
+         * }
          */
     }
 
@@ -76,27 +77,27 @@ public class AuthenticationFilter implements Filter {
         // For example, a logging filter might log the attributes on the
         // request object after the request has been processed.
         /*
-	for (Enumeration en = request.getAttributeNames(); en.hasMoreElements(); ) {
-	    String name = (String)en.nextElement();
-	    Object value = request.getAttribute(name);
-	    log("attribute: " + name + "=" + value.toString());
-
-	}
+         * for (Enumeration en = request.getAttributeNames(); en.hasMoreElements(); ) {
+         * String name = (String)en.nextElement();
+         * Object value = request.getAttribute(name);
+         * log("attribute: " + name + "=" + value.toString());
+         * 
+         * }
          */
         // For example, a filter might append something to the response.
         /*
-	PrintWriter respOut = new PrintWriter(response.getWriter());
-	respOut.println("<P><B>This has been appended by an intrusive filter.</B>");
+         * PrintWriter respOut = new PrintWriter(response.getWriter());
+         * respOut.println("<P><B>This has been appended by an intrusive filter.</B>");
          */
     }
 
     /**
      *
-     * @param request The servlet request we are processing
+     * @param request  The servlet request we are processing
      * @param response The servlet response we are creating
-     * @param chain The filter chain we are processing
+     * @param chain    The filter chain we are processing
      *
-     * @exception IOException if an input/output error occurs
+     * @exception IOException      if an input/output error occurs
      * @exception ServletException if a servlet error occurs
      */
     public void doFilter(ServletRequest request, ServletResponse response,
@@ -111,7 +112,7 @@ public class AuthenticationFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse) response;
         HttpSession session = req.getSession(false);
 
-//        String reqURI = req.getRequestURI();
+        // String reqURI = req.getRequestURI();
         String contextPath = req.getContextPath();
 
         boolean isLoggedIn = (session != null && session.getAttribute("loggedInUser") != null);
@@ -126,9 +127,8 @@ public class AuthenticationFilter implements Filter {
         if (debug) {
             log("User is logged in. Continuing chain");
         }
-        
 
-//        doBeforeProcessing(request, response);
+        // doBeforeProcessing(request, response);
         Throwable problem = null;
 
         try {
@@ -141,11 +141,10 @@ public class AuthenticationFilter implements Filter {
             t.printStackTrace();
         }
 
-//        doAfterProcessing(request, response);
+        // doAfterProcessing(request, response);
         // If there was a problem, we want to rethrow it if it is
         // a known type, otherwise log it.
-        if (problem
-                != null) {
+        if (problem != null) {
             if (problem instanceof ServletException) {
                 throw (ServletException) problem;
             }
@@ -212,12 +211,12 @@ public class AuthenticationFilter implements Filter {
                 response.setContentType("text/html");
                 PrintStream ps = new PrintStream(response.getOutputStream());
                 PrintWriter pw = new PrintWriter(ps);
-                pw.print("<html>\n<head>\n<title>Error</title>\n</head>\n<body>\n"); //NOI18N
+                pw.print("<html>\n<head>\n<title>Error</title>\n</head>\n<body>\n"); // NOI18N
 
                 // PENDING! Localize this for next official release
                 pw.print("<h1>The resource did not process correctly</h1>\n<pre>\n");
                 pw.print(stackTrace);
-                pw.print("</pre></body>\n</html>"); //NOI18N
+                pw.print("</pre></body>\n</html>"); // NOI18N
                 pw.close();
                 ps.close();
                 response.getOutputStream().close();
