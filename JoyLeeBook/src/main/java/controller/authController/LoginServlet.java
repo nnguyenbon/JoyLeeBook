@@ -78,9 +78,7 @@ public class LoginServlet extends HttpServlet {
             User user = userDAO.checkLogin(username, password);
             if (user != null) {
                 HttpSession session = request.getSession();
-                session.setAttribute("username", username);
-                session.setAttribute("userRole", user.getRoleName());
-                session.setAttribute("userId", user.getUserId());
+                session.setAttribute("loggedInUser", user); 
                 session.setMaxInactiveInterval(30 * 60);
 
                 Cookie userCookie = new Cookie("rememberedUsername", username);
@@ -88,7 +86,7 @@ public class LoginServlet extends HttpServlet {
                 response.addCookie(userCookie);
                 String role = user.getRoleName();
                 if ("admin".equals(role)) {
-                    response.sendRedirect(request.getContextPath() + "/views/chapter/adminDashboard.jsp");
+                    response.sendRedirect(request.getContextPath() + "/adminDashboard.jsp");
                 } else if ("user".equals(role)) {
                     response.sendRedirect(request.getContextPath() + "/index.jsp");
                 } else {
