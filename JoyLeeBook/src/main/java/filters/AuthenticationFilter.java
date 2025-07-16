@@ -19,12 +19,13 @@ import jakarta.servlet.annotation.WebFilter;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.User;
 
 /**
  *
  * @author KHAI TOAN
  */
-@WebFilter(filterName = "AuthenticationFilter", urlPatterns = { "/adminDashboard.jsp", "/user/*" })
+@WebFilter(filterName = "AuthenticationFilter", urlPatterns = {"/views/adminDashboard.jsp", "/views/user/*"})
 public class AuthenticationFilter implements Filter {
 
     private static final boolean debug = true;
@@ -93,11 +94,11 @@ public class AuthenticationFilter implements Filter {
 
     /**
      *
-     * @param request  The servlet request we are processing
+     * @param request The servlet request we are processing
      * @param response The servlet response we are creating
-     * @param chain    The filter chain we are processing
+     * @param chain The filter chain we are processing
      *
-     * @exception IOException      if an input/output error occurs
+     * @exception IOException if an input/output error occurs
      * @exception ServletException if a servlet error occurs
      */
     public void doFilter(ServletRequest request, ServletResponse response,
@@ -112,8 +113,9 @@ public class AuthenticationFilter implements Filter {
         HttpServletResponse resp = (HttpServletResponse) response;
         HttpSession session = req.getSession(false);
 
-        // String reqURI = req.getRequestURI();
         String contextPath = req.getContextPath();
+        String requestURI = req.getRequestURI();
+        String requestPath = requestURI.substring(contextPath.length());
 
         boolean isLoggedIn = (session != null && session.getAttribute("loggedInUser") != null);
 
@@ -121,13 +123,23 @@ public class AuthenticationFilter implements Filter {
             if (debug) {
                 log("User not logged in. Redirecting to login page.");
             }
-            resp.sendRedirect(contextPath + "/login.jsp");
+            req.getRequestDispatcher("/WEB-INF/views/authorization/login.jsp").forward(req, resp);
             return;
         }
         if (debug) {
-            log("User is logged in. Continuing chain");
+            log("User is logged in. Continuing kho");
         }
 
+        User userObj = (User) session.getAttribute("loggedInUser");
+        String userRole = userObj.getRoleName();
+
+        if (!hasPermission(requestPath, userRole)) {
+            if (debug) {
+                log("User " + userObj + " with role " + userRole + " denied access to " + requestPath);
+            }
+            req.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(req, resp);
+            return;
+        }
         // doBeforeProcessing(request, response);
         Throwable problem = null;
 
@@ -153,6 +165,19 @@ public class AuthenticationFilter implements Filter {
             }
             sendProcessingError(problem, response);
         }
+    }
+
+    private boolean hasPermission(String requestPath, String userRole) {
+        if (userRole == null) {
+            return false;
+        }
+        if ("admin".equals(userRole)) {
+            return true;
+        }
+        if ("user".equals(userRole)) {
+            return !requestPath.endsWith("/adminDashboard.jsp");
+        }
+        return false;
     }
 
     /**
