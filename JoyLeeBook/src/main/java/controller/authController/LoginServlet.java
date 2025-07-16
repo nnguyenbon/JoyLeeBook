@@ -44,7 +44,7 @@ public class LoginServlet extends HttpServlet {
         if (session != null && session.getAttribute("username") != null) {
             response.sendRedirect(request.getContextPath() + "/index.jsp");
         } else {
-            request.getRequestDispatcher("/views/authorization/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/authorization/login.jsp").forward(request, response);
         }
     }
 
@@ -64,12 +64,12 @@ public class LoginServlet extends HttpServlet {
 
         if (!isValidString(username)) {
             request.setAttribute("error", "Username cannot be empty.");
-            request.getRequestDispatcher("/views/authorization/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/authorization/login.jsp").forward(request, response);
             return;
         }
         if (!isValidString(password)) {
             request.setAttribute("error", "Password cannot be empty.");
-            request.getRequestDispatcher("/views/authorization/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/authorization/login.jsp").forward(request, response);
             return;
         }
 
@@ -78,7 +78,7 @@ public class LoginServlet extends HttpServlet {
             User user = userDAO.checkLogin(username, password);
             if (user != null) {
                 HttpSession session = request.getSession();
-                session.setAttribute("loggedInUser", user); 
+                session.setAttribute("loggedInUser", user);
                 session.setMaxInactiveInterval(30 * 60);
 
                 Cookie userCookie = new Cookie("rememberedUsername", username);
@@ -86,16 +86,16 @@ public class LoginServlet extends HttpServlet {
                 response.addCookie(userCookie);
                 String role = user.getRoleName();
                 if ("admin".equals(role)) {
-                    response.sendRedirect(request.getContextPath() + "/adminDashboard.jsp");
+                    request.getRequestDispatcher("/WEB-INF/views/adminDashboard.jsp").forward(request, response);
                 } else if ("user".equals(role)) {
                     response.sendRedirect(request.getContextPath() + "/index.jsp");
                 } else {
                     request.setAttribute("errorMessage", "Invalid role");
-                    request.getRequestDispatcher("/views/authorization/login.jsp").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/views/authorization/login.jsp").forward(request, response);
                 }
             } else {
                 request.setAttribute("errorMessage", "Invalid username or password.");
-                request.getRequestDispatcher("/views/authorization/login.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/authorization/login.jsp").forward(request, response);
             }
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();

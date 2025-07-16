@@ -58,7 +58,7 @@
                     </div>
 
                     <div class="login-body w-100">
-                        <form action="/login" method="POST" class="w-100 d-flex flex-column gap-4 align-items-center justify-content-center">
+                        <form action="${pageContext.request.contextPath}/login" method="POST" class="w-100 d-flex flex-column gap-4 align-items-center justify-content-center">
                             <input type="text" class="w-75 ps-4" name="username" placeholder="Username">
                             <input type="password" class="w-75 ps-4" name="password" placeholder="Password">
                             <input type="submit" class="w-75" value="LOGIN" />
