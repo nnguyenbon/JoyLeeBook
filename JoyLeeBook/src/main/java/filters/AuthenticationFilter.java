@@ -175,7 +175,7 @@ public class AuthenticationFilter implements Filter {
             return true;
         }
         if ("user".equals(userRole)) {
-            return !requestPath.endsWith("/adminDashboard.jsp");
+            return !(requestPath.endsWith("/adminDashboard.jsp") || requestPath.contains("add") || requestPath.contains("delete") || requestPath.contains("update"));
         }
         return false;
     }
