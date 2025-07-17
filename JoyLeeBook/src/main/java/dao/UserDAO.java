@@ -155,7 +155,7 @@ public class UserDAO {
      *
      * @param userName The user name of the User to check.
      * @return true if the user name is not used (available), false if it
-     *         already exists.
+     * already exists.
      * @throws SQLException If a database access error occurs.
      */
     public boolean checkUserName(String userName) throws SQLException {
@@ -173,7 +173,7 @@ public class UserDAO {
      *
      * @param email The email of the User to check.
      * @return true if the email is not used (available), false if it already
-     *         exists.
+     * exists.
      * @throws SQLException If a database access error occurs.
      */
     public boolean checkEmail(String email) throws SQLException {
@@ -201,5 +201,23 @@ public class UserDAO {
         user.setEmail(rs.getString("email"));
         user.setPassword(rs.getString("user_password"));
         return user;
+    }
+
+    public User getUserByUsername(String username) throws SQLException {
+        String sql = "SELECT * FROM Users WHERE username = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setUserId(rs.getInt("user_id"));
+                    user.setUsername(rs.getString("username"));
+                    user.setPassword(rs.getString("user_password"));
+                    user.setRoleName(rs.getString("role_name"));
+                    return user;
+                }
+            }
+        }
+        return null;
     }
 }

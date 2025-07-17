@@ -15,8 +15,8 @@
     /*
     Note:
     pageType: Name of folder contained main page
-    */
-    
+     */
+
     String[] pageTypeArray = ((String) request.getRequestURI()).split("/");
     String pageType = pageTypeArray[pageTypeArray.length - 1].replace(".jsp", "");
 
@@ -59,9 +59,15 @@
 
                     <div class="login-body w-100">
                         <form action="${pageContext.request.contextPath}/login" method="POST" class="w-100 d-flex flex-column gap-4 align-items-center justify-content-center">
-                            <input type="text" class="w-75 ps-4" name="username" placeholder="Username">
-                            <input type="password" class="w-75 ps-4" name="password" placeholder="Password">
-                            <input type="submit" class="w-75" value="LOGIN" />
+                            <input type="text" class="w-75 ps-4" name="username" placeholder="Username" value="${rememberedUser != null ? rememberedUser : ''}" required>
+                            <input type="password" class="w-75 ps-4" name="password" placeholder="Password" required>
+                            <div class="remember-me w-75">
+                                <label>
+                                    <input type="checkbox" name="rememberMe" value="on" ${rememberedUser != null ? 'checked' : ''}>
+                                    <span>Remember Me</span>
+                                </label>
+                            </div>
+                            <input type="submit" class="w-75" value="LOGIN" />  
                         </form>
                     </div>
                 </div>
@@ -71,7 +77,7 @@
         </main>
 
         <%--<jsp:include page="/views/footer/_footer.jsp" />--%>
-        <!--<script lang="text/javascript" src="${pageContext.request.contextPath}/js/index.js?v=<%= System.currentTimeMillis() %>"></script>-->
+        <script lang="text/javascript" src="${pageContext.request.contextPath}/js/index.js?v=<%= System.currentTimeMillis()%>"></script>
 
     </body>
 
