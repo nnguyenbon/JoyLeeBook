@@ -72,6 +72,8 @@ public class PreviousChapterServlet extends HttpServlet {
             }
 
             Chapter chapter = chapterDAO.getPreviousChapter(currentChapter.getSeriesId(), currentChapter.getChapterIndex());
+            request.setAttribute("firstIndex", chapterDAO.getFirstChapterIndex(currentChapter.getSeriesId()));
+            request.setAttribute("lastIndex", chapterDAO.getLastChapterIndex(currentChapter.getSeriesId()));
             request.setAttribute("chapter", chapter);
             request.getRequestDispatcher("/WEB-INF/views/chapter/readChapter.jsp").forward(request, response);
         } catch (Exception e) {

@@ -88,8 +88,8 @@ public class ChapterDAO {
         }
         return null;
     }
-    
-    public Chapter getChapterByIndex (int seriesId, int chapterIndex) throws SQLException {
+
+    public Chapter getChapterByIndex(int seriesId, int chapterIndex) throws SQLException {
         String sql = "SELECT * FROM Chapters WHERE series_id = ? AND chapter_index = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, seriesId);
@@ -109,7 +109,7 @@ public class ChapterDAO {
         }
         return null;
     }
-    
+
     /**
      * Insert a new chapter into the database.
      *
@@ -198,6 +198,15 @@ public class ChapterDAO {
         return null;
     }
 
+    /**
+     * Retrieves the next chapter in a series based on the chapter index.
+     * 
+     * @param seriesId     the ID of the series
+     * @param chapterIndex the index of the current chapter
+     * @return the next Chapter object if it exists, or null if there is no next
+     *         chapter.
+     * @throws SQLException If a database access error occurs.
+     */
     public Chapter getNextChapter(int seriesId, int chapterIndex) throws SQLException {
         String sql = "SELECT TOP 1 * FROM Chapters WHERE series_id = ? AND chapter_index > ? ORDER BY chapter_index ";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -219,6 +228,15 @@ public class ChapterDAO {
         return null;
     }
 
+    /**
+     * Retrieves the previous chapter in a series based on the chapter index.
+     * 
+     * @param seriesId     the ID of the series
+     * @param chapterIndex the index of the current chapter
+     * @return the previous Chapter object if it exists, or null if there is no
+     *         previous chapter.
+     * @throws SQLException If a database access error occurs.
+     */
     public Chapter getPreviousChapter(int seriesId, int chapterIndex) throws SQLException {
         String sql = "SELECT TOP 1 * FROM Chapters WHERE series_id = ? AND chapter_index < ? ORDER BY chapter_index DESC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
@@ -238,5 +256,45 @@ public class ChapterDAO {
             }
         }
         return null;
+    }
+
+    /**
+     * Retrieves the index of the first chapter in a series.
+     * 
+     * @param seriesId the ID of the series
+     * @return the index of the first chapter, or -1 if no chapters exist.
+     * @throws SQLException If a database access error occurs.
+     */
+    public int getFirstChapterIndex(int seriesId) throws SQLException {
+        String sql = "SELECT MIN(chapter_index) FROM Chapters WHERE series_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, seriesId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Retrieves the index of the last chapter in a series.
+     * 
+     * @param seriesId the ID of the series
+     * @return the index of the last chapter, or -1 if no chapters exist.
+     * @throws SQLException If a database access error occurs.
+     */
+    public int getLastChapterIndex(int seriesId) throws SQLException {
+        String sql = "SELECT MAX(chapter_index) FROM Chapters WHERE series_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, seriesId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return -1;
     }
 }

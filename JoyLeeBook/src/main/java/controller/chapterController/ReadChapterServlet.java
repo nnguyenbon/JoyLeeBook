@@ -55,8 +55,12 @@ public class ReadChapterServlet extends HttpServlet {
             // Retrieve chapter and list of chapters
             Chapter chapter = chapterDAO.getChapterByIndex(seriesId, chapterIndex);
             ArrayList<Chapter> listChapter = chapterDAO.getAllChaptersBySeriesId(seriesId);
+            int firstIndex = chapterDAO.getFirstChapterIndex(seriesId);
+            int lastIndex = chapterDAO.getLastChapterIndex(seriesId);
 
             // Set attributes and forward to JSP
+            request.setAttribute("firstIndex", firstIndex);
+            request.setAttribute("lastIndex", lastIndex);
             request.setAttribute("chapter", chapter);
             request.setAttribute("chapterList", listChapter);
             request.getRequestDispatcher("/WEB-INF/views/chapter/readChapter.jsp").forward(request, response);

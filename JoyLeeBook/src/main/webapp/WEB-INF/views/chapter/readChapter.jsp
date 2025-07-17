@@ -6,6 +6,7 @@
 
 <%@page import="model.Chapter"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -39,16 +40,6 @@
 
     <body class="bg-white d-flex flex-column min-vh-100">
 
-        <%
-            Chapter c = (Chapter) request.getAttribute("chapter");
-            if (c == null) {
-                out.println("Không nhận được chapter!");
-            } else {
-                out.println("Chapter nhận được: " + c.getChapterTitle());
-            }
-        %>
-
-
         <header>
             <!-- Navbar -->
             <nav class="navbar navbar-expand-lg border-bottom sticky-top">
@@ -78,7 +69,16 @@
         <main class="flex-grow-1">
             <div class="reader-container">
                 <div class="nav-reader d-flex justify-content-between align-items-center">
-                    <a href="previousChapter?chapterId=${chapter.chapterId}" class="btn btn-outline-secondary btn-sm">⟵ Prev Chapter</a>
+                   <c:choose>
+                        <c:when test="${chapter.chapterIndex eq firstIndex}">
+                            <a href="#" class="btn btn-outline-secondary btn-sm disabled">⟵ Prev Chapter</a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="previousChapter?chapterId=${chapter.chapterId}" class="btn btn-outline-secondary btn-sm">
+                                ⟵ Prev Chapter
+                            </a>
+                        </c:otherwise>
+                    </c:choose>
 
                     <!-- Button để mở modal -->
                     <button type="button" class="btn bg-primary-subtle" data-bs-toggle="modal" data-bs-target="#chapterModal">
@@ -90,7 +90,17 @@
                     </button>
 
 
-                    <a href="forwardChapter?chapterId=${chapter.chapterId}" class="btn btn-outline-secondary btn-sm">Next Chapter ⟶</a>
+                    <c:choose>
+                        <c:when test="${chapter.chapterIndex eq lastIndex}">
+                            <a href="#" class="btn btn-outline-secondary btn-sm disabled">Next Chapter ⟶</a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="forwardChapter?chapterId=${chapter.chapterId}" class="btn btn-outline-secondary btn-sm">
+                                Next Chapter ⟶
+                            </a>
+                        </c:otherwise>
+                    </c:choose>
+
                 </div>
 
                 <!-- Web novel reading content -->
@@ -100,7 +110,16 @@
                     </p>
                 </div>
                 <div class="nav-reader d-flex justify-content-between align-items-center">
-                    <a href="previousChapter?chapterId=${chapter.chapterId}" class="btn btn-outline-secondary btn-sm">⟵ Prev Chapter</a>
+                    <c:choose>
+                        <c:when test="${chapter.chapterIndex eq firstIndex}">
+                            <a href="#" class="btn btn-outline-secondary btn-sm disabled">⟵ Prev Chapter</a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="previousChapter?chapterId=${chapter.chapterId}" class="btn btn-outline-secondary btn-sm">
+                                ⟵ Prev Chapter
+                            </a>
+                        </c:otherwise>
+                    </c:choose>
 
                     <!-- Button để mở modal -->
                     <button type="button" class="btn bg-primary-subtle" data-bs-toggle="modal" data-bs-target="#chapterModal">
@@ -111,8 +130,17 @@
                         </svg> ${chapter.chapterTitle}
                     </button>
 
+                    <c:choose>
+                        <c:when test="${chapter.chapterIndex eq lastIndex}">
+                            <a href="#" class="btn btn-outline-secondary btn-sm disabled">Next Chapter ⟶</a>
+                        </c:when>
+                        <c:otherwise>
+                            <a href="forwardChapter?chapterId=${chapter.chapterId}" class="btn btn-outline-secondary btn-sm">
+                                Next Chapter ⟶
+                            </a>
+                        </c:otherwise>
+                    </c:choose>
 
-                    <a href="forwardChapter?chapterId=${chapter.chapterId}" class="btn btn-outline-secondary btn-sm">Next Chapter ⟶</a>
                 </div>
             </div>
 

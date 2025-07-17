@@ -20,17 +20,17 @@ import model.Chapter;
  *
  * @author KHAI TOAN
  */
-@WebServlet(name = "ForwardChapterServlet", urlPatterns = { "/forwardChapter" })
+@WebServlet(name = "ForwardChapterServlet", urlPatterns = {"/forwardChapter"})
 public class ForwardChapterServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -54,10 +54,10 @@ public class ForwardChapterServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -74,6 +74,8 @@ public class ForwardChapterServlet extends HttpServlet {
             }
 
             Chapter chapter = chapterDAO.getNextChapter(currentChapter.getSeriesId(), currentChapter.getChapterIndex());
+            request.setAttribute("firstIndex", chapterDAO.getFirstChapterIndex(currentChapter.getSeriesId()));
+            request.setAttribute("lastIndex", chapterDAO.getLastChapterIndex(currentChapter.getSeriesId()));
             request.setAttribute("chapter", chapter);
             request.getRequestDispatcher("/WEB-INF/views/chapter/readChapter.jsp").forward(request, response);
         } catch (Exception e) {
@@ -86,10 +88,10 @@ public class ForwardChapterServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
