@@ -69,7 +69,7 @@
         <main class="flex-grow-1">
             <div class="reader-container">
                 <div class="nav-reader d-flex justify-content-between align-items-center">
-                   <c:choose>
+                    <c:choose>
                         <c:when test="${chapter.chapterIndex eq firstIndex}">
                             <a href="#" class="btn btn-outline-secondary btn-sm disabled">⟵ Prev Chapter</a>
                         </c:when>
@@ -200,23 +200,10 @@
 
             <!-- Body -->
             <div class="modal-body">
-
                 <ul class="list-group">
-                    <!-- Danh sách chương -->
-                    <li class="list-group-item active">Chương 1 The Awakening</li>
-                    <li class="list-group-item">Chương 2 Chronicles of the Azure Realm</li>
-                    <li class="list-group-item">Chương 3 Chronicles of the Azure Realm</li>
-                    <li class="list-group-item">Chương 4 Chronicles of the Azure Realm</li>
-                    <li class="list-group-item">Chương 5 Chronicles of the Azure Realm</li>
-                    <li class="list-group-item">Chương 6 Chronicles of the Azure Realm</li>
-                    <li class="list-group-item">Chương 7 Chronicles of the Azure Realm</li>
-                    <li class="list-group-item">Chương 8 Chronicles of the Azure Realm</li>
-                    <li class="list-group-item">Chương 9</li>
-                    <li class="list-group-item">Chương 10</li>
-                    <li class="list-group-item">Chương 11</li>
-                    <li class="list-group-item">Chương 12</li>
-                    <li class="list-group-item">Chương 13</li>
-                    <li class="list-group-item">Chương 14</li>
+                    <c:forEach var="chapterOfList" items="${chapters}">
+                        <li class="list-group-item <c:if test="${chapterOfList.chapterIndex eq chapter.chapterIndex}">active</c:if>">${chapterOfList.chapterTitle}</li>
+                        </c:forEach>
                 </ul>
             </div>
 

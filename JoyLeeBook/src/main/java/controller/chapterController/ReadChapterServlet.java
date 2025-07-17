@@ -54,7 +54,7 @@ public class ReadChapterServlet extends HttpServlet {
 
             // Retrieve chapter and list of chapters
             Chapter chapter = chapterDAO.getChapterByIndex(seriesId, chapterIndex);
-            ArrayList<Chapter> listChapter = chapterDAO.getAllChaptersBySeriesId(seriesId);
+            ArrayList<Chapter> chapters = chapterDAO.getAllChaptersBySeriesId(seriesId);
             int firstIndex = chapterDAO.getFirstChapterIndex(seriesId);
             int lastIndex = chapterDAO.getLastChapterIndex(seriesId);
 
@@ -62,7 +62,7 @@ public class ReadChapterServlet extends HttpServlet {
             request.setAttribute("firstIndex", firstIndex);
             request.setAttribute("lastIndex", lastIndex);
             request.setAttribute("chapter", chapter);
-            request.setAttribute("chapterList", listChapter);
+            request.setAttribute("chapters", chapters);
             request.getRequestDispatcher("/WEB-INF/views/chapter/readChapter.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             // Redirect to error page if parameters are not valid integers

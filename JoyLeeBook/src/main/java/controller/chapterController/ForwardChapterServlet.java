@@ -14,6 +14,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.util.ArrayList;
 import model.Chapter;
 
 /**
@@ -73,10 +74,12 @@ public class ForwardChapterServlet extends HttpServlet {
                 return;
             }
 
+            ArrayList<Chapter> chapters = chapterDAO.getAllChaptersBySeriesId(currentChapter.getSeriesId());
             Chapter chapter = chapterDAO.getNextChapter(currentChapter.getSeriesId(), currentChapter.getChapterIndex());
             request.setAttribute("firstIndex", chapterDAO.getFirstChapterIndex(currentChapter.getSeriesId()));
             request.setAttribute("lastIndex", chapterDAO.getLastChapterIndex(currentChapter.getSeriesId()));
             request.setAttribute("chapter", chapter);
+            request.setAttribute("chapters", chapters);
             request.getRequestDispatcher("/WEB-INF/views/chapter/readChapter.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
