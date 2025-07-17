@@ -42,21 +42,21 @@ public class UpdateChapterServlet extends HttpServlet {
             Chapter chapter = chapterDAO.getChapterById(chapterId);
 
             if (chapter == null) {
-                response.sendRedirect("views/error.jsp");
+                response.sendRedirect("WEB-INF/views/error.jsp");
                 return;
             }
 
             SeriesDAO seriesDAO = new SeriesDAO(DBConnection.getConnection());
             Series series = seriesDAO.getSeriesById(chapter.getSeriesId());
-            request.setAttribute("chapter", chapter);
-            request.setAttribute("seriesTitle", series.getSeriesTitle());
+            chapter.setSeriesTitle(series.getSeriesTitle());
 
-            request.getRequestDispatcher("views/chapter/editChapter.jsp").forward(request, response);
+            request.setAttribute("chapter", chapter);
+            request.getRequestDispatcher("WEB-INF/views/chapter/editChapter.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Cannot get Chapter detail.");
-            request.getRequestDispatcher("views/error.jsp").forward(request, response);
+            request.getRequestDispatcher("WEB-INF/views/error.jsp").forward(request, response);
         }
     }
 
@@ -73,23 +73,33 @@ public class UpdateChapterServlet extends HttpServlet {
             throws ServletException, IOException {
 
         try {
+            int seriesId = Integer.parseInt(request.getParameter("seriesId"));
             int chapterId = Integer.parseInt(request.getParameter("chapterId"));
             String seriesTitle = request.getParameter("seriesTitle");
             int chapterIndex = Integer.parseInt(request.getParameter("chapterIndex"));
             String chapterTitle = request.getParameter("chapterTitle");
-            String content = request.getParameter("content");
-            Chapter chapter = new Chapter(chapterId, chapterIndex, chapterTitle, content);
+            String content = request.getParameter("chapterContent");
 
-            if (chapterTitle == null || chapterTitle.trim().isEmpty()) {
-                request.setAttribute("message", "Chapter Title cannot empty");
+            Chapter chapter = new Chapter(seriesId, chapterIndex, chapterTitle, content);
+            chapter.setChapterId(chapterId);
+            chapter.setSeriesTitle(seriesTitle);
+
+            if (chapterTitle == null || chapterTitle.trim().isEmpty() || content == null || content.trim().isEmpty()) {
+                request.setAttribute("message", "Chapter Title, Chapter Content cannot empty");
                 request.setAttribute("chapter", chapter);
-                request.setAttribute("seriesTitle", seriesTitle);
-                request.getRequestDispatcher("views/chapter/editChapter.jsp").forward(request, response);
+                request.getRequestDispatcher("WEB-INF/views/chapter/editChapter.jsp").forward(request, response);
+                return;
             }
             ChapterDAO chapterDAO = new ChapterDAO(DBConnection.getConnection());
-            chapterDAO.updateChapter(chapter);
-            request.setAttribute("message", "updated successfully!");
-            request.getRequestDispatcher("views/chapter/readChapter.jsp").forward(request, response);
+            if (chapterDAO.updateChapter(chapter)) {
+                request.setAttribute("message", "updated successfully!");
+            } else {
+                request.setAttribute("message", "Update failed!");
+                request.setAttribute("chapter", chapter);
+                request.getRequestDispatcher("WEB-INF/views/chapter/editChapter.jsp").forward(request, response);
+                return;
+            }
+            request.getRequestDispatcher("WEB-INF/views/chapter/readChapter.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
@@ -104,8 +114,8 @@ public class UpdateChapterServlet extends HttpServlet {
 
             request.setAttribute("chapter", chapter);
             request.setAttribute("seriesTitle", seriesTitle);
-            request.setAttribute("message", "update failed");
-            request.getRequestDispatcher("views/chapter/editChapter.jsp").forward(request, response);
+            request.setAttribute("message", "Update failed!");
+            request.getRequestDispatcher("WEB-INF/views/chapter/editChapter.jsp").forward(request, response);
         }
 
     }
