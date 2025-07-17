@@ -87,7 +87,7 @@ public class LoginServlet extends HttpServlet {
                 String role = user.getRoleName();
                 if ("admin".equals(role)) {
                     request.getRequestDispatcher("/WEB-INF/views/adminDashboard.jsp").forward(request, response);
-                } else if ("user".equals(role)) {
+                } else if ("reader".equals(role)) {
                     response.sendRedirect(request.getContextPath() + "/index.jsp");
                 } else {
                     request.setAttribute("errorMessage", "Invalid role");
