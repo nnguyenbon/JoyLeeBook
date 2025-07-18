@@ -100,9 +100,9 @@
                             <div class="mb-3">
                                 <label class="form-label">Status</label>
                                 <select class="form-select" name="status">
-                                    <option value="0" <c:if test="${series.status eq '0'}">Selected</c:if>>Ongoing</option>
-                                    <option value="1" <c:if test="${series.status eq '1'}">Selected</c:if>>Completed</option>
-                                    <option value="2" <c:if test="${series.status eq '2'}">Selected</c:if>>Hiatus</option>
+                                    <option value="0" <c:if test="${series.status eq '0'}">selected</c:if>>Ongoing</option>
+                                    <option value="1" <c:if test="${series.status eq '1'}">selected</c:if>>Completed</option>
+                                    <option value="2" <c:if test="${series.status eq '2'}">selected</c:if>>Hiatus</option>
                                     </select>
                                 </div>
 
@@ -135,9 +135,9 @@
                             <div class="d-flex gap-2">
                                 <button type="submit" class="btn btn-success">Save</button> 
                                 <!--<a href="detailAdmin.html">Lưu</a>-->
-                                <button type="button" class="btn btn-secondary" onclick="customReset()">Reset</button>
-                                <button type="button" class="btn btn-danger"
-                                        onclick="confirm('Xác nhận xoá truyện này?') && deleteStory();">Delete</button>
+                                <a href="updateSeries?seriesId=${series.seriesId}" class="btn btn-secondary">Cancel</a>
+                                <a href="deleteSeries?seriesId=${series.seriesId}" class="btn btn-danger" 
+                                   onclick="return confirm('Xác nhận xoá truyện này?');">Delete</a>
                             </div>
                         </div>
                     </div>
@@ -189,44 +189,14 @@
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
         <script>
-                                            let initialGenres = [];
-
-                                            $(document).ready(function () {
-
-                                                $('#genreSelect').select2({
-                                                    placeholder: "Choose genre",
-                                                    allowClear: true
-                                                });
-
-
-                                                initialGenres = $('#genreSelect').val() || [];
-                                                console.log('Initial genres:', initialGenres);
-                                            });
-
-                                            function customReset() {
-
-                                                document.getElementById('editStoryForm').reset();
-
-
-                                                $('#genreSelect').val(initialGenres).trigger('change');
-                                            }
-
-                                            function deleteStory() {
-
-                                                const form = document.createElement('form');
-                                                form.method = 'POST';
-                                                form.action = 'deleteSeries';
-
-                                                const input = document.createElement('input');
-                                                input.type = 'hidden';
-                                                input.name = 'seriesId';
-                                                input.value = "${series.seriesId}";
-                                                form.appendChild(input);
-
-                                                document.body.appendChild(form);
-                                                form.submit();
-                                            }
+                                               $(document).ready(function () {
+                                                   $('#genreSelect').select2({
+                                                       placeholder: "Choose genre",
+                                                       allowClear: true
+                                                   });
+                                               });
         </script>
+
     </body>
 
 </html>
