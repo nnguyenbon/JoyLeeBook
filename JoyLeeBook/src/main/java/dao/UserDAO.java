@@ -12,6 +12,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.User;
+import utils.PasswordUtil;
 
 /**
  * DAO class for handling database operations related to User entity. Provides
@@ -81,7 +82,7 @@ public class UserDAO {
      * @throws java.sql.SQLException
      */
     public boolean insertUser(User user) throws SQLException {
-        String sql = "INSERT INTO Users(role_name, username, email, password) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Users(role_name, username, email, user_password) VALUES (?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, user.getRoleName());
             pstmt.setString(2, user.getUsername());
@@ -99,7 +100,7 @@ public class UserDAO {
      * @throws java.sql.SQLException
      */
     public boolean updateUser(User user) throws SQLException {
-        String sql = "UPDATE Users SET role_name = ?, username = ?, email = ?, password = ? WHERE user_id = ?;";
+        String sql = "UPDATE Users SET role_name = ?, username = ?, email = ?, user_password = ? WHERE user_id = ?;";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, user.getRoleName());
             pstmt.setString(2, user.getUsername());
@@ -134,10 +135,11 @@ public class UserDAO {
      * @throws java.sql.SQLException
      */
     public User checkLogin(String username, String password) throws SQLException {
-        String sql = "SELECT * FROM Users WHERE username = ? AND password = ?";
+        String hashPassword = PasswordUtil.hashPassword(password);
+        String sql = "SELECT * FROM Users WHERE username = ? AND user_password = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, username);
-            pstmt.setString(2, password);
+            pstmt.setString(2, hashPassword);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return extractUserFromResultSet(rs);
@@ -197,7 +199,25 @@ public class UserDAO {
         user.setRoleName(rs.getString("role_name"));
         user.setUsername(rs.getString("username"));
         user.setEmail(rs.getString("email"));
-        user.setPassword(rs.getString("password"));
+        user.setPassword(rs.getString("user_password"));
         return user;
+    }
+
+    public User getUserByUsername(String username) throws SQLException {
+        String sql = "SELECT * FROM Users WHERE username = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setUserId(rs.getInt("user_id"));
+                    user.setUsername(rs.getString("username"));
+                    user.setPassword(rs.getString("user_password"));
+                    user.setRoleName(rs.getString("role_name"));
+                    return user;
+                }
+            }
+        }
+        return null;
     }
 }

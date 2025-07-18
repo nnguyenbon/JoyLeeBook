@@ -82,7 +82,7 @@ public class AddSeriesServlet extends HttpServlet {
                 return;
             }
     
-            if (isValidInteger(Integer.valueOf(seriesStatus))) {
+            if (isValidInteger(seriesStatus)) {
                 request.setAttribute("error", "Series status cannot be empty");
                 request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
                 return;

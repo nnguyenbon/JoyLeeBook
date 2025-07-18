@@ -5,6 +5,7 @@
 
 package controller.generalController;
 
+import dao.SeriesDAO;
 import java.io.IOException;
 import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
@@ -12,6 +13,13 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import db.DBConnection;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import model.Series;
 
 /**
  *
@@ -29,19 +37,7 @@ public class AdminDashboardServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet AdminDashboardServlet</title>");  
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet AdminDashboardServlet at " + request.getContextPath () + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
+       
     } 
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -55,7 +51,17 @@ public class AdminDashboardServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
     throws ServletException, IOException {
-        processRequest(request, response);
+        try {
+            SeriesDAO seriesDao = new SeriesDAO(DBConnection.getConnection());
+            List<Series> allSeries = seriesDao.getAllSeries();
+            request.setAttribute("allSeries", allSeries);
+        } catch (SQLException e){
+            request.setAttribute("errorMessage", "Lỗi kết nối DB " + e);
+            request.getRequestDispatcher("/WEB-INF/views/adminDashboard.jsp").forward(request, response);
+        } catch (Exception e) { 
+            e.printStackTrace();
+        }
+        request.getRequestDispatcher("/WEB-INF/views/adminDashboard.jsp").forward(request, response);
     } 
 
     /** 
