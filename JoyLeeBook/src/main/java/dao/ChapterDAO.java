@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 import model.Chapter;
 
@@ -14,7 +13,6 @@ import model.Chapter;
  * DAO class for handling database operations related to Chapter entity.
  * Provides methods to insert, update, delete, and retrieve chapter records from
  * the database.
- *
  * Assumes the Chapter table has columns: chapter_id (PK), series_id (FK),
  * chapter_index, chapter_title, content, created_at
  *
@@ -129,13 +127,14 @@ public class ChapterDAO {
      * Deletes a chapter from the database by its ID.
      *
      * @param chapterId The ID of the chapter to delete.
+     * @return true if deletion was successful, false if no record was deleted
      * @throws SQLException If a database access error occurs.
      */
-    public void deleteChapter(int chapterId) throws SQLException {
+    public boolean deleteChapter(int chapterId) throws SQLException {
         String sql = "DELETE FROM Chapter WHERE chapter_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, chapterId);
-            ps.executeUpdate();
+            return ps.executeUpdate() > 0;
         }
     }
 
