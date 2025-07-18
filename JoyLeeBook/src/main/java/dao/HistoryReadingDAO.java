@@ -5,15 +5,16 @@
 package dao;
 
 import java.sql.Connection;
-import model.HistoryReading;
-import db.DBConnection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
 
+import model.HistoryReading;
+
 /**
  * not done yet
+ * 
  * @author PC
  */
 public class HistoryReadingDAO {
@@ -40,7 +41,7 @@ public class HistoryReadingDAO {
      * creates a new history record.
      *
      * @param history The HistoryReading object containing user ID, series ID,
-     * chapter ID, and last read timestamp.
+     *                chapter ID, and last read timestamp.
      */
     public void saveOrUpdateHistory(HistoryReading history) {
         String checkExistQuery = "SELECT history_id FROM HistoryReading WHERE user_id = ? AND series_id = ?";
@@ -83,10 +84,10 @@ public class HistoryReadingDAO {
      *
      * This is used to resume reading from the last saved point.
      *
-     * @param userId The ID of the user.
+     * @param userId   The ID of the user.
      * @param seriesId The ID of the series.
      * @return An Optional containing the HistoryReading object if found;
-     * otherwise, Optional.empty().
+     *         otherwise, Optional.empty().
      */
     public Optional<HistoryReading> getLastReadChapter(int userId, int seriesId) {
         String query = "SELECT h.user_id, h.series_id, h.chapter_id, s.title AS series_title, c.title AS chapter_title, h.last_read_at "
@@ -117,5 +118,19 @@ public class HistoryReadingDAO {
         }
 
         return Optional.empty();
+    }
+
+    public boolean deleteBySeriesId(int seriesId) {
+        String sql = "DELETE FROM HistoryReading WHERE series_id = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setInt(1, seriesId);
+
+            int affectedRows = pstmt.executeUpdate();
+            return affectedRows > 0;
+        } catch (SQLException e) {
+            System.err.println("Lỗi khi xóa tất cả lịch sử đọc cho Series ID " + seriesId + ": " + e.getMessage());
+            e.printStackTrace();
+            return false;
+        }
     }
 }

@@ -4,8 +4,9 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
+
 import model.Genre;
 
 /**
@@ -80,14 +81,15 @@ public class CategoryDAO {
      * @param seriesId The ID of the series whose categories should be removed.
      * @throws SQLException If a database access error occurs.
      */
-    public void deleteBySeriesId(int seriesId) throws SQLException {
+    public boolean deleteBySeriesId(int seriesId) throws SQLException {
         String sql = "DELETE FROM Categories WHERE series_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, seriesId);
-            ps.executeUpdate();
+            return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return false;
     }
 
     public boolean updateGenreOfSeries(int seriedId, List<Integer> newGenresId) throws SQLException {

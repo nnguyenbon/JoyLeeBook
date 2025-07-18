@@ -212,7 +212,6 @@
                                             }
 
                                             function deleteStory() {
-                                                alert("Request to delete story has been sent.");
 
                                                 const form = document.createElement('form');
                                                 form.method = 'POST';

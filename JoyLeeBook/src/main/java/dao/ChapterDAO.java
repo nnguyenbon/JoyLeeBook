@@ -297,4 +297,16 @@ public class ChapterDAO {
         }
         return -1;
     }
+
+    public boolean deleteBySeriesId(int seriesId) throws SQLException {
+        String sql = "DELETE FROM Chapters WHERE series_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, seriesId);
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }
