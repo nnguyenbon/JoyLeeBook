@@ -191,26 +191,6 @@
         <script>
                                             let initialGenres = [];
 
-                                            $(document).ready(function () {
-
-                                                $('#genreSelect').select2({
-                                                    placeholder: "Choose genre",
-                                                    allowClear: true
-                                                });
-
-
-                                                initialGenres = $('#genreSelect').val() || [];
-                                                console.log('Initial genres:', initialGenres);
-                                            });
-
-                                            function customReset() {
-
-                                                document.getElementById('editStoryForm').reset();
-
-
-                                                $('#genreSelect').val(initialGenres).trigger('change');
-                                            }
-
                                             function deleteStory() {
 
                                                 const form = document.createElement('form');
