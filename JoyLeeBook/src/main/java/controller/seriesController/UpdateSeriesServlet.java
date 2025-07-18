@@ -13,19 +13,37 @@ import java.sql.SQLException;
 import dao.SeriesDAO;
 import db.DBConnection;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.List;
+import java.nio.file.Paths;
+import java.sql.Connection;
+import java.util.UUID;
+import java.util.logging.Level;
+import java.util.logging.Logger;
+import java.util.stream.Collectors;
 import model.Genre;
 import model.Series;
+import static utils.Validator.isValidString;
 
 /**
  *
  * @author PC
  */
 @WebServlet(name = "UpdateSeriesServlet", urlPatterns = {"/updateSeries"})
+@MultipartConfig(fileSizeThreshold = 1024 * 1024, // 1MB
+        maxFileSize = 5 * 1024 * 1024, // 5MB
+        maxRequestSize = 10 * 1024 * 1024 // 10MB
+)
 public class UpdateSeriesServlet extends HttpServlet {
 
     /**
@@ -39,19 +57,6 @@ public class UpdateSeriesServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet UpdateSeriesServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet UpdateSeriesServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
@@ -67,10 +72,12 @@ public class UpdateSeriesServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        java.sql.Connection conn = null;
         try {
-            SeriesDAO seriesDao = new SeriesDAO(DBConnection.getConnection());
-            GenreDAO genreDao = new GenreDAO(DBConnection.getConnection());
-            CategoryDAO categoryDao = new CategoryDAO(DBConnection.getConnection());
+            conn = DBConnection.getConnection();
+            SeriesDAO seriesDao = new SeriesDAO(conn);
+            GenreDAO genreDao = new GenreDAO(conn);
+            CategoryDAO categoryDao = new CategoryDAO(conn);
 //            Series series = seriesDao.getSeriesById(Integer.parseInt(request.getParameter("seriesId")));
             Series series = seriesDao.getSeriesById(3);
             series.setGenres(categoryDao.getGenresBySeriesId(series.getSeriesId()));
@@ -94,66 +101,199 @@ public class UpdateSeriesServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        int seriesId = Integer.parseInt(request.getParameter("seriesId"));
-        if (seriesId <= 0) {
-            response.sendError(HttpServletResponse.SC_BAD_REQUEST, "Invalid series ID");
-            return;
-        }
-        String authorName = request.getParameter("authorName");
-        String seriesTitle = request.getParameter("seriesTitle");
-        String status = request.getParameter("status");
-        String description = request.getParameter("description");
 
-        if (authorName == null || authorName.trim().isEmpty()
-                || seriesTitle == null || seriesTitle.trim().isEmpty()
-                || status == null || status.trim().isEmpty()
-                || description == null || description.trim().isEmpty()) {
-            dispatcherError(request, response, "All fields are required.",
-                    seriesId, authorName, seriesTitle, status, description);
-            return;
-        }
+        java.sql.Connection conn = null;
+        Series series = new Series();
         try {
-            SeriesDAO seriesDAO = new SeriesDAO(DBConnection.getConnection());
-            Series existingSeries = seriesDAO.getSeriesById(seriesId);
-            if (existingSeries == null) {
-                dispatcherError(request, response, "Series not found.",
-                        seriesId, authorName, seriesTitle, status, description);
+            conn = DBConnection.getConnection();
+            CategoryDAO categoryDao = new CategoryDAO(conn);
+            SeriesDAO seriesDao = new SeriesDAO(conn);
+            GenreDAO genreDao = new GenreDAO(conn);
+
+            // Lấy dữ liệu form
+            int seriesId = Integer.parseInt(request.getParameter("seriesId"));
+            String authorName = request.getParameter("authorName");
+            String seriesTitle = request.getParameter("seriesTitle");
+            String status = request.getParameter("status");
+            String description = request.getParameter("description");
+            String existingImageUrl = request.getParameter("coverImageUrl");
+            String imageUrl = existingImageUrl;
+            String[] selectedGenre = request.getParameterValues("genres");
+
+            List<Integer> genreIDs = new ArrayList<>();
+            if (selectedGenre != null) {
+                for (String idStr : selectedGenre) {
+                    try {
+                        genreIDs.add(Integer.parseInt(idStr));
+                    } catch (NumberFormatException e) {
+                        e.printStackTrace();
+                    }
+                }
+            }
+
+            ArrayList<Genre> genres = new ArrayList<>();
+            for (Integer genreId : genreIDs) {
+                genres.add(genreDao.getGenreById(genreId));
+            }
+
+            // Chuẩn bị dữ liệu gửi về nếu lỗi
+            series.setSeriesId(seriesId);
+            series.setAuthorName(authorName);
+            series.setSeriesTitle(seriesTitle);
+            series.setStatus(status);
+            series.setDescription(description);
+            series.setCoverImageUrl(imageUrl);
+            series.setGenres(genres);
+            request.setAttribute("series", series);
+            request.setAttribute("genres", genreDao.getAll());
+
+            if (!isValidString(authorName) || !isValidString(seriesTitle)
+                    || !isValidString(status) || !isValidString(description)
+                    || genreIDs.isEmpty()) {
+                forwardWithError(request, response, "All fields are required.", series, genreDao);
                 return;
             }
-            existingSeries.setAuthorName(authorName);
-            existingSeries.setSeriesTitle(seriesTitle);
-            existingSeries.setStatus(status);
-            existingSeries.setDescription(description);
 
-            boolean isUpdated = seriesDAO.updateSeries(existingSeries);
-            if (isUpdated) {
-                request.setAttribute("successMessage", "Series updated successfully.");
-                request.getRequestDispatcher("views/series/editSeries.jsp").forward(request, response);
-            } else {
-                request.setAttribute("errorMessage", "Failed to update series. Please try again.");
-                request.getRequestDispatcher("views/series/editSeries.jsp").forward(request, response);
+            // Xử lý ảnh
+            // Bước 1: Lấy file ảnh từ form
+            Part filePart = request.getPart("coverImage");
+            if (filePart == null || filePart.getSize() == 0 || filePart.getSubmittedFileName() == null || filePart.getSubmittedFileName().trim().isEmpty()) {
+                request.setAttribute("errorMessage", "Vui lòng chọn ảnh bìa.");
+                request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
+                return;
             }
-        } catch (SQLException e) {
+
+// Bước 2: Tạo thư mục lưu file nếu chưa tồn tại
+            String uploadPath = getServletContext().getRealPath("/assets/images/") + File.separator;
+            File uploadDir = new File(uploadPath);
+            if (!uploadDir.exists()) {
+                uploadDir.mkdirs();
+            }
+
+// Bước 3: Xử lý tên file
+            String submittedFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+            int lastDotIndex = submittedFileName.lastIndexOf('.');
+            String baseName = (lastDotIndex > 0) ? submittedFileName.substring(0, lastDotIndex) : submittedFileName;
+            String uniqueID = UUID.randomUUID().toString().substring(0, 8);
+
+            String avifFileName = baseName + "-" + uniqueID + ".avif";
+            String tempFileName = baseName + "-" + uniqueID + "_temp." + getExtension(submittedFileName);
+
+// Bước 4: Ghi file tạm
+            File tempImageFile = new File(uploadPath + tempFileName);
+            filePart.write(tempImageFile.getAbsolutePath());
+            System.out.println("Ảnh tạm đã ghi tại: " + tempImageFile.getAbsolutePath());
+            System.out.println("Tồn tại không? " + tempImageFile.exists());
+            System.out.println("Kích thước (bytes): " + tempImageFile.length());
+
+// Bước 5: Chuyển đổi ảnh sang AVIF
+            File avifImageFile = new File(uploadPath + avifFileName);
+            String avifencPath = "H:\\InstallApp\\windows-artifacts\\avifenc.exe";
+
+            ProcessBuilder pb = new ProcessBuilder(
+                    avifencPath,
+                    tempImageFile.getAbsolutePath(),
+                    avifImageFile.getAbsolutePath()
+            );
+
+            System.out.println("Lệnh chạy avifenc:");
+            System.out.println(avifencPath + " " + tempImageFile.getAbsolutePath() + " " + avifImageFile.getAbsolutePath());
+
+            Process process = null;
+            try {
+                process = pb.start();
+                int exitCode = process.waitFor();
+
+                if (exitCode != 0) {
+                    InputStream errorStream = process.getErrorStream();
+                    String errorOutput = new BufferedReader(new InputStreamReader(errorStream))
+                            .lines().collect(Collectors.joining("\n"));
+
+                    System.out.println("❌ avifenc thất bại. Chi tiết lỗi:");
+                    System.out.println(errorOutput);
+
+                    request.setAttribute("errorMessage", "Không thể chuyển ảnh sang AVIF. Chi tiết: " + errorOutput);
+                    request.setAttribute("errorMessage", "Lỗi! Không thể chuyển ảnh sang định dạng AVIF.");
+                    request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
+                    return;
+                }
+
+            } catch (Exception e) {
+                e.printStackTrace();
+                request.setAttribute("errorMessage", "Lỗi xử lý ảnh: " + e.getMessage());
+                request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
+                return;
+
+            } finally {
+                // Quản lý process và file tạm
+                if (process != null) {
+                    try {
+                        process.getInputStream().close();
+                        process.getErrorStream().close();
+                        process.getOutputStream().close();
+                    } catch (IOException e) {
+                        e.printStackTrace();
+                    }
+                    process.destroy();
+                }
+
+                if (tempImageFile.exists()) {
+                    tempImageFile.delete();
+                }
+            }
+
+// Bước 6: Lưu đường dẫn tương đối vào database
+            imageUrl = "assets/images/" + avifFileName;
+            series.setCoverImageUrl(imageUrl);
+
+            boolean isUpdated = seriesDao.updateSeries(series);
+            boolean isUpdatedGenres = categoryDao.updateGenreOfSeries(seriesId, genreIDs);
+
+            if (isUpdated && isUpdatedGenres) {
+                request.setAttribute("successMessage", "Series updated successfully.");
+                request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
+            } else {
+                forwardWithError(request, response, "Failed to update series.", series, genreDao);
+            }
+
+        } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "A database error occurred");
-            request.getRequestDispatcher("views/series/editSeries.jsp").forward(request, response);
-        } catch (ClassNotFoundException e) {
-            e.printStackTrace();
-            request.setAttribute("errorMessage", "Server configuration error.");
-            request.getRequestDispatcher("views/series/editSeries.jsp").forward(request, response);
+            request.setAttribute("errorMessage", "Database error: " + e.getMessage());
+            request.setAttribute("series", series);
+            try {
+                if (conn != null) {
+                    GenreDAO genreDao = new GenreDAO(conn);
+                    request.setAttribute("genres", genreDao.getAll());
+                }
+            } catch (Exception ignored) {
+            }
+            request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
+
+        } finally {
+            if (conn != null) {
+                try {
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
+            }
         }
     }
 
-    public void dispatcherError(HttpServletRequest request, HttpServletResponse response, String errorMessage,
-            int seriesId, String authorName, String seriesTitle, String status, String description)
-            throws ServletException, IOException {
-        request.setAttribute("errorMessage", errorMessage);
-        request.setAttribute("seriesId", seriesId);
-        request.setAttribute("authorName", authorName);
-        request.setAttribute("seriesTitle", seriesTitle);
-        request.setAttribute("status", status);
-        request.setAttribute("description", description);
-        request.getRequestDispatcher("views/series/editSeries.jsp").forward(request, response);
+    private void forwardWithError(HttpServletRequest request, HttpServletResponse response, String message, Series series, GenreDAO genreDao)
+            throws ServletException, IOException, SQLException {
+        request.setAttribute("errorMessage", message);
+        request.setAttribute("series", series);
+        request.setAttribute("genres", genreDao.getAll());
+        request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
+    }
+
+    private String getExtension(String filename) {
+        int dotIndex = filename.lastIndexOf('.');
+        if (dotIndex >= 0) {
+            return filename.substring(dotIndex + 1).toLowerCase();
+        }
+        return "";
     }
 
     /**
