@@ -22,8 +22,8 @@ public class LibraryDAO {
         this.connection = connection;
     }
 
-    public List<Library> getAllLibraries() {
-        List<Library> libraries = new ArrayList<>();
+    public ArrayList<Library> getAllLibraries() {
+        ArrayList<Library> libraries = new ArrayList<>();
         // Đảm bảo tên bảng là "UserLibraries" như đã thống nhất
         String sql = "SELECT user_id, series_id FROM UserLibraries";
         try (PreparedStatement statement = connection.prepareStatement(sql);
@@ -42,8 +42,8 @@ public class LibraryDAO {
         return libraries; // Trả về danh sách, dù có lỗi hay không (có thể rỗng)
     }
 
-    public List<Library> getLibrariesByUserId(int userId) {
-        List<Library> userLibraries = new ArrayList<>();
+    public ArrayList<Library> getLibrariesByUserId(int userId) {
+        ArrayList<Library> userLibraries = new ArrayList<>();
         String sql = "SELECT user_id, series_id FROM UserLibraries WHERE user_id = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setInt(1, userId);

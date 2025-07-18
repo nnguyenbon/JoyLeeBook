@@ -34,19 +34,6 @@ public class PreviousChapterServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        response.setContentType("text/html;charset=UTF-8");
-        try (PrintWriter out = response.getWriter()) {
-            /* TODO output your page here. You may use following sample code. */
-            out.println("<!DOCTYPE html>");
-            out.println("<html>");
-            out.println("<head>");
-            out.println("<title>Servlet PreviousChapterServlet</title>");
-            out.println("</head>");
-            out.println("<body>");
-            out.println("<h1>Servlet PreviousChapterServlet at " + request.getContextPath() + "</h1>");
-            out.println("</body>");
-            out.println("</html>");
-        }
     }
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
@@ -72,12 +59,12 @@ public class PreviousChapterServlet extends HttpServlet {
                 return;
             }
 
-            ArrayList<Chapter> chapters = chapterDAO.getAllChaptersBySeriesId(currentChapter.getSeriesId());
-            Chapter chapter = chapterDAO.getPreviousChapter(currentChapter.getSeriesId(), currentChapter.getChapterIndex());
+            ArrayList<Chapter> allChapterOfSeries = chapterDAO.getAllChaptersBySeriesId(currentChapter.getSeriesId());
+            Chapter newChapter = chapterDAO.getPreviousChapter(currentChapter.getSeriesId(), currentChapter.getChapterIndex());
             request.setAttribute("firstIndex", chapterDAO.getFirstChapterIndex(currentChapter.getSeriesId()));
             request.setAttribute("lastIndex", chapterDAO.getLastChapterIndex(currentChapter.getSeriesId()));
-            request.setAttribute("chapter", chapter);
-            request.setAttribute("chapters", chapters);
+            request.setAttribute("chapter", newChapter);
+            request.setAttribute("chapters", allChapterOfSeries);
             request.getRequestDispatcher("/WEB-INF/views/chapter/readChapter.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();

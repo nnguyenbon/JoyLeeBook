@@ -168,13 +168,12 @@ public class LoginServlet extends HttpServlet {
     private void redirectBasedOnRole(HttpServletRequest request, HttpServletResponse response, String role)
             throws ServletException, IOException {
         if ("admin".equals(role)) {
-            request.getRequestDispatcher("/WEB-INF/views/adminDashboard.jsp").forward(request, response);
-//            response.sendRedirect(request.getContextPath() + "/admin-dashboard");
+            response.sendRedirect(request.getContextPath() + "/adminDashboard");
         } else if ("reader".equals(role)) {
             response.sendRedirect(request.getContextPath() + "/index.jsp");
         } else {
             request.setAttribute("errorMessage", "Invalid role");
-            request.getRequestDispatcher("/WEB-INF/views/authorization/login.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         }
     }
 

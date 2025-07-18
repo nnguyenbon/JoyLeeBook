@@ -171,21 +171,17 @@ public class UpdateSeriesServlet extends HttpServlet {
                 return;
             }
 
-            // Xử lý ảnh
-            // Bước 1: Lấy file ảnh từ form
             Part filePart = request.getPart("coverImage");
             imageUrl = existingImageUrl;
             if (filePart != null && filePart.getSize() > 0 && filePart.getSubmittedFileName() != null
                     && !filePart.getSubmittedFileName().trim().isEmpty()) {
 
-// Bước 2: Tạo thư mục lưu file nếu chưa tồn tại
                 String uploadPath = getServletContext().getRealPath("/assets/images/") + File.separator;
                 File uploadDir = new File(uploadPath);
                 if (!uploadDir.exists()) {
                     uploadDir.mkdirs();
                 }
 
-// Bước 3: Xử lý tên file
                 String submittedFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
                 int lastDotIndex = submittedFileName.lastIndexOf('.');
                 String baseName = (lastDotIndex > 0) ? submittedFileName.substring(0, lastDotIndex) : submittedFileName;
@@ -194,14 +190,9 @@ public class UpdateSeriesServlet extends HttpServlet {
                 String avifFileName = baseName + "-" + uniqueID + ".avif";
                 String tempFileName = baseName + "-" + uniqueID + "_temp." + getExtension(submittedFileName);
 
-// Bước 4: Ghi file tạm
                 File tempImageFile = new File(uploadPath + tempFileName);
                 filePart.write(tempImageFile.getAbsolutePath());
-                System.out.println("Ảnh tạm đã ghi tại: " + tempImageFile.getAbsolutePath());
-                System.out.println("Tồn tại không? " + tempImageFile.exists());
-                System.out.println("Kích thước (bytes): " + tempImageFile.length());
 
-// Bước 5: Chuyển đổi ảnh sang AVIF
                 File avifImageFile = new File(uploadPath + avifFileName);
                 String avifencPath = "H:\\InstallApp\\windows-artifacts\\avifenc.exe";
 
@@ -210,10 +201,6 @@ public class UpdateSeriesServlet extends HttpServlet {
                         tempImageFile.getAbsolutePath(),
                         avifImageFile.getAbsolutePath()
                 );
-
-                System.out.println("Lệnh chạy avifenc:");
-                System.out.println(avifencPath + " " + tempImageFile.getAbsolutePath() + " " + avifImageFile.getAbsolutePath());
-
                 Process process = null;
                 try {
                     process = pb.start();
@@ -224,19 +211,15 @@ public class UpdateSeriesServlet extends HttpServlet {
                         String errorOutput = new BufferedReader(new InputStreamReader(errorStream))
                                 .lines().collect(Collectors.joining("\n"));
 
-                        System.out.println("❌ avifenc thất bại. Chi tiết lỗi:");
-                        System.out.println(errorOutput);
-
-                        request.setAttribute("errorMessage", "Không thể chuyển ảnh sang AVIF. Chi tiết: " + errorOutput);
-                        request.setAttribute("errorMessage", "Lỗi! Không thể chuyển ảnh sang định dạng AVIF.");
-                        request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
+                        request.setAttribute("errorMessage", "Không thể chuyển ảnh sang AVIF. Chi tiết: " + errorOutput + "Lỗi! Không thể chuyển ảnh sang định dạng AVIF.");
+                        request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
                         return;
                     }
 
                 } catch (Exception e) {
                     e.printStackTrace();
                     request.setAttribute("errorMessage", "Lỗi xử lý ảnh: " + e.getMessage());
-                    request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
                     return;
 
                 } finally {
@@ -259,7 +242,6 @@ public class UpdateSeriesServlet extends HttpServlet {
                 imageUrl = "assets/images/" + avifFileName;
             }
 
-// Bước 6: Lưu đường dẫn tương đối vào database
             series.setCoverImageUrl(imageUrl);
 
             boolean isUpdated = seriesDao.updateSeries(series);

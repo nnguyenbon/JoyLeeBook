@@ -128,7 +128,6 @@ public class HistoryReadingDAO {
             int affectedRows = pstmt.executeUpdate();
             return affectedRows > 0;
         } catch (SQLException e) {
-            System.err.println("Lỗi khi xóa tất cả lịch sử đọc cho Series ID " + seriesId + ": " + e.getMessage());
             e.printStackTrace();
             return false;
         }

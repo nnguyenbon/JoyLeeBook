@@ -6,7 +6,7 @@
 
 <%@page import="model.Chapter"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+<%@taglib prefix="c" uri="jakarta.tags.core" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -194,7 +194,7 @@
 
             <!-- Header -->
             <div class="modal-header">
-                <h5 class="modal-title" id="chapterModalLabel">Danh Sách Chương</h5>
+                <h5 class="modal-title" id="chapterModalLabel">List of Chapters</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
 
@@ -202,14 +202,14 @@
             <div class="modal-body">
                 <ul class="list-group">
                     <c:forEach var="chapterOfList" items="${chapters}">
-                        <li class="list-group-item <c:if test="${chapterOfList.chapterIndex eq chapter.chapterIndex}">active</c:if>">${chapterOfList.chapterTitle}</li>
+                        <li class="list-group-item <c:if test="${chapterOfList.chapterIndex eq chapter.chapterIndex}">active</c:if>">Chapter ${chapterOfList.chapterIndex}</li>
                         </c:forEach>
                 </ul>
             </div>
 
             <!-- Footer -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
             </div>
         </div>
     </div>
