@@ -1,9 +1,6 @@
 package dao;
 
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -159,6 +156,33 @@ public class SeriesDAO {
             stmt.setString(1, seriesTitle);
             try (ResultSet rs = stmt.executeQuery()) {
                 return !rs.next(); // true if the title is not used (available)
+            }
+        }
+    }
+
+    public int insertAndReturnId(Series series) throws SQLException {
+        String sql = "INSERT INTO Series (author_name, series_title, status, description, cover_image_url) " +
+                "VALUES (?, ?, ?, ?, ?)";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, series.getAuthorName());
+            ps.setString(2, series.getSeriesTitle());
+            ps.setString(3, series.getStatus());
+            ps.setString(4, series.getDescription());
+            ps.setString(5, series.getCoverImageUrl());
+
+            int affectedRows = ps.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Inserting series failed, no rows affected.");
+            }
+
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1); // return generated series_id
+                } else {
+                    throw new SQLException("Inserting series failed, no ID obtained.");
+                }
             }
         }
     }
