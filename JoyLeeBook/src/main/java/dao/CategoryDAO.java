@@ -26,8 +26,8 @@ public class CategoryDAO {
     }
 
     /**
-     * Adds multiple category relationships to the database.
-     * Each category links a series with a genre.
+     * Adds multiple category relationships to the database. Each category links
+     * a series with a genre.
      *
      * @param seriesId The ID of the series to associate genres with.
      * @param genreIds A list of genre IDs to be associated with the series.
@@ -88,5 +88,16 @@ public class CategoryDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    public boolean updateGenreOfSeries(int seriedId, List<Integer> newGenresId) throws SQLException {
+        try {
+            deleteBySeriesId(seriedId);
+            addCategories(seriedId, newGenresId);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }

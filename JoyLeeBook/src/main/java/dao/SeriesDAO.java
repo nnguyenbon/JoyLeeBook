@@ -1,11 +1,14 @@
 package dao;
 
+import db.DBConnection;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 import model.Series;
 
@@ -95,16 +98,14 @@ public class SeriesDAO {
         String sql = "UPDATE Series SET author_name= ?, series_title = ?, status = ?, description = ?, cover_image_url = ? "
                 + "WHERE series_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-
             stmt.setString(1, series.getAuthorName());
             stmt.setString(2, series.getSeriesTitle());
             stmt.setString(3, series.getStatus());
             stmt.setString(4, series.getDescription());
             stmt.setString(5, series.getCoverImageUrl());
             stmt.setInt(6, series.getSeriesId());
-
             return stmt.executeUpdate() > 0;
-        }
+        } 
     }
 
     /**

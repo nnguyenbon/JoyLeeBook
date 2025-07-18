@@ -147,103 +147,119 @@ public class UpdateSeriesServlet extends HttpServlet {
             request.setAttribute("series", series);
             request.setAttribute("genres", genreDao.getAll());
 
-            if (!isValidString(authorName) || !isValidString(seriesTitle)
-                    || !isValidString(status) || !isValidString(description)
-                    || genreIDs.isEmpty()) {
-                forwardWithError(request, response, "All fields are required.", series, genreDao);
+            if (!isValidString(authorName)) {
+                request.setAttribute("errorMessage", "Author name cannot be empty");
+                request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
+                return;
+            }
+
+            if (!isValidString(seriesTitle)) {
+                request.setAttribute("errorMessage", "Series title cannot be empty");
+                request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
+                return;
+            }
+
+            if (!isValidString(status)) {
+                request.setAttribute("errorMessage", "Series status cannot be empty");
+                request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
+                return;
+            }
+
+            if (!isValidString(description)) {
+                request.setAttribute("errorMessage", "Series description cannot be empty");
+                request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
                 return;
             }
 
             // Xử lý ảnh
             // Bước 1: Lấy file ảnh từ form
             Part filePart = request.getPart("coverImage");
-            if (filePart == null || filePart.getSize() == 0 || filePart.getSubmittedFileName() == null || filePart.getSubmittedFileName().trim().isEmpty()) {
-                request.setAttribute("errorMessage", "Vui lòng chọn ảnh bìa.");
-                request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
-                return;
-            }
+            imageUrl = existingImageUrl;
+            if (filePart != null && filePart.getSize() > 0 && filePart.getSubmittedFileName() != null
+                    && !filePart.getSubmittedFileName().trim().isEmpty()) {
 
 // Bước 2: Tạo thư mục lưu file nếu chưa tồn tại
-            String uploadPath = getServletContext().getRealPath("/assets/images/") + File.separator;
-            File uploadDir = new File(uploadPath);
-            if (!uploadDir.exists()) {
-                uploadDir.mkdirs();
-            }
+                String uploadPath = getServletContext().getRealPath("/assets/images/") + File.separator;
+                File uploadDir = new File(uploadPath);
+                if (!uploadDir.exists()) {
+                    uploadDir.mkdirs();
+                }
 
 // Bước 3: Xử lý tên file
-            String submittedFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-            int lastDotIndex = submittedFileName.lastIndexOf('.');
-            String baseName = (lastDotIndex > 0) ? submittedFileName.substring(0, lastDotIndex) : submittedFileName;
-            String uniqueID = UUID.randomUUID().toString().substring(0, 8);
+                String submittedFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+                int lastDotIndex = submittedFileName.lastIndexOf('.');
+                String baseName = (lastDotIndex > 0) ? submittedFileName.substring(0, lastDotIndex) : submittedFileName;
+                String uniqueID = UUID.randomUUID().toString().substring(0, 8);
 
-            String avifFileName = baseName + "-" + uniqueID + ".avif";
-            String tempFileName = baseName + "-" + uniqueID + "_temp." + getExtension(submittedFileName);
+                String avifFileName = baseName + "-" + uniqueID + ".avif";
+                String tempFileName = baseName + "-" + uniqueID + "_temp." + getExtension(submittedFileName);
 
 // Bước 4: Ghi file tạm
-            File tempImageFile = new File(uploadPath + tempFileName);
-            filePart.write(tempImageFile.getAbsolutePath());
-            System.out.println("Ảnh tạm đã ghi tại: " + tempImageFile.getAbsolutePath());
-            System.out.println("Tồn tại không? " + tempImageFile.exists());
-            System.out.println("Kích thước (bytes): " + tempImageFile.length());
+                File tempImageFile = new File(uploadPath + tempFileName);
+                filePart.write(tempImageFile.getAbsolutePath());
+                System.out.println("Ảnh tạm đã ghi tại: " + tempImageFile.getAbsolutePath());
+                System.out.println("Tồn tại không? " + tempImageFile.exists());
+                System.out.println("Kích thước (bytes): " + tempImageFile.length());
 
 // Bước 5: Chuyển đổi ảnh sang AVIF
-            File avifImageFile = new File(uploadPath + avifFileName);
-            String avifencPath = "H:\\InstallApp\\windows-artifacts\\avifenc.exe";
+                File avifImageFile = new File(uploadPath + avifFileName);
+                String avifencPath = "H:\\InstallApp\\windows-artifacts\\avifenc.exe";
 
-            ProcessBuilder pb = new ProcessBuilder(
-                    avifencPath,
-                    tempImageFile.getAbsolutePath(),
-                    avifImageFile.getAbsolutePath()
-            );
+                ProcessBuilder pb = new ProcessBuilder(
+                        avifencPath,
+                        tempImageFile.getAbsolutePath(),
+                        avifImageFile.getAbsolutePath()
+                );
 
-            System.out.println("Lệnh chạy avifenc:");
-            System.out.println(avifencPath + " " + tempImageFile.getAbsolutePath() + " " + avifImageFile.getAbsolutePath());
+                System.out.println("Lệnh chạy avifenc:");
+                System.out.println(avifencPath + " " + tempImageFile.getAbsolutePath() + " " + avifImageFile.getAbsolutePath());
 
-            Process process = null;
-            try {
-                process = pb.start();
-                int exitCode = process.waitFor();
+                Process process = null;
+                try {
+                    process = pb.start();
+                    int exitCode = process.waitFor();
 
-                if (exitCode != 0) {
-                    InputStream errorStream = process.getErrorStream();
-                    String errorOutput = new BufferedReader(new InputStreamReader(errorStream))
-                            .lines().collect(Collectors.joining("\n"));
+                    if (exitCode != 0) {
+                        InputStream errorStream = process.getErrorStream();
+                        String errorOutput = new BufferedReader(new InputStreamReader(errorStream))
+                                .lines().collect(Collectors.joining("\n"));
 
-                    System.out.println("❌ avifenc thất bại. Chi tiết lỗi:");
-                    System.out.println(errorOutput);
+                        System.out.println("❌ avifenc thất bại. Chi tiết lỗi:");
+                        System.out.println(errorOutput);
 
-                    request.setAttribute("errorMessage", "Không thể chuyển ảnh sang AVIF. Chi tiết: " + errorOutput);
-                    request.setAttribute("errorMessage", "Lỗi! Không thể chuyển ảnh sang định dạng AVIF.");
+                        request.setAttribute("errorMessage", "Không thể chuyển ảnh sang AVIF. Chi tiết: " + errorOutput);
+                        request.setAttribute("errorMessage", "Lỗi! Không thể chuyển ảnh sang định dạng AVIF.");
+                        request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
+                        return;
+                    }
+
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    request.setAttribute("errorMessage", "Lỗi xử lý ảnh: " + e.getMessage());
                     request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
                     return;
-                }
 
-            } catch (Exception e) {
-                e.printStackTrace();
-                request.setAttribute("errorMessage", "Lỗi xử lý ảnh: " + e.getMessage());
-                request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
-                return;
-
-            } finally {
-                // Quản lý process và file tạm
-                if (process != null) {
-                    try {
-                        process.getInputStream().close();
-                        process.getErrorStream().close();
-                        process.getOutputStream().close();
-                    } catch (IOException e) {
-                        e.printStackTrace();
+                } finally {
+                    // Quản lý process và file tạm
+                    if (process != null) {
+                        try {
+                            process.getInputStream().close();
+                            process.getErrorStream().close();
+                            process.getOutputStream().close();
+                        } catch (IOException e) {
+                            e.printStackTrace();
+                        }
+                        process.destroy();
                     }
-                    process.destroy();
-                }
 
-                if (tempImageFile.exists()) {
-                    tempImageFile.delete();
+                    if (tempImageFile.exists()) {
+                        tempImageFile.delete();
+                    }
                 }
+                imageUrl = "assets/images/" + avifFileName;
             }
 
 // Bước 6: Lưu đường dẫn tương đối vào database
-            imageUrl = "assets/images/" + avifFileName;
             series.setCoverImageUrl(imageUrl);
 
             boolean isUpdated = seriesDao.updateSeries(series);
