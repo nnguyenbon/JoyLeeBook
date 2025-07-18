@@ -22,8 +22,7 @@ import static utils.Validator.isValidString;
  * @author HaiDD-dev
  */
 @WebServlet(name = "AddSeriesServlet", urlPatterns = {"/addSeries"})
-@MultipartConfig(
-        fileSizeThreshold = 1024 * 1024,    // 1MB
+@MultipartConfig(fileSizeThreshold = 1024 * 1024,    // 1MB
         maxFileSize = 5 * 1024 * 1024,      // 5MB
         maxRequestSize = 10 * 1024 * 1024   // 10MB
 )
@@ -51,8 +50,7 @@ public class AddSeriesServlet extends HttpServlet {
      * @throws IOException      if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         String seriesTitle = request.getParameter("seriesTitle");
         String authorName = request.getParameter("authorName");
@@ -111,20 +109,28 @@ public class AddSeriesServlet extends HttpServlet {
         File uploadDir = new File(uploadPath);
         if (!uploadDir.exists()) uploadDir.mkdirs();
 
-        // Tạo tên file .avif ngẫu nhiên
-        String uuid = UUID.randomUUID().toString();
-        String avifFileName = uuid + ".avif";
-        String tempFileName = uuid + "_temp." + getExtension(submittedFileName);
+        // Lấy tên file gốc không có phần mở rộng
+        String baseName;
+        int lastDotIndex = submittedFileName.lastIndexOf('.');
+        if (lastDotIndex > 0 && lastDotIndex < submittedFileName.length() - 1) {
+            baseName = submittedFileName.substring(0, lastDotIndex);
+        } else {
+            baseName = submittedFileName;
+        }
+
+        // Tạo một mã định danh duy nhất ngắn gọn
+        String uniqueID = UUID.randomUUID().toString().substring(0, 8);
+
+        // Ghép tên gốc với mã duy nhất để tạo tên file mới
+        String avifFileName = baseName + "-" + uniqueID + ".avif";
+        String tempFileName = baseName + "-" + uniqueID + "_temp." + getExtension(submittedFileName);
 
         File tempImageFile = new File(uploadPath + tempFileName);
         filePart.write(tempImageFile.getAbsolutePath());
 
         // Convert ảnh sang AVIF yêu cầu avifenc đã được cài đặt
-        //
         File avifImageFile = new File(uploadPath + avifFileName);
-        ProcessBuilder pb = new ProcessBuilder("avifenc",
-                tempImageFile.getAbsolutePath(),
-                avifImageFile.getAbsolutePath());
+        ProcessBuilder pb = new ProcessBuilder("avifenc", tempImageFile.getAbsolutePath(), avifImageFile.getAbsolutePath());
 
         try {
             Process process = pb.start();
