@@ -118,27 +118,77 @@ public class SeriesDAO {
     }
 
     /**
-     * Searches for series by a partial title or author match.
+     * Searches for series by keyword with pagination support.
      *
-     * @param keyword Keyword to search in series titles.
-     * @return List of Series matching the keyword.
+     * @param keyword    The keyword to search for in the title or author name.
+     * @param pageNumber The current page to retrieve (starting from 1).
+     * @param pageSize   The number of results per page.
+     * @return A list of Series objects for the current page.
+     * @throws SQLException If a database access error occurs.
      */
-    public List<Series> searchSeries(String keyword) throws SQLException {
+    public List<Series> searchSeries(String keyword, int pageNumber, int pageSize) throws SQLException {
         List<Series> list = new ArrayList<>();
-        String sql = "SELECT * FROM Series WHERE series_title LIKE ? OR author_name LIKE ?";
+
+        // Base SQL query for searching
+        String baseSql = "SELECT * FROM Series";
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            baseSql += " WHERE series_title LIKE ? OR author_name LIKE ?";
+        }
+
+        // Append ordering and pagination clauses for SQL Server
+        String sql = baseSql + " ORDER BY series_id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            String searchPattern = "%" + keyword + "%";
-            stmt.setString(1, searchPattern);
-            stmt.setString(2, searchPattern);
+            int paramIndex = 1;
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String searchPattern = "%" + keyword + "%";
+                stmt.setString(paramIndex++, searchPattern);
+                stmt.setString(paramIndex++, searchPattern);
+            }
+
+            // Calculate the offset based on the page number and page size
+            int offset = (pageNumber - 1) * pageSize;
+            stmt.setInt(paramIndex++, offset);
+            stmt.setInt(paramIndex++, pageSize);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
+                    // Reuse your mapping method to avoid code duplication
                     list.add(mappingSeriesFromResultSet(rs));
                 }
             }
         }
         return list;
+    }
+
+    /**
+     * Counts the total number of series that match the search keyword.
+     *
+     * @param keyword The keyword to search for in the series title and author name.
+     * @return The total number of series found.
+     * @throws SQLException If a database access error occurs.
+     */
+    public int getTotalSeriesCount(String keyword) throws SQLException {
+        // If the keyword is null or empty, we count all series.
+        String sql = "SELECT COUNT(*) FROM Series";
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql += " WHERE series_title LIKE ? OR author_name LIKE ?";
+        }
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String searchPattern = "%" + keyword + "%";
+                stmt.setString(1, searchPattern);
+                stmt.setString(2, searchPattern);
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1); // Return the value of the first column (the COUNT result)
+                }
+            }
+        }
+        return 0; // Return 0 if no results are found
     }
 
     /**
