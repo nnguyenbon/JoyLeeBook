@@ -40,9 +40,9 @@ public class ChapterDAO {
      * @return a list of chapter objects belonging to the specified series.
      * @throws SQLException If a database access error occurs.
      */
-    public List<Chapter> getAllChaptersBySeriesId(int seriesId) throws SQLException {
-        List<Chapter> list = new ArrayList<>();
-        String sql = "SELECT * FROM Chapters WHERE series_id = ? ORDER BY chapter_index ASC";
+    public ArrayList<Chapter> getAllChaptersBySeriesId(int seriesId) throws SQLException {
+        ArrayList<Chapter> list = new ArrayList<>();
+        String sql = "SELECT * FROM Chapter WHERE series_id = ? ORDER BY chapter_index ASC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, seriesId);
             try (ResultSet rs = ps.executeQuery()) {

@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package dao;
 
 import java.sql.Connection;
@@ -13,15 +9,15 @@ import java.util.List;
 import model.Genre;
 
 /**
- *
- * @author PC
+ * Data Access Object for handling operations related to the Categories table.
+ * This class manages the relationship between series and genres.
  */
 public class CategoryDAO {
 
     private final Connection connection;
 
     /**
-     * Constructor to initialize ChapterDAO with a database connection.
+     * Constructor to initialize CategoryDAO with a database connection.
      *
      * @param connection Active SQL connection to be used in DAO methods.
      */
@@ -30,10 +26,12 @@ public class CategoryDAO {
     }
 
     /**
+     * Adds multiple category relationships to the database.
+     * Each category links a series with a genre.
      *
-     * @param seriesId
-     * @param genreIds
-     * @throws SQLException
+     * @param seriesId The ID of the series to associate genres with.
+     * @param genreIds A list of genre IDs to be associated with the series.
+     * @throws SQLException If a database access error occurs.
      */
     public void addCategories(int seriesId, List<Integer> genreIds) throws SQLException {
         String sql = "INSERT INTO Categories (series_id, genre_id) VALUES (?, ?)";
@@ -44,17 +42,20 @@ public class CategoryDAO {
                 ps.addBatch();
             }
             ps.executeBatch();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
     /**
+     * Retrieves a list of genres associated with a specific series.
      *
-     * @param seriesId
-     * @return
-     * @throws SQLException
+     * @param seriesId The ID of the series.
+     * @return A list of Genre objects linked to the series.
+     * @throws SQLException If a database access error occurs.
      */
-    public List<Genre> getGenresBySeriesId(int seriesId) throws SQLException {
-        List<Genre> genres = new ArrayList<>();
+    public ArrayList<Genre> getGenresBySeriesId(int seriesId) throws SQLException {
+        ArrayList<Genre> genres = new ArrayList<>();
         String sql = "SELECT g.genre_id, g.genre_name FROM Genres g "
                 + "JOIN Categories c ON g.genre_id = c.genre_id "
                 + "WHERE c.series_id = ?";
@@ -68,22 +69,26 @@ public class CategoryDAO {
                     genres.add(genre);
                 }
             }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
         return genres;
 
     }
 
     /**
+     * Deletes all category associations for a given series.
      *
-     * @param seriesId
-     * @throws SQLException
+     * @param seriesId The ID of the series whose categories should be removed.
+     * @throws SQLException If a database access error occurs.
      */
     public void deleteBySeriesId(int seriesId) throws SQLException {
         String sql = "DELETE FROM Categories WHERE series_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, seriesId);
             ps.executeUpdate();
-
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 }

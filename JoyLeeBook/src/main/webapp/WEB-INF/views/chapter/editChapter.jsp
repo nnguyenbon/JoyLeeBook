@@ -1,9 +1,3 @@
-<%--
-    Document   : editChapter
-    Created on : Jul 8, 2025, 1:53:43 PM
-    Author     : NguyenNTCE191135
---%>
-
 <%@page import="model.Chapter"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%
@@ -119,6 +113,5 @@
         <script lang="text/javascript" src="${pageContext.request.contextPath}/js/index.js?v=<%= System.currentTimeMillis()%>"></script>
         <!-- Bootstrap JS (optional for interactivity) -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-
     </body>
 </html>

@@ -9,7 +9,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
-import java.util.List;
+import java.util.ArrayList;
 import model.Chapter;
 
 /**
@@ -53,7 +53,7 @@ public class ReadChapterServlet extends HttpServlet {
 
             // Retrieve chapter and list of chapters
             Chapter chapter = chapterDAO.getChapterById(chapterId);
-            List<Chapter> listChapter = chapterDAO.getAllChaptersBySeriesId(seriesId);
+            ArrayList<Chapter> listChapter = chapterDAO.getAllChaptersBySeriesId(seriesId);
 
             // Set attributes and forward to JSP
             request.setAttribute("chapter", chapter);

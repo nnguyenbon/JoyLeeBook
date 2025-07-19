@@ -3,6 +3,8 @@ package controller.chapterController;
 import dao.ChapterDAO;
 import dao.SeriesDAO;
 import db.DBConnection;
+import java.io.IOException;
+import java.util.ArrayList;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -19,8 +21,6 @@ import model.Series;
  * list by series ID and forwards to a JSP view.
  *
  * URL pattern: /chapterList
- *
- * Author: PC
  */
 @WebServlet(name = "ListChapterBySeriesServlet", urlPatterns = {"/chapterList"})
 public class ListChapterBySeriesServlet extends HttpServlet {
@@ -49,7 +49,7 @@ public class ListChapterBySeriesServlet extends HttpServlet {
             int seriesId = Integer.parseInt(seriesIdParam);
             ChapterDAO chapterDAO = new ChapterDAO(DBConnection.getConnection());
             SeriesDAO seriesDAO = new SeriesDAO(DBConnection.getConnection());
-            List<Chapter> chapterList = chapterDAO.getAllChaptersBySeriesId(seriesId);
+            ArrayList<Chapter> chapterList = chapterDAO.getAllChaptersBySeriesId(seriesId);
             Series series = seriesDAO.getSeriesById(seriesId);
 
             request.setAttribute("seriesTitle", series.getSeriesTitle());
@@ -81,7 +81,7 @@ public class ListChapterBySeriesServlet extends HttpServlet {
     /**
      * Handles the HTTP POST method by calling processRequest().
      *
-     * @param request The HTTP request object.
+     * @param request  The HTTP request object.
      * @param response The HTTP response object.
      * @throws ServletException If a servlet-specific error occurs.
      * @throws IOException If an I/O error occurs.

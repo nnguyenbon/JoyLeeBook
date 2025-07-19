@@ -1,9 +1,3 @@
-<%--
-    Document   : register
-    Created on : Jun 29, 2025, 12:30:24 AM
-    Author     : minhp
---%>
-
 <%@ page language="java"
          contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"

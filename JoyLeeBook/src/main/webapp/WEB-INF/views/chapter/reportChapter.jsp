@@ -1,3 +1,9 @@
+<%-- 
+    Document   : reportChapter
+    Created on : Jul 5, 2025, 10:42:39 AM
+    Author     : PC
+--%>
+
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -6,6 +12,6 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <%=request.getAttribute("error")%>
+        <h1>Hello World!</h1>
     </body>
 </html>
