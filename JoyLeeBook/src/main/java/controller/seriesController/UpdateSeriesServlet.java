@@ -78,8 +78,8 @@ public class UpdateSeriesServlet extends HttpServlet {
             SeriesDAO seriesDao = new SeriesDAO(conn);
             GenreDAO genreDao = new GenreDAO(conn);
             CategoryDAO categoryDao = new CategoryDAO(conn);
-//            Series series = seriesDao.getSeriesById(Integer.parseInt(request.getParameter("seriesId")));
-            Series series = seriesDao.getSeriesById(3);
+            Series series = seriesDao.getSeriesById(Integer.parseInt(request.getParameter("seriesId")));
+//            Series series = seriesDao.getSeriesById(3);
             series.setGenres(categoryDao.getGenresBySeriesId(series.getSeriesId()));
             ArrayList<Genre> genres = genreDao.getAll();
             request.setAttribute("genres", genres);
