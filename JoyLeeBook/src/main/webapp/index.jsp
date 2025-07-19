@@ -5,7 +5,7 @@
          errorPage=""
          isErrorPage="false" %>
 
-<%@ page import="java.util.List, model.Series" %>
+<%@ page import="java.util.ArrayList, model.Series" %>
 
 <%
     /*
@@ -84,7 +84,10 @@
 
                     <!-- Nội dung slide -->
                     <div class="carousel-inner">
-                        <%  List< Series> seriesList = (List<Series>) request.getAttribute("seriesList");
+                        <%  ArrayList< Series> seriesList = (ArrayList<Series>) request.getAttribute("seriesList");
+                            if (seriesList == null) {
+                               seriesList = new ArrayList<>();
+                            }
                             int maxSlide = Math.min(3, seriesList.size());
                             for (int i = 0; i < maxSlide; i++) {
                                 boolean isActive = (i == 0);
@@ -128,7 +131,7 @@
 
 
             <div class="container mb-5">
-                <div class="section-title text-center m-4"> LASR RALEASED </div>
+                <div class="section-title text-center m-4"> LASR RELEASED </div>
                 <div class="row row-cols-2 row-cols-md-4 g-5 mx-5">
                     <%
                         int MAXIMUM_SERIES_IN_PAGE = 20;
@@ -138,8 +141,9 @@
                         int currentPage = request.getParameter("page") == null
                                 || request.getParameter("page").equals("1") ? 1 : Integer.parseInt(request.getParameter("page"));
 
-                        for (int i = (currentPage - 1) * MAXIMUM_SERIES_IN_PAGE + 3; i < currentPage * MAXIMUM_SERIES_IN_PAGE - 1; i++) {
-                            Series s = seriesList.get(i);
+                        for (int i = (currentPage - 1) * MAXIMUM_SERIES_IN_PAGE + 3; i < Math.min(currentPage * MAXIMUM_SERIES_IN_PAGE - 1,
+                           seriesList.size()); i++) {
+                        Series s = seriesList.get(i);
                     %>
                     <div class="col">
                         <a href="viewSeriesInfo?seriesId=<%= s.getSeriesId()%>">
