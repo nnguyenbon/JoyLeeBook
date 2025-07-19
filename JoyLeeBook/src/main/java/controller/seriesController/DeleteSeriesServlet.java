@@ -23,17 +23,17 @@ import jakarta.servlet.http.HttpServletResponse;
  *
  * @author PC
  */
-@WebServlet(name = "DeleteSeriesServlet", urlPatterns = { "/deleteSeries" })
+@WebServlet(name = "DeleteSeriesServlet", urlPatterns = {"/deleteSeries"})
 public class DeleteSeriesServlet extends HttpServlet {
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -44,10 +44,10 @@ public class DeleteSeriesServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -57,10 +57,10 @@ public class DeleteSeriesServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -77,8 +77,6 @@ public class DeleteSeriesServlet extends HttpServlet {
             LibraryDAO libraryDao = new LibraryDAO(conn);
 
             int seriesId = Integer.parseInt(request.getParameter("seriesId"));
-
-            // Thực hiện xóa theo thứ tự phụ thuộc (từ con đến cha)
             boolean isDeletedCategory = categoryDao.deleteBySeriesId(seriesId);
             boolean isDeletedHistory = historyDao.deleteBySeriesId(seriesId);
             boolean isDeletedLibrary = libraryDao.deleteBySeriesId(seriesId);
@@ -87,12 +85,12 @@ public class DeleteSeriesServlet extends HttpServlet {
 
             if (isDeletedCategory && isDeletedHistory && isDeletedLibrary && isDeletedChapter && isDeletedSeries) {
                 conn.commit();
-                request.setAttribute("message", "Deleted Succesfully");
             } else {
                 conn.rollback();
-                request.setAttribute("message", "Delete failed. Please check log for details.");
+                request.setAttribute("errorMessage", "Delete failed. Please check log for details.");
+                request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
             }
-            request.getRequestDispatcher("/WEB-INF/views/adminDashboard.jsp").forward(request, response);
+            response.sendRedirect(request.getContextPath() + "/adminDashboard");
         } catch (Exception e) {
             e.printStackTrace();
             // Đảm bảo rollback nếu có ngoại lệ không mong muốn xảy ra
@@ -104,7 +102,7 @@ public class DeleteSeriesServlet extends HttpServlet {
                 }
             }
             request.setAttribute("message", "An error occurred during deletion.");
-            request.getRequestDispatcher("/WEB-INF/views/adminDashboard.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         } finally {
             if (conn != null) {
                 try {
