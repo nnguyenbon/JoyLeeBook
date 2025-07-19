@@ -1,9 +1,3 @@
-<%-- 
-    Document   : error
-    Created on : Jul 5, 2025, 10:39:30 AM
-    Author     : PC
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
@@ -12,6 +6,6 @@
         <title>JSP Page</title>
     </head>
     <body>
-        <h1>Hello World!</h1>
+        <%=request.getAttribute("error")%>
     </body>
 </html>

@@ -7,7 +7,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import model.Chapter;
 
 /**
@@ -70,7 +69,7 @@ public class ChapterDAO {
      * @throws SQLException If a database access error occurs.
      */
     public Chapter getChapterById(int chapterId) throws SQLException {
-        String sql = " SELECT c.*, s.series_title FROM Chapter c JOIN Series s ON c.series_id = s.series_id WHERE c.chapter_id = ?";
+        String sql = " SELECT c.*, s.series_title FROM Chapters c JOIN Series s ON c.series_id = s.series_id WHERE c.chapter_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, chapterId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -97,14 +96,14 @@ public class ChapterDAO {
      * @param chapter the chapter object containing the data to insert.
      * @throws SQLException If a database access error occurs.
      */
-    public void insertChapter(Chapter chapter) throws SQLException {
-        String sql = "INSERT INTO Chapter (series_id, chapter_index, chapter_title, content) VALUES (?, ?, ?, ?)";
+    public boolean insertChapter(Chapter chapter) throws SQLException {
+        String sql = "INSERT INTO Chapters (series_id, chapter_index, chapter_title, content) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, chapter.getSeriesId());
             ps.setInt(2, chapter.getChapterIndex());
             ps.setString(3, chapter.getChapterTitle());
             ps.setString(4, chapter.getContent());
-            ps.executeUpdate();
+            return ps.executeUpdate() > 0;
         }
     }
 
@@ -112,16 +111,17 @@ public class ChapterDAO {
      * Updates the information of an existing chapter.
      *
      * @param chapter The Chapter object containing updated information.
+     * @return
      * @throws SQLException If a database access error occurs.
      */
-    public void updateChapter(Chapter chapter) throws SQLException {
-        String sql = "UPDATE Chapter SET chapter_index = ?, chapter_title = ?, content = ? WHERE chapter_id = ?";
+    public boolean updateChapter(Chapter chapter) throws SQLException {
+        String sql = "UPDATE Chapters SET chapter_index = ?, chapter_title = ?, content = ? WHERE chapter_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, chapter.getChapterIndex());
             ps.setString(2, chapter.getChapterTitle());
             ps.setString(3, chapter.getContent());
             ps.setInt(4, chapter.getChapterId());
-            ps.executeUpdate();
+            return ps.executeUpdate() > 0;
         }
     }
 
@@ -131,11 +131,11 @@ public class ChapterDAO {
      * @param chapterId The ID of the chapter to delete.
      * @throws SQLException If a database access error occurs.
      */
-    public void deleteChapter(int chapterId) throws SQLException {
-        String sql = "DELETE FROM Chapter WHERE chapter_id = ?";
+    public boolean deleteChapter(int chapterId) throws SQLException {
+        String sql = "DELETE FROM Chapters WHERE chapter_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, chapterId);
-            ps.executeUpdate();
+            return ps.executeUpdate() > 0;
         }
     }
 
@@ -147,7 +147,7 @@ public class ChapterDAO {
      * @throws SQLException If a database access error occurs.
      */
     public int getTotalChaptersBySeriesId(int seriesId) throws SQLException {
-        String sql = "SELECT COUNT(*) FROM Chapter WHERE series_id = ?";
+        String sql = "SELECT COUNT(*) FROM Chapters WHERE series_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, seriesId);
             try (ResultSet rs = ps.executeQuery();) {
@@ -158,8 +158,10 @@ public class ChapterDAO {
         }
         return 0;
     }
+
     /**
      * Get latest date chapter of Series
+     *
      * @param seriesId id of series
      * @return latest date or null
      * @throws SQLException If a database access error occurs.
