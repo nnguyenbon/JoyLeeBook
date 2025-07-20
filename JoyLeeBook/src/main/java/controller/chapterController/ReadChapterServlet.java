@@ -11,7 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import model.Chapter;
-import static utils.Validator;
+import static utils.Validator.*;
 
 /**
  * Servlet for handling requests to read a specific chapter in a series. It
