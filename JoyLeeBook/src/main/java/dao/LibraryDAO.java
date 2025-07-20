@@ -5,7 +5,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List; 
 
 import model.Library; 
 
@@ -34,7 +33,7 @@ public class LibraryDAO {
                 library.setSeriesId(resultSet.getInt("series_id"));
                 libraries.add(library);
             }
-        } catch (SQLException e) {
+        } catch (SQLException ignored) {
 
         }
         return libraries; 

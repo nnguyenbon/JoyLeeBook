@@ -82,7 +82,8 @@ public class SaveSeriesServlet extends HttpServlet {
             int startIndex = (currentPage - 1) * itemsPerPage;
             int endIndex = Math.min(startIndex + itemsPerPage, totalItems);
 
-            ArrayList<Series> paginatedSeries = (ArrayList<Series>) librarySeries.subList(startIndex, endIndex);
+            ArrayList<Series> paginatedSeries = new ArrayList<>(librarySeries.subList(startIndex, endIndex));
+            
             request.setAttribute("librarySeries", paginatedSeries);
             request.setAttribute("currentPage", currentPage);
             request.setAttribute("totalPages", totalPages);

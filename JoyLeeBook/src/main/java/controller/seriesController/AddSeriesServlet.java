@@ -14,11 +14,9 @@ import model.Series;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
 
 import static utils.Validator.*;
@@ -169,7 +167,7 @@ public class AddSeriesServlet extends HttpServlet {
         newSeries.setDescription(seriesDescription);
         newSeries.setCoverImageUrl(imageUrl);
 
-        int insertedId = 0;
+        int insertedId;
         try {
             insertedId = seriesDAO.insertAndReturnId(newSeries);
         } catch (SQLException e) {

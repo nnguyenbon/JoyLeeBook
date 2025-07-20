@@ -2,8 +2,6 @@ package model;
 
 import java.util.Date;
 
-import java.util.Objects;
-
 /**
  * Represents a single chapter of a series. Includes details such as chapter
  * index,

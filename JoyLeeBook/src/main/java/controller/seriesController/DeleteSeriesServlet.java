@@ -17,6 +17,8 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import static utils.Validator.*;
 
+import static utils.Validator.isValidInteger;
+
 /**
  *
  * @author PC
@@ -38,6 +40,7 @@ public class DeleteSeriesServlet extends HttpServlet {
         try {
             conn = DBConnection.getConnection();
 
+            assert conn != null;
             conn.setAutoCommit(false);
             SeriesDAO seriesDao = new SeriesDAO(conn);
             CategoryDAO categoryDao = new CategoryDAO(conn);

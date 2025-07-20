@@ -27,7 +27,6 @@ public class GenreDAO {
 
     /**
      *
-     * @param connection
      */
 
     public GenreDAO(Connection connection) {
@@ -36,7 +35,6 @@ public class GenreDAO {
 
     /**
      *
-     * @return
      * @throws SQLException
      */
     public ArrayList<Genre> getAll() throws SQLException {
@@ -44,32 +42,27 @@ public class GenreDAO {
         String sql = "SELECT * FROM Genres";
         try (
                 PreparedStatement ps = connection.prepareStatement(sql);
-                ResultSet rs = ps.executeQuery();) {
+                ResultSet rs = ps.executeQuery()) {
             while (rs.next()) {
                 Genre genre = new Genre();
                 genre.setGenreId(rs.getInt("genre_id"));
                 genre.setGenreName(rs.getString("genre_name"));
                 genres.add(genre);
             }
-        } catch (SQLException e) {
-            throw e;
         }
         return genres;
     }
 
     /**
      *
-     * @param id
-     * @return
-     * @throws SQLException
      */
     public Genre getGenreById(int id) throws SQLException {
         String sql = "SELECT * FROM Genres WHERE genre_id = ?";
         try (
-                PreparedStatement ps = connection.prepareStatement(sql);) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, id);
             try (
-                    ResultSet rs = ps.executeQuery();) {
+                    ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     Genre genre = new Genre();
                     genre.setGenreId(rs.getInt("genre_id"));
@@ -77,17 +70,12 @@ public class GenreDAO {
                     return genre;
                 }
             }
-        } catch (SQLException e) {
-            throw e;
         }
         return null;
     }
 
     /**
      *
-     * @param genre
-     * @return
-     * @throws SQLException
      */
     public int insertGenre(Genre genre) throws SQLException {
         String sql = "INSERT INTO Genres Values (?)";
@@ -97,7 +85,7 @@ public class GenreDAO {
             return existId;
         }
         try (
-                PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS);) {
+                PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
             ps.setString(1, genre.getGenreName());
             if (ps.executeUpdate() > 0) {
                 try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
@@ -114,8 +102,6 @@ public class GenreDAO {
 
     /**
      *
-     * @param genre
-     * @throws SQLException
      */
     public void updateGenre(Genre genre) throws SQLException {
         String sql = "UPDATE Genres SET genre_name = ? WHERE genre_id = ?";
@@ -132,8 +118,6 @@ public class GenreDAO {
 
     /**
      *
-     * @param id
-     * @throws SQLException
      */
     public void deleteGenre(int id) throws SQLException {
         String sql = "DELETE FROM Genres WHERE genre_id = ?";
@@ -149,25 +133,20 @@ public class GenreDAO {
 
     /**
      *
-     * @param name
-     * @return
-     * @throws SQLException
      */
     public int checkDuplicatesName(String name)
             throws SQLException {
         String sql = "SELECT genre_id FROM Genres WHERE genre_name = ?";
         // Connection conn = (Connection) DBConnection.getConnection();
         try (
-                PreparedStatement ps = connection.prepareStatement(sql);) {
+                PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setString(1, name);
             try (
-                    ResultSet rs = ps.executeQuery();) {
+                    ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt("genre_id");
                 }
             }
-        } catch (SQLException e) {
-            throw e;
         }
         return -1;
     }

@@ -9,7 +9,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 
 import model.User;
 import utils.PasswordUtil;
@@ -40,7 +39,6 @@ public class UserDAO {
      * Get all users from the database.
      *
      * @return List of all users.
-     * @throws java.sql.SQLException
      */
     public ArrayList<User> getAllUser() throws SQLException {
         ArrayList<User> listUser = new ArrayList<>();
@@ -58,7 +56,6 @@ public class UserDAO {
      *
      * @param user_id User ID
      * @return User object if found, otherwise null.
-     * @throws java.sql.SQLException
      */
     public User getUserById(int user_id) throws SQLException {
         String sql = "SELECT * FROM Users WHERE user_id = ?";
@@ -78,7 +75,6 @@ public class UserDAO {
      *
      * @param user The User object to insert.
      * @return true if insert is successful, false otherwise.
-     * @throws java.sql.SQLException
      */
     public boolean insertUser(User user) throws SQLException {
         String sql = "INSERT INTO Users(role_name, username, email, user_password) VALUES (?, ?, ?, ?)";
@@ -96,7 +92,6 @@ public class UserDAO {
      *
      * @param user The User object with updated data.
      * @return true if update is successful, false otherwise.
-     * @throws java.sql.SQLException
      */
     public boolean updateUser(User user) throws SQLException {
         String sql = "UPDATE Users SET role_name = ?, username = ?, email = ?, user_password = ? WHERE user_id = ?;";
@@ -115,7 +110,6 @@ public class UserDAO {
      *
      * @param user_id The user ID to delete.
      * @return true if delete is successful, false otherwise.
-     * @throws java.sql.SQLException
      */
     public boolean deleteUser(int user_id) throws SQLException {
         String sql = "DELETE FROM Users WHERE user_id = ?;";
@@ -131,7 +125,6 @@ public class UserDAO {
      * @param username username
      * @param password password
      * @return User object if login is successful, otherwise null.
-     * @throws java.sql.SQLException
      */
     public User checkLogin(String username, String password) throws SQLException {
         String hashPassword = PasswordUtil.hashPassword(password);

@@ -130,7 +130,6 @@ public class ChapterDAO {
      * Updates the information of an existing chapter.
      *
      * @param chapter The Chapter object containing updated information.
-     * @return
      * @throws SQLException If a database access error occurs.
      */
     public boolean updateChapter(Chapter chapter) throws SQLException {
@@ -170,7 +169,7 @@ public class ChapterDAO {
         String sql = "SELECT COUNT(*) FROM Chapters WHERE series_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, seriesId);
-            try (ResultSet rs = ps.executeQuery();) {
+            try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getInt(1);
                 }
@@ -189,7 +188,7 @@ public class ChapterDAO {
         String sql = "SELECT MAX(created_at) as latestDate FROM Chapters WHERE series_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, seriesId);
-            try (ResultSet rs = ps.executeQuery();) {
+            try (ResultSet rs = ps.executeQuery()) {
                 if (rs.next()) {
                     return rs.getDate("latestDate");
                 }
@@ -298,7 +297,7 @@ public class ChapterDAO {
         return -1;
     }
 
-    public boolean deleteBySeriesId(int seriesId) throws SQLException {
+    public boolean deleteBySeriesId(int seriesId) {
         String sql = "DELETE FROM Chapters WHERE series_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, seriesId);

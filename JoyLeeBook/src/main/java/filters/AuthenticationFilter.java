@@ -18,12 +18,11 @@ import jakarta.servlet.http.HttpSession;
 import model.User;
 
 /**
- *
  * @author KHAI TOAN
  */
 @WebFilter(filterName = "AuthenticationFilter", urlPatterns = {"/addChapter", "/deleteChapter", "/updateChapter", "/chapterList",
-    "/adminDashboard", "/saveHistory", "/viewHistory", "/addSeries", "/deleteSeries", "/removeSavedSeries", "/saveSeries",
-    "/updateSeries",})
+        "/adminDashboard", "/saveHistory", "/viewHistory", "/addSeries", "/deleteSeries", "/removeSavedSeries", "/saveSeries",
+        "/updateSeries",})
 public class AuthenticationFilter implements Filter {
 
     private static final boolean debug = true;
@@ -38,16 +37,14 @@ public class AuthenticationFilter implements Filter {
     }
 
     /**
-     *
-     * @param request The servlet request we are processing
+     * @param request  The servlet request we are processing
      * @param response The servlet response we are creating
-     * @param chain The filter chain we are processing
-     *
-     * @exception IOException if an input/output error occurs
-     * @exception ServletException if a servlet error occurs
+     * @param chain    The filter chain we are processing
+     * @throws IOException      if an input/output error occurs
+     * @throws ServletException if a servlet error occurs
      */
     public void doFilter(ServletRequest request, ServletResponse response,
-            FilterChain chain)
+                         FilterChain chain)
             throws IOException, ServletException {
 
         if (debug) {
@@ -169,16 +166,13 @@ public class AuthenticationFilter implements Filter {
         if (filterConfig == null) {
             return ("AuthenticationFilter()");
         }
-        StringBuffer sb = new StringBuffer("AuthenticationFilter(");
-        sb.append(filterConfig);
-        sb.append(")");
-        return (sb.toString());
+        return ("AuthenticationFilter(" + filterConfig + ")");
     }
 
     private void sendProcessingError(Throwable t, ServletResponse response) {
         String stackTrace = getStackTrace(t);
 
-        if (stackTrace != null && !stackTrace.equals("")) {
+        if (stackTrace != null && !stackTrace.isEmpty()) {
             try {
                 response.setContentType("text/html");
                 PrintStream ps = new PrintStream(response.getOutputStream());
@@ -192,7 +186,7 @@ public class AuthenticationFilter implements Filter {
                 pw.close();
                 ps.close();
                 response.getOutputStream().close();
-            } catch (Exception ex) {
+            } catch (Exception ignored) {
             }
         } else {
             try {
@@ -200,7 +194,7 @@ public class AuthenticationFilter implements Filter {
                 t.printStackTrace(ps);
                 ps.close();
                 response.getOutputStream().close();
-            } catch (Exception ex) {
+            } catch (Exception ignored) {
             }
         }
     }
@@ -214,7 +208,7 @@ public class AuthenticationFilter implements Filter {
             pw.close();
             sw.close();
             stackTrace = sw.getBuffer().toString();
-        } catch (Exception ex) {
+        } catch (Exception ignored) {
         }
         return stackTrace;
     }

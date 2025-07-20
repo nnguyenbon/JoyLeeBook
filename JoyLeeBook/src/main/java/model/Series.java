@@ -192,8 +192,7 @@ public class Series {
     }
 
     /**
-     * 
-     * @param latestChapterDate
+     *
      */
     public void setLatestChapterDate(Date latestChapterDate) {
         this.latestChapterDate = latestChapterDate;

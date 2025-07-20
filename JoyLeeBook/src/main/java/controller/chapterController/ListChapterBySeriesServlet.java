@@ -3,25 +3,26 @@ package controller.chapterController;
 import dao.ChapterDAO;
 import dao.SeriesDAO;
 import db.DBConnection;
+
 import java.io.IOException;
+import java.sql.Connection;
 import java.util.ArrayList;
+
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.sql.Connection;
-import java.util.List;
 import model.Chapter;
 import model.Series;
+
 import static utils.Validator.*;
 
 /**
  * Servlet that displays the list of chapters belonging to a specific series.
  * Used for admin operations to manage chapters of a series. Retrieves chapter
  * list by series ID and forwards to a JSP view.
- *
+ * <p>
  * URL pattern: /chapterList
  */
 @WebServlet(name = "ListChapterBySeriesServlet", urlPatterns = {"/chapterList"})
@@ -33,10 +34,10 @@ public class ListChapterBySeriesServlet extends HttpServlet {
      * forwards to the admin chapter list JSP. If an error occurs, forwards to
      * the error JSP page.
      *
-     * @param request The HTTP request object.
+     * @param request  The HTTP request object.
      * @param response The HTTP response object.
      * @throws ServletException If a servlet-specific error occurs.
-     * @throws IOException If an I/O error occurs.
+     * @throws IOException      If an I/O error occurs.
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -56,7 +57,7 @@ public class ListChapterBySeriesServlet extends HttpServlet {
             conn = DBConnection.getConnection();
             ChapterDAO chapterDAO = new ChapterDAO(conn);
             SeriesDAO seriesDAO = new SeriesDAO(conn);
-            
+
             ArrayList<Chapter> chapterList = chapterDAO.getAllChaptersBySeriesId(seriesId);
             Series series = seriesDAO.getSeriesById(seriesId);
 
@@ -75,10 +76,10 @@ public class ListChapterBySeriesServlet extends HttpServlet {
     /**
      * Handles the HTTP GET method by calling processRequest().
      *
-     * @param request The HTTP request object.
+     * @param request  The HTTP request object.
      * @param response The HTTP response object.
      * @throws ServletException If a servlet-specific error occurs.
-     * @throws IOException If an I/O error occurs.
+     * @throws IOException      If an I/O error occurs.
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -92,7 +93,7 @@ public class ListChapterBySeriesServlet extends HttpServlet {
      * @param request  The HTTP request object.
      * @param response The HTTP response object.
      * @throws ServletException If a servlet-specific error occurs.
-     * @throws IOException If an I/O error occurs.
+     * @throws IOException      If an I/O error occurs.
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

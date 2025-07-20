@@ -38,4 +38,11 @@ public class PasswordUtil {
     public static boolean checkPassword(String plainPassword, String hashedPassword) {
         return hashPassword(plainPassword).equals(hashedPassword);
     }
+
+    public static void main(String[] args) {
+        // Example usage
+        String password = "12345678";
+        String hashed = hashPassword(password);
+        System.out.println("Hashed Password: " + hashed);
+    }
 }

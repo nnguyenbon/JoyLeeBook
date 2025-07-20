@@ -5,9 +5,9 @@ import java.sql.Timestamp;
 /**
  * Represents a user's reading history, including information about the series,
  * chapter, and the timestamp of the last read.
- * 
+ * <p>
  * This model is useful for tracking user activity and resuming reading progress.
- * 
+ *
  * @author PC
  */
 public class HistoryReading {

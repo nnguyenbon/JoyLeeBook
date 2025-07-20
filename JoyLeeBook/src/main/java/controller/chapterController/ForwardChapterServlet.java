@@ -1,7 +1,6 @@
 package controller.chapterController;
 
 import java.io.IOException;
-import java.io.PrintWriter;
 
 import dao.ChapterDAO;
 import db.DBConnection;
