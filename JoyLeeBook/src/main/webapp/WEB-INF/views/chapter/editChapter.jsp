@@ -1,5 +1,13 @@
+<%--
+    Document   : editChapter
+    Created on : Jul 8, 2025, 1:53:43 PM
+    Author     : NguyenNTCE191135
+--%>
+
 <%@page import="model.Chapter"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
+
 <%
     /*
     Note:
@@ -69,38 +77,35 @@
             </nav>
         </header>
         <main class="flex-grow-1 ">
-            <%
-                Chapter chapter = (Chapter) request.getAttribute("chapter");
-            %>
             <div class="edit-form-container border border-2 rounded-4 p-4 bg-white my-5">
-                <h3 class="fw-bold mb-4">Edit <span class="text-primary">Chapter <%=chapter.getChapterIndex()%> - <%=chapter.getSeriesTitle()%></span></h3>
+                <h3 class="fw-bold mb-4">Edit <span class="text-primary">Chapter ${chapter.chapterIndex} - ${chapter.seriesTitle}</span></h3>
 
                 <% String message = (String) request.getAttribute("message"); %>
                 <% if (message != null) {%>
                 <div class="alert alert-danger"><%= message%></div>
                 <% }%>
                 <form action="updateChapter" method="post">
-                    <input type="hidden" name="seriesId" value="<%=chapter.getSeriesId()%>">
-                    <input type="hidden" name="chapterId" value="<%= chapter.getChapterId()%>">
-                    <input type="hidden" name="seriesTitle" value="<%=chapter.getSeriesTitle()%>">
+                    <input type="hidden" name="seriesId" value="${chapter.seriesId}">
+                    <input type="hidden" name="chapterId" value="${chapter.chapterId}">
+                    <input type="hidden" name="seriesTitle" value="${chapter.seriesTitle}">
 
                     <div class="mb-3">
                         <label for="chapterIndex" class="form-label fw-bold">Chapter Index <span class="text-danger">*</span></label>
-                        <input type="number" class="form-control" id="chapterIndex" name="chapterIndex" value="<%=chapter.getChapterIndex()%>" required min="0">
+                        <input type="number" class="form-control" id="chapterIndex" name="chapterIndex" value="${chapter.chapterIndex}" required min="0">
                     </div>
                     <div class="mb-3">
-                        <label for="chapterTitle" class="form-label fw-bold">Chapter Title <span class="text-danger">*</span></label>
-                        <input type="text" class="form-control" id="chapterTitle" name="chapterTitle" value="<%=chapter.getChapterTitle()%>" required maxlength="50">
+                        <label for="chapterTitle" class="form-label fw-bold">Chapter Title</label>
+                        <input type="text" class="form-control" id="chapterTitle" name="chapterTitle" value="${chapter.chapterTitle}" maxlength="50">
                     </div>
 
                     <div class="mb-3">
                         <label for="chapterContent" class="form-label fw-bold">Chapter Content <span class="text-danger">*</span></label>
-                        <textarea class="form-control" id="chapterContent" name="chapterContent" required rows="50"><%=chapter.getContent()%></textarea>
+                        <textarea class="form-control" id="chapterContent" name="chapterContent" required rows="50">${chapter.content}</textarea>
                     </div>
 
                     <div class="d-flex justify-content-center">
                         <button type="submit" class="btn btn-primary mx-3"> Save </button>
-                        <a href="readChapter?chapterId=<%=chapter.getChapterId()%>&seriesId=<%=chapter.getSeriesId()%>" class="btn btn-secondary">Cancel</a>
+                        <a href="readChapter?chapterId=${chapter.chapterId}&seriesId=${chapter.seriesId}" class="btn btn-secondary">Cancel</a>
                     </div>
                 </form>
             </div>
@@ -113,5 +118,6 @@
         <script lang="text/javascript" src="${pageContext.request.contextPath}/js/index.js?v=<%= System.currentTimeMillis()%>"></script>
         <!-- Bootstrap JS (optional for interactivity) -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
     </body>
 </html>

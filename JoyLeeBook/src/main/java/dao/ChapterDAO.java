@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 import model.Chapter;
 
 /**
@@ -42,7 +41,7 @@ public class ChapterDAO {
      */
     public ArrayList<Chapter> getAllChaptersBySeriesId(int seriesId) throws SQLException {
         ArrayList<Chapter> list = new ArrayList<>();
-        String sql = "SELECT * FROM Chapter WHERE series_id = ? ORDER BY chapter_index ASC";
+        String sql = "SELECT * FROM Chapters WHERE series_id = ? ORDER BY chapter_index ASC";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, seriesId);
             try (ResultSet rs = ps.executeQuery()) {
@@ -94,6 +93,7 @@ public class ChapterDAO {
      * Insert a new chapter into the database.
      *
      * @param chapter the chapter object containing the data to insert.
+     * @return
      * @throws SQLException If a database access error occurs.
      */
     public boolean insertChapter(Chapter chapter) throws SQLException {
@@ -129,6 +129,7 @@ public class ChapterDAO {
      * Deletes a chapter from the database by its ID.
      *
      * @param chapterId The ID of the chapter to delete.
+     * @return
      * @throws SQLException If a database access error occurs.
      */
     public boolean deleteChapter(int chapterId) throws SQLException {
@@ -173,6 +174,27 @@ public class ChapterDAO {
             try (ResultSet rs = ps.executeQuery();) {
                 if (rs.next()) {
                     return rs.getDate("latestDate");
+                }
+            }
+        }
+        return null;
+    }
+
+    public Chapter getChapterByIndex(int seriesId, int chapterIndex) throws SQLException {
+        String sql = "SELECT * FROM Chapters WHERE series_id = ? AND chapter_index = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, seriesId);
+            ps.setInt(2, chapterIndex);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Chapter chapter = new Chapter();
+                    chapter.setChapterId(rs.getInt("chapter_id"));
+                    chapter.setSeriesId(rs.getInt("series_id"));
+                    chapter.setChapterIndex(rs.getInt("chapter_index"));
+                    chapter.setChapterTitle(rs.getString("chapter_title"));
+                    chapter.setCreatedAt(rs.getTimestamp("created_at"));
+                    chapter.setContent(rs.getString("content"));
+                    return chapter;
                 }
             }
         }

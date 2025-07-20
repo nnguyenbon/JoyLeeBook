@@ -34,39 +34,45 @@ public class ReadChapterServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             // Get parameters from the request
-            String chapterIdParam = request.getParameter("chapterId");
+            String chapterIndexParam = request.getParameter("chapterIndex");
             String seriesIdParam = request.getParameter("seriesId");
 
             // Validate parameters
-            if (chapterIdParam == null || chapterIdParam.isEmpty()
+            if (chapterIndexParam == null || chapterIndexParam.isEmpty()
                     || seriesIdParam == null || seriesIdParam.isEmpty()) {
-                response.sendRedirect("/WEB-INF/views/error.jsp");
+                response.sendRedirect(request.getContextPath() + "/error.jsp");
                 return;
             }
 
-            int chapterId = Integer.parseInt(chapterIdParam);
+            int chapterIndex = Integer.parseInt(chapterIndexParam);
             int seriesId = Integer.parseInt(seriesIdParam);
 
             // Initialize DAOs
-            SeriesDAO seriesDAO = new SeriesDAO(DBConnection.getConnection());
             ChapterDAO chapterDAO = new ChapterDAO(DBConnection.getConnection());
-
+            SeriesDAO seriesDAO = new SeriesDAO(DBConnection.getConnection());
             // Retrieve chapter and list of chapters
-            Chapter chapter = chapterDAO.getChapterById(chapterId);
+            Chapter chapter = chapterDAO.getChapterByIndex(seriesId, chapterIndex);
+            chapter.setSeriesTitle(seriesDAO.getSeriesById(seriesId).getSeriesTitle());
+
             ArrayList<Chapter> listChapter = chapterDAO.getAllChaptersBySeriesId(seriesId);
+            int firstIndex = listChapter.get(0).getChapterIndex();
+            int lastIndex = listChapter.get(listChapter.size() - 1).getChapterIndex();
 
             // Set attributes and forward to JSP
+            request.setAttribute("firstIndex", firstIndex);
+            request.setAttribute("lastIndex", lastIndex);
             request.setAttribute("chapter", chapter);
-            request.setAttribute("chapterList", listChapter);
-            request.getRequestDispatcher("WEB-INF/views/chapter/readChapter.jsp").forward(request, response);
+            request.setAttribute("listChapter", listChapter);
+            request.getRequestDispatcher("/WEB-INF/views/chapter/readChapter.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             // Redirect to error page if parameters are not valid integers
-            response.sendRedirect("WEB-INF/views/error.jsp");
+            response.sendRedirect("/WEB-INF/views/error.jsp");
+
         } catch (Exception e) {
             // Log exception and forward to error view
             e.printStackTrace();
             request.setAttribute("error", "Cannot get the Chapter Information.");
-            request.getRequestDispatcher("WEB-INF/views/error.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         }
     }
 

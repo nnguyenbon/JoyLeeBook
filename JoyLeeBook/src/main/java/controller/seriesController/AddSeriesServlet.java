@@ -1,18 +1,17 @@
 package controller.seriesController;
 
-import java.io.IOException;
-import java.sql.SQLException;
-
+import dao.SeriesDAO;
 import db.DBConnection;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.sql.SQLException;
 import model.Series;
-import dao.SeriesDAO;
-
-import static utils.Validator;
+import static utils.Validator.isValidInteger;
+import static utils.Validator.isValidString;
 
 /**
  * Servlet to handle adding a new series.
@@ -36,10 +35,10 @@ public class AddSeriesServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -53,10 +52,10 @@ public class AddSeriesServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
@@ -67,42 +66,42 @@ public class AddSeriesServlet extends HttpServlet {
             String seriesStatus = request.getParameter("seriesStatus");
             String seriesDescription = request.getParameter("seriesDescription");
             String seriesCoverImageURL = request.getParameter("seriesCoverImageURL");
-    
+
             // Validate input parameters
             if (isValidString(authorName)) {
                 request.setAttribute("error", "Author name cannot be empty");
                 request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
                 return;
             }
-    
+
             if (isValidString(seriesTitle)) {
                 request.setAttribute("error", "Series title cannot be empty");
                 request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
                 return;
             }
-    
+
             if (isValidInteger(seriesStatus)) {
                 request.setAttribute("error", "Series status cannot be empty");
                 request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
                 return;
             }
-    
+
             if (isValidString(seriesDescription)) {
                 request.setAttribute("error", "Series description cannot be empty");
                 request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
                 return;
             }
-    
+
             if (isValidString(seriesCoverImageURL)) {
                 request.setAttribute("error", "Series cover image URL cannot be empty");
                 request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
                 return;
             }
-    
+
             // Create a new Series object and insert it into the database
             Series series = new Series(authorName, seriesTitle, seriesStatus, seriesDescription, seriesCoverImageURL);
             boolean success = seriesDAO.insertSeries(series);
-    
+
             // Check if the insertion was successful
             if (success) {
                 request.setAttribute("message", "Series added successfully");

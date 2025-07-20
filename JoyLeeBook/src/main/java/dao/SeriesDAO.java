@@ -5,14 +5,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 import model.Series;
 
 /**
  * DAO class for handling database operations related to Series entity. Provides
  * methods to insert, update, delete, and retrieve Series records from the
- * database.
- * Assumes the Series table has columns: series_id (PK), author_name,
+ * database. Assumes the Series table has columns: series_id (PK), author_name,
  * series_title, status, description, cover_image_url, created_at.
  *
  * @author Trunguyen
@@ -23,6 +21,8 @@ public class SeriesDAO {
 
     /**
      * Constructor to initialize SeriesDAO with a database connection.
+     *
+     * @param connection
      */
     public SeriesDAO(Connection connection) {
         this.connection = connection;
@@ -33,8 +33,8 @@ public class SeriesDAO {
      *
      * @return List of Series objects.
      */
-    public List<Series> getAllSeries() throws SQLException {
-        List<Series> listSeries = new ArrayList<>();
+    public ArrayList<Series> getAllSeries() throws SQLException {
+        ArrayList<Series> listSeries = new ArrayList<>();
         String sql = "SELECT * FROM Series";
         try (PreparedStatement stmt = connection.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
@@ -124,9 +124,10 @@ public class SeriesDAO {
      *
      * @param keyword Keyword to search in series titles.
      * @return List of Series matching the keyword.
+     * @throws java.sql.SQLException
      */
-    public List<Series> searchSeries(String keyword) throws SQLException {
-        List<Series> list = new ArrayList<>();
+    public ArrayList<Series> searchSeries(String keyword) throws SQLException {
+        ArrayList<Series> list = new ArrayList<>();
         String sql = "SELECT * FROM Series WHERE series_title LIKE ? OR author_name LIKE ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
