@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller.seriesController;
 
 import dao.CategoryDAO;
@@ -33,6 +29,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import model.Genre;
 import model.Series;
+import static utils.Validator.isValidInteger;
 import static utils.Validator.isValidString;
 
 /**
@@ -45,22 +42,6 @@ import static utils.Validator.isValidString;
         maxRequestSize = 10 * 1024 * 1024 // 10MB
 )
 public class UpdateSeriesServlet extends HttpServlet {
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
-    // + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -78,8 +59,16 @@ public class UpdateSeriesServlet extends HttpServlet {
             SeriesDAO seriesDao = new SeriesDAO(conn);
             GenreDAO genreDao = new GenreDAO(conn);
             CategoryDAO categoryDao = new CategoryDAO(conn);
-            Series series = seriesDao.getSeriesById(Integer.parseInt(request.getParameter("seriesId")));
-//            Series series = seriesDao.getSeriesById(3);
+
+         String seriesIdStr = request.getParameter("seriesId");
+         if (!isValidInteger(seriesIdStr)) {
+            request.setAttribute("errorMessage", "Invalid series ID.");
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
+            return;
+        }
+        
+        int seriesId = Integer.parseInt(seriesIdStr);
+        Series series = seriesDao.getSeriesById(seriesId);
             series.setGenres(categoryDao.getGenresBySeriesId(series.getSeriesId()));
             ArrayList<Genre> genres = genreDao.getAll();
             request.setAttribute("genres", genres);
@@ -110,8 +99,13 @@ public class UpdateSeriesServlet extends HttpServlet {
             SeriesDAO seriesDao = new SeriesDAO(conn);
             GenreDAO genreDao = new GenreDAO(conn);
 
-            // Lấy dữ liệu form
-            int seriesId = Integer.parseInt(request.getParameter("seriesId"));
+            String seriesIdStr = request.getParameter("seriesId");
+        if (!isValidInteger(seriesIdStr)) {
+            forwardWithError(request, response, "Invalid series ID", series, genreDao);
+            return;
+        }
+        int seriesId = Integer.parseInt(seriesIdStr);
+
             String authorName = request.getParameter("authorName");
             String seriesTitle = request.getParameter("seriesTitle");
             String status = request.getParameter("status");
@@ -120,7 +114,7 @@ public class UpdateSeriesServlet extends HttpServlet {
             String imageUrl = existingImageUrl;
             String[] selectedGenre = request.getParameterValues("genres");
 
-            List<Integer> genreIDs = new ArrayList<>();
+            ArrayList<Integer> genreIDs = new ArrayList<>();
             if (selectedGenre != null) {
                 for (String idStr : selectedGenre) {
                     try {
@@ -147,29 +141,12 @@ public class UpdateSeriesServlet extends HttpServlet {
             request.setAttribute("series", series);
             request.setAttribute("genres", genreDao.getAll());
 
-            if (!isValidString(authorName)) {
-                request.setAttribute("errorMessage", "Author name cannot be empty");
-                request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
-                return;
-            }
-
-            if (!isValidString(seriesTitle)) {
-                request.setAttribute("errorMessage", "Series title cannot be empty");
-                request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
-                return;
-            }
-
-            if (!isValidString(status)) {
-                request.setAttribute("errorMessage", "Series status cannot be empty");
-                request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
-                return;
-            }
-
-            if (!isValidString(description)) {
-                request.setAttribute("errorMessage", "Series description cannot be empty");
-                request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
-                return;
-            }
+            if (!isValidString(authorName) || !isValidString(seriesTitle)
+                || !isValidString(status) || !isValidString(description)) {
+            request.setAttribute("message", "All fields are required.");
+            request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
+            return;
+        }
 
             Part filePart = request.getPart("coverImage");
             imageUrl = existingImageUrl;
@@ -293,15 +270,4 @@ public class UpdateSeriesServlet extends HttpServlet {
         }
         return "";
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

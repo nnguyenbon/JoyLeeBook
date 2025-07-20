@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller.authController;
 
 import java.io.IOException;
@@ -25,9 +21,6 @@ import static utils.Validator.isValidString;
  */
 @WebServlet(name = "LoginServlet", urlPatterns = {"/login"})
 public class LoginServlet extends HttpServlet {
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
-    // + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -77,6 +70,7 @@ public class LoginServlet extends HttpServlet {
                     for (Cookie cookie : cookies) {
                         if ("rememberedUsername".equals(cookie.getName()) || "rememberedRole".equals(cookie.getName())) {
                             cookie.setMaxAge(0);
+                            response.addCookie(cookie);
                         }
                     }
                 }
@@ -102,17 +96,17 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
+        String username = request.getParameter("username").trim();
+        String password = request.getParameter("password").trim();
         String rememberMe = request.getParameter("rememberMe");
 
         if (!isValidString(username)) {
-            request.setAttribute("error", "Username cannot be empty.");
+            request.setAttribute("message", "Username cannot be empty.");
             request.getRequestDispatcher("/WEB-INF/views/authorization/login.jsp").forward(request, response);
             return;
         }
         if (!isValidString(password)) {
-            request.setAttribute("error", "Password cannot be empty.");
+            request.setAttribute("message", "Password cannot be empty.");
             request.getRequestDispatcher("/WEB-INF/views/authorization/login.jsp").forward(request, response);
             return;
         }
@@ -149,7 +143,7 @@ public class LoginServlet extends HttpServlet {
                 redirectBasedOnRole(request, response, user.getRoleName());
 
             } else {
-                request.setAttribute("errorMessage", "Invalid username or password.");
+                request.setAttribute("message", "Invalid username or password.");
                 request.getRequestDispatcher("/WEB-INF/views/authorization/login.jsp").forward(request, response);
             }
         } catch (SQLException | ClassNotFoundException e) {
@@ -165,19 +159,8 @@ public class LoginServlet extends HttpServlet {
         } else if ("reader".equals(role)) {
             response.sendRedirect(request.getContextPath() + "/home");
         } else {
-            request.setAttribute("errorMessage", "Invalid role");
+            request.setAttribute("error", "Invalid role");
             request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

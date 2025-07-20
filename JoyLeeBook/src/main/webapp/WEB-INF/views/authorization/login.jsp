@@ -1,10 +1,3 @@
-<%-- 
-    Document   : login
-    Created on : Jun 29, 2025, 12:30:13 AM
-    Author     : minhp
---%>
-
-
 <%@ page language="java" 
          contentType="text/html; charset=UTF-8" 
          pageEncoding="UTF-8"
@@ -16,7 +9,6 @@
     Note:
     pageType: Name of folder contained main page
      */
-
     String[] pageTypeArray = ((String) request.getRequestURI()).split("/");
     String pageType = pageTypeArray[pageTypeArray.length - 1].replace(".jsp", "");
 
@@ -36,7 +28,6 @@
     </head>
 
     <body>
-        <%--<jsp:include page="/views/header/_header.jsp" />--%>
 
         <main class="main-main d-flex align-items-center justify-content-center">
             <div class="content mt-4 mb-4 d-flex align-items-center justify-content-center">
@@ -75,10 +66,8 @@
             </div>
 
         </main>
-
         <%--<jsp:include page="/views/footer/_footer.jsp" />--%>
         <script lang="text/javascript" src="${pageContext.request.contextPath}/js/index.js?v=<%= System.currentTimeMillis()%>"></script>
 
     </body>
-
 </html>

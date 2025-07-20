@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Filter.java to edit this template
- */
 package filters;
 
 import java.io.IOException;
@@ -41,9 +37,6 @@ public class AuthenticationFilter implements Filter {
         System.out.println("AuthenticationFilter initialized.");
     }
 
-    
-
-    
     /**
      *
      * @param request The servlet request we are processing
@@ -89,6 +82,8 @@ public class AuthenticationFilter implements Filter {
             if (debug) {
                 log("User " + userObj + " with role " + userRole + " denied access to " + requestPath);
             }
+            resp.setStatus(HttpServletResponse.SC_FORBIDDEN);
+            request.setAttribute("error", "You do not have permission to access this resource.");
             request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
             return;
         }

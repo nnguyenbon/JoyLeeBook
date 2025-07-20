@@ -1,11 +1,13 @@
-<%-- 
-    Document   : adminDashboard
-    Created on : Jul 5, 2025, 10:37:14 AM
-    Author     : PC
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ page language="java"
+         contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8"
+         session="true"
+         errorPage=""
+         isErrorPage="false" %>
+
+<%@ page import="java.util.List, model.Series" %>
 <%
     /*
     Note:
@@ -81,7 +83,7 @@
         <main>
             <div class="container my-5">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h4 class="fw-bold">Story Management</h4>
+                    <h4 class="fw-bold">Series Management</h4>
                     <a href="addSeries" class="btn btn-success">+ Add new series</a>
                 </div>
 
@@ -136,7 +138,6 @@
                     </table>
                 </div>
             </div>
-
             <div>
                 <nav aria-label="Page navigation example" class="mt-4 d-flex justify-content-center">
                     <ul class="pagination">

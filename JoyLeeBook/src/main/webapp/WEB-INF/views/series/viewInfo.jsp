@@ -12,8 +12,7 @@
          errorPage=""
          isErrorPage="false" %>
 
-<%@ page import="java.util.List, model.Series, model.Chapter" %>
-
+<%@ page import="java.util.ArrayList, model.Series, model.Chapter" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -105,7 +104,7 @@
                     <!-- Manga Cover -->
                     <%  java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
                         Series series = (Series) request.getAttribute("series");
-                        List<Chapter> listChapter = (List<Chapter>) request.getAttribute("listChapter");
+                        ArrayList<Chapter> listChapter = (ArrayList<Chapter>) request.getAttribute("listChapter");
                         String[] colorGenre = {
                             "bg-primary-subtle text-primary",
                             "bg-secondary-subtle text-secondary",
@@ -134,7 +133,7 @@
                         <!-- Genres -->
                         <div class="mb-3">
                             <h6>GENRE</h6>
-                            <% List<Genre> genres = series.getGenres();
+                            <% ArrayList<Genre> genres = series.getGenres();
                                 for (int i = 0; i < genres.size(); i++) {
                             %>
                             <span class="badge genre-badge <%=colorGenre[i % 5]%>"><%=genres.get(i).getGenreName()%></span>
@@ -228,5 +227,4 @@
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
-
 </html>

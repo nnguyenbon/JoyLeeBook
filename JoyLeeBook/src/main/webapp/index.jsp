@@ -1,9 +1,3 @@
-<%-- 
-    Document   : index
-    Created on : Jul 5, 2025, 10:43:19 AM
-    Author     : PC
---%>
-
 <%@ page language="java"
          contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"
@@ -11,7 +5,7 @@
          errorPage=""
          isErrorPage="false" %>
 
-<%@ page import="java.util.List, model.Series, model.User" %>
+<%@ page import="java.util.ArrayList, model.Series, model.User" %>
 
 <%
     /*
@@ -22,7 +16,7 @@
     String pageType = pageTypeArray[pageTypeArray.length - 1].replace(".jsp", "");
 
     request.setAttribute("pageType", pageType);
-    List<Series> seriesList = (List<Series>) request.getAttribute("seriesList");
+    ArrayList<Series> seriesList = (ArrayList<Series>) request.getAttribute("seriesList");
     User user = (User) request.getSession().getAttribute("loggedInUser");
 %>
 <% if (user != null) { %>
@@ -30,7 +24,6 @@
 <% } else { %>
 <jsp:include page="/WEB-INF/views/components/header_unLoggedIn.jsp" />
 <% }%>
-
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -200,11 +193,9 @@
                 }
             } else {
             %>
-            <p class="text-center">No manga series found.</p>
+            <p class="text-center">No series found.</p>
             <% }%>
         </main>
-
-
         <jsp:include page="/WEB-INF/views/components/footer.jsp" />
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script lang="text/javascript" src="${pageContext.request.contextPath}/js/index.js?v=<%= System.currentTimeMillis()%>"></script>

@@ -6,7 +6,6 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-
 import model.Chapter;
 
 /**
@@ -116,14 +115,14 @@ public class ChapterDAO {
      * @param chapter the chapter object containing the data to insert.
      * @throws SQLException If a database access error occurs.
      */
-    public void insertChapter(Chapter chapter) throws SQLException {
+    public boolean insertChapter(Chapter chapter) throws SQLException {
         String sql = "INSERT INTO Chapters (series_id, chapter_index, chapter_title, content) VALUES (?, ?, ?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, chapter.getSeriesId());
             ps.setInt(2, chapter.getChapterIndex());
             ps.setString(3, chapter.getChapterTitle());
             ps.setString(4, chapter.getContent());
-            ps.executeUpdate();
+            return ps.executeUpdate() > 0;
         }
     }
 
@@ -131,16 +130,17 @@ public class ChapterDAO {
      * Updates the information of an existing chapter.
      *
      * @param chapter The Chapter object containing updated information.
+     * @return
      * @throws SQLException If a database access error occurs.
      */
-    public void updateChapter(Chapter chapter) throws SQLException {
+    public boolean updateChapter(Chapter chapter) throws SQLException {
         String sql = "UPDATE Chapters SET chapter_index = ?, chapter_title = ?, content = ? WHERE chapter_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, chapter.getChapterIndex());
             ps.setString(2, chapter.getChapterTitle());
             ps.setString(3, chapter.getContent());
             ps.setInt(4, chapter.getChapterId());
-            ps.executeUpdate();
+            return ps.executeUpdate() > 0;
         }
     }
 
@@ -150,11 +150,11 @@ public class ChapterDAO {
      * @param chapterId The ID of the chapter to delete.
      * @throws SQLException If a database access error occurs.
      */
-    public void deleteChapter(int chapterId) throws SQLException {
+    public boolean deleteChapter(int chapterId) throws SQLException {
         String sql = "DELETE FROM Chapters WHERE chapter_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, chapterId);
-            ps.executeUpdate();
+            return ps.executeUpdate() > 0;
         }
     }
 
@@ -180,7 +180,6 @@ public class ChapterDAO {
 
     /**
      * Get latest date chapter of Series
-     * 
      * @param seriesId id of series
      * @return latest date or null
      * @throws SQLException If a database access error occurs.
