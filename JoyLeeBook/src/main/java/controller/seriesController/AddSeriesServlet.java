@@ -45,7 +45,7 @@ public class AddSeriesServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            response.sendRedirect("views/series/addSeries.jsp");
+            request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -72,31 +72,31 @@ public class AddSeriesServlet extends HttpServlet {
             // Validate input parameters
             if (isValidString(authorName)) {
                 request.setAttribute("error", "Author name cannot be empty");
-                request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
                 return;
             }
     
             if (isValidString(seriesTitle)) {
                 request.setAttribute("error", "Series title cannot be empty");
-                request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
                 return;
             }
     
             if (isValidInteger(seriesStatus)) {
                 request.setAttribute("error", "Series status cannot be empty");
-                request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
                 return;
             }
     
             if (isValidString(seriesDescription)) {
                 request.setAttribute("error", "Series description cannot be empty");
-                request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
                 return;
             }
     
             if (isValidString(seriesCoverImageURL)) {
                 request.setAttribute("error", "Series cover image URL cannot be empty");
-                request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
                 return;
             }
     
@@ -107,15 +107,15 @@ public class AddSeriesServlet extends HttpServlet {
             // Check if the insertion was successful
             if (success) {
                 request.setAttribute("message", "Series added successfully");
-                response.sendRedirect("views/adminDashboard");
+                response.sendRedirect(request.getContextPath() + "/adminDashboard");
             } else {
                 request.setAttribute("error", "An error occurred while adding the series");
-                request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Cannot add the Series Information.");
-            request.getRequestDispatcher("views/error.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         }
     }
 
