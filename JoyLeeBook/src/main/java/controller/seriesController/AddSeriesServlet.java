@@ -11,8 +11,9 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Series;
 import dao.SeriesDAO;
+import static utils.Validator.isValidInteger;
+import static utils.Validator.isValidString;
 
-import static utils.Validator;
 
 /**
  * Servlet to handle adding a new series.
