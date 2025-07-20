@@ -40,7 +40,8 @@ a {
     text-decoration: none;
 }
 
-header, footer {
+header,
+footer {
     min-width: 550px;
 }
 
@@ -480,11 +481,32 @@ body {
     flex-direction: row;
 }
 
+.custom-control {
+    width: 40px;
+    height: 40px;
+    position: absolute;
+    top: 50%;
+    transform: translateY(-65%);
+    z-index: 2;
+    background-color: rgba(0, 0, 0, 0.5);
+    border-radius: 50%;
+    border: 2px solid #ccc;
+}
+
+.carousel-control-prev {
+    left: 20px;
+}
+
+.carousel-control-next {
+    right: 20px;
+}
+
 .menu {
     width: 100%;
     display: flex;
     justify-content: end;
 }
+
 
 .genre-badge {
     border-radius: 1rem;
@@ -596,7 +618,7 @@ a[href="#header"] {
     .search-container {
         flex-direction: column;
     }
-    
+
     .search-series {
         width: 100%;
     }
@@ -665,7 +687,8 @@ a[href="#header"] {
         width: 100%;
     }
 
-    .login, .signup {
+    .login,
+    .signup {
         width: 100%;
     }
 

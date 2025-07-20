@@ -49,6 +49,7 @@
   </header>
 
   <main class="mb-4 d-flex flex-column align-items-center justify-content-center">
+
     <!-- Carousel -->
     <div class="container my-5">
       <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
@@ -71,35 +72,58 @@
                   <a href="#" class="btn btn-outline-dark">Add library</a>
                 </div>
               </div>
-              
+
               <!-- Ảnh -->
-              <div class="image-series mx-5" >
+              <div class="image-series mx-5">
                 <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
                   alt="cover" class="rounded" style="height: 300px; object-fit: cover;">
               </div>
             </div>
           </div>
 
+          <!-- Slide 2 -->
+          <div class="carousel-item">
+            <div class="d-flex flex-wrap align-items-center p-4 mb-5 bg-primary-subtle rounded shadow"
+              style="max-width: 1150px; margin: auto;">
+              <!-- Text -->
+              <div class="information-series flex-grow-1 mx-5">
+                <span class="badge bg-light text-primary mt-2 mb-2">Hot</span>
+                <h3 class="fw-bold">Tên truyện 2</h3>
+                <span class="text-muted">Ch. 15 - 13m ago</span>
 
+                <div class="d-flex gap-2 mt-2 mb-2">
+                  <a href="read.html" class="btn btn-primary" style="background-color: #0070d2; border: none;">Read</a>
+                  <a href="#" class="btn btn-outline-dark">Add library</a>
+                </div>
+              </div>
+
+              <!-- Ảnh -->
+              <div class="image-series mx-5">
+                <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
+                  alt="cover" class="rounded" style="height: 300px; object-fit: cover;">
+              </div>
+            </div>
+          </div>
         </div>
-
         <!-- Nút chuyển slide -->
-        <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators"
-          data-bs-slide="prev">
+        <button class="carousel-control-prev custom-control border border-black" type="button"
+          data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
           <span class="carousel-control-prev-icon" aria-hidden="true"></span>
           <span class="visually-hidden">Previous</span>
         </button>
 
-        <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators"
-          data-bs-slide="next">
+        <button class="carousel-control-next custom-control border border-black" type="button"
+          data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
           <span class="carousel-control-next-icon" aria-hidden="true"></span>
           <span class="visually-hidden">Next</span>
         </button>
-
       </div>
+
+
     </div>
 
-    <div class="content d-flex flex-column align-items-center justify-content-between border border-danger">
+
+    <div class="content d-flex flex-column align-items-center justify-content-between">
       <div class="section-title text-center m-4"> LAST RELEASED </div>
 
       <div class="card-container">
@@ -231,4 +255,5 @@
   <!-- Bootstrap JS -->
   <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
+
 </html>
