@@ -77,6 +77,7 @@ public class LoginServlet extends HttpServlet {
                     for (Cookie cookie : cookies) {
                         if ("rememberedUsername".equals(cookie.getName()) || "rememberedRole".equals(cookie.getName())) {
                             cookie.setMaxAge(0);
+                            response.addCookie(cookie);
                         }
                     }
                 }
@@ -102,8 +103,8 @@ public class LoginServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        String username = request.getParameter("username");
-        String password = request.getParameter("password");
+        String username = request.getParameter("username").trim();
+        String password = request.getParameter("password").trim();
         String rememberMe = request.getParameter("rememberMe");
 
         if (!isValidString(username)) {
