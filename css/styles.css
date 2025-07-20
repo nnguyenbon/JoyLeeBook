@@ -1,3 +1,9 @@
+/* ============================================================================================================================== */
+/* ======================================================                  ====================================================== */
+/* ======================================================      HTMLv1      ====================================================== */
+/* ======================================================                  ====================================================== */
+/* ============================================================================================================================== */
+
 /* =========================================================== ROOT =========================================================== */
 * {
     margin: 0px;
@@ -45,6 +51,22 @@ body {
     height: 100%;
 }
 
+.border-radius-none {
+    border-radius: none;
+}
+
+.outline-none {
+    outline: none;
+}
+
+.border-none {
+    border: none;
+}
+
+.bg-none {
+    background: none;
+}
+
 .d-none {
     display: none;
 }
@@ -65,12 +87,6 @@ body {
 .menu-layout {
     display: flex;
     align-items: center;
-}
-
-.menu {
-    margin-left: 25px;
-    display: flex;
-    justify-content: space-evenly;
 }
 
 .menu-icon {
@@ -117,6 +133,7 @@ body {
 }
 
 .user-profile-icon {
+    font-size: 2.7em;
     color: var(--light-blue-gray);
     border: 2px solid black;
     border-radius: 50%;
@@ -307,7 +324,7 @@ body {
     top: 1.2rem;
 }
 
-/* =========================================================== VIEW INFO =========================================================== */
+/* =================================== VIEW INFO =================================== */
 .series-content {
     max-width: 750px;
     min-width: 200px;
@@ -399,7 +416,7 @@ body {
     background-color: lightgray;
 }
 
-/* =========================================================== READ CHAPTER =========================================================== */
+/* =================================== READ CHAPTER =================================== */
 .prev-btn {
     width: 2.5em;
     height: 2.5em;
@@ -442,9 +459,26 @@ body {
     background-color: #e3e3e3;
 }
 
-/* =========================================================== HTMLv2 =========================================================== */
-.navbar-collapse {
+/* ============================================================================================================================== */
+/* ======================================================                  ====================================================== */
+/* ======================================================      HTMLv2      ====================================================== */
+/* ======================================================                  ====================================================== */
+/* ============================================================================================================================== */
+
+/* =================================== HEADER =================================== */
+.navbar {
+    background-color: #517594;
+}
+
+.navbar-layout {
     display: flex;
+    flex-direction: row;
+}
+
+.menu {
+    width: 100%;
+    display: flex;
+    justify-content: end;
 }
 
 .genre-badge {
@@ -475,17 +509,35 @@ body {
     margin-left: 0.5em;
 }
 
-.navbar {
-    background-color: #517594;
-}
-
 .login {
     color: #fff;
+    text-align: center;
+    align-self: center;
 }
 
 .signup {
-    background-color: #8aab52;
     color: white;
+    text-align: center;
+    align-self: center;
+    background-color: #8aab52;
+}
+
+.section-title {
+    font-weight: bold;
+    font-size: 1.3rem;
+    margin-top: 0.5rem;
+}
+
+.manga-card {
+    border-radius: 0.5rem;
+    overflow: hidden;
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+    width: 250px;
+}
+
+.manga-cover {
+    object-fit: cover;
+    height: 300px;
 }
 
 /* =========================================================== FOOTER =========================================================== */
@@ -513,7 +565,8 @@ a[href="#header"] {
 @keyframes moveLeft {}
 
 /* =========================================================== RESPONSIVE =========================================================== */
-@media (max-width: 1200px) {
+/* MEDIA TABLET */
+@media (max-width: 768px) {
 
     /* =========================================================== MAIN =========================================================== */
     .content {
@@ -525,7 +578,6 @@ a[href="#header"] {
     }
 
     /* =================================== HOME/DASHBOARD =================================== */
-
     .menu-layout {
         flex-direction: column;
     }
@@ -549,13 +601,6 @@ a[href="#header"] {
         display: none;
     }
 
-    .menu {
-        margin-top: 15px;
-        display: none;
-        flex-direction: column-reverse;
-        border-top: 2px solid var(--white-cream);
-    }
-
     .menu-icon {
         display: flex;
     }
@@ -567,5 +612,23 @@ a[href="#header"] {
     .signup-btn {
         background-color: var(--blue-gray);
     }
+
+    /* =================================== HTMLv2 =================================== */
+    .navbar-layout {
+        flex-direction: column;
+    }
+
+    .menu {
+        margin-top: 15px;
+        display: none;
+        flex-direction: column-reverse;
+        border-top: 2px solid var(--white-cream);
+    }
+
+    .menu>form,
+    .menu>form>input {
+        width: 100%;
+    }
+
 
 }
