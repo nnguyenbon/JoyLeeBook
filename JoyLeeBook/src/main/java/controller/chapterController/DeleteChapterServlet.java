@@ -1,8 +1,3 @@
-/**
- * Servlet to handle deleting a chapter.
- *
- * @author HaiDD-dev
- */
 package controller.chapterController;
 
 import dao.ChapterDAO;
@@ -18,6 +13,8 @@ import static utils.Validator.isValidInteger;
 
 /**
  * Servlet to handle deleting a chapter.
+ *
+ * @author HaiDD-dev
  */
 @WebServlet(name = "DeleteChapterServlet", urlPatterns = {"/deleteChapter"})
 public class DeleteChapterServlet extends HttpServlet {
@@ -62,16 +59,6 @@ public class DeleteChapterServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            // Uncomment and adjust for role-based access control if needed
-            /*
-            User user = (User) request.getSession().getAttribute("user");
-            if (user == null || !"admin".equalsIgnoreCase(user.getRoleName())) {
-                request.setAttribute("error", "Unauthorized access.");
-                request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
-                return;
-            }
-             */
-
             String chapterId = request.getParameter("chapterId");
             String seriesId = request.getParameter("seriesId");
 
@@ -106,15 +93,5 @@ public class DeleteChapterServlet extends HttpServlet {
             request.setAttribute("error", "A database error occurred while deleting the chapter.");
             request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         }
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Handles deletion of chapter records.";
     }
 }
