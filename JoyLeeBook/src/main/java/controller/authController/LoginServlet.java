@@ -132,14 +132,7 @@ public class LoginServlet extends HttpServlet {
 
                     // Set thời gian sống 7 ngày
                     userCookie.setMaxAge(60 * 60 * 24 * 7);
-                    roleCookie.setMaxAge(60 * 60 * 24 * 7);
-
-                    // Set path và httpOnly để bảo mật
-//                    userCookie.setPath("/");
-//                    roleCookie.setPath("/");
-//        userCookie.setHttpOnly(true);
-//        roleCookie.setHttpOnly(true);
-//        
+                    roleCookie.setMaxAge(60 * 60 * 24 * 7);   
                     response.addCookie(userCookie);
                     response.addCookie(roleCookie);
                 } else {
@@ -170,7 +163,7 @@ public class LoginServlet extends HttpServlet {
         if ("admin".equals(role)) {
             response.sendRedirect(request.getContextPath() + "/adminDashboard");
         } else if ("reader".equals(role)) {
-            response.sendRedirect(request.getContextPath() + "/index.jsp");
+            response.sendRedirect(request.getContextPath() + "/home");
         } else {
             request.setAttribute("errorMessage", "Invalid role");
             request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
