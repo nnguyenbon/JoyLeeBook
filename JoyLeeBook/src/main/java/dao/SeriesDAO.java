@@ -36,8 +36,8 @@ public class SeriesDAO {
      *
      * @return List of Series objects.
      */
-    public List<Series> getAllSeries() throws SQLException {
-        List<Series> listSeries = new ArrayList<>();
+    public ArrayList<Series> getAllSeries() throws SQLException {
+        ArrayList<Series> listSeries = new ArrayList<>();
         String sql = "SELECT * FROM Series";
         try (PreparedStatement stmt = connection.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
@@ -131,8 +131,8 @@ public class SeriesDAO {
      * @return A list of Series objects for the current page.
      * @throws SQLException If a database access error occurs.
      */
-    public List<Series> searchSeries(String keyword, int pageNumber, int pageSize) throws SQLException {
-        List<Series> list = new ArrayList<>();
+    public ArrayList<Series> searchSeries(String keyword, int pageNumber, int pageSize) throws SQLException {
+        ArrayList<Series> list = new ArrayList<>();
 
         // Base SQL query for searching
         String baseSql = "SELECT * FROM Series";
