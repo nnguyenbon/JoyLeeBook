@@ -1,9 +1,11 @@
 package controller.seriesController;
 
-import dao.ChapterDAO;
-import dao.LibraryDAO;
 import java.io.IOException;
 import java.sql.Connection;
+import java.util.ArrayList;
+
+import dao.ChapterDAO;
+import dao.LibraryDAO;
 import dao.SeriesDAO;
 import db.DBConnection;
 import jakarta.servlet.ServletException;
@@ -12,12 +14,11 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
-import java.util.ArrayList;
 import java.util.List;
 import model.Library;
 import model.Series;
 import model.User;
-import utils.Validator;
+import static utils.Validator.isValidInteger;
 
 /**
  *
@@ -25,6 +26,7 @@ import utils.Validator;
  */
 @WebServlet(name = "SaveSeriesServlet", urlPatterns = {"/saveSeries"})
 public class SaveSeriesServlet extends HttpServlet {
+
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -48,10 +50,10 @@ public class SaveSeriesServlet extends HttpServlet {
                 response.sendRedirect(request.getContextPath() + "/login");
                 return;
             }
-            
+
             User user = (User) session.getAttribute("loggedInUser");
             int userId = user.getUserId();
-            
+
             ArrayList<Library> libraryOfUser = libraryDao.getLibrariesByUserId(userId);
             ArrayList<Series> librarySeries = new ArrayList<>();
             for (Library library : libraryOfUser) {
@@ -68,21 +70,31 @@ public class SaveSeriesServlet extends HttpServlet {
 
             String pageParam = request.getParameter("page");
             int currentPage = 1;
-            if (pageParam != null && Validator.isValidInteger(pageParam)) {
+            if (pageParam != null && isValidInteger(pageParam)) {
                 currentPage = Integer.parseInt(pageParam);
             }
 
-            if (currentPage < 1) {
+// Điều chỉnh currentPage phù hợp
+            if (totalPages == 0) {
                 currentPage = 1;
-            }
-            if (currentPage > totalPages) {
-                currentPage = totalPages;
+            } else {
+                if (currentPage < 1) {
+                    currentPage = 1;
+                }
+                if (currentPage > totalPages) {
+                    currentPage = totalPages;
+                }
             }
 
-            int startIndex = (currentPage - 1) * itemsPerPage;
-            int endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+            List<Series> paginatedSeries;
+            if (totalItems == 0) {
+                paginatedSeries = new ArrayList<>();
+            } else {
+                int startIndex = (currentPage - 1) * itemsPerPage;
+                int endIndex = Math.min(startIndex + itemsPerPage, totalItems);
+                paginatedSeries = librarySeries.subList(startIndex, endIndex);
+            }
 
-            ArrayList<Series> paginatedSeries = (ArrayList<Series>) librarySeries.subList(startIndex, endIndex);
             request.setAttribute("librarySeries", paginatedSeries);
             request.setAttribute("currentPage", currentPage);
             request.setAttribute("totalPages", totalPages);
@@ -109,28 +121,28 @@ public class SaveSeriesServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/login");
             return;
         }
-    
+
         String seriesIdStr = request.getParameter("seriesId");
-        if (!Validator.isValidInteger(seriesIdStr)) {
+        if (!isValidInteger(seriesIdStr)) {
             request.setAttribute("error", "Invalid series ID.");
             request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
             return;
         }
         int seriesId = Integer.parseInt(seriesIdStr);
-    
+
         User user = (User) session.getAttribute("loggedInUser");
         int userId = user.getUserId();
-    
+
         try {
             SeriesDAO seriesDAO = new SeriesDAO(DBConnection.getConnection());
             boolean isSeriesSaved = seriesDAO.isSeriesSaved(seriesId, userId);
-    
+
             if (isSeriesSaved) {
                 session.setAttribute("message", "This series is already saved in your library.");
                 response.sendRedirect(request.getContextPath() + "/viewSeriesInfo?seriesId=" + seriesId);
                 return;
             }
-    
+
             boolean isSaved = seriesDAO.saveSeries(seriesId, userId);
             if (isSaved) {
                 session.setAttribute("message", "Series saved successfully!");
@@ -140,7 +152,7 @@ public class SaveSeriesServlet extends HttpServlet {
                 request.setAttribute("seriesId", seriesId);
                 request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
             }
-    
+
         } catch (Exception e) {
             request.setAttribute("error", e.getMessage());
             request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);

@@ -1,34 +1,40 @@
 package controller.seriesController;
 
-import java.io.IOException;
-import java.sql.SQLException;
-
+import dao.CategoryDAO;
+import dao.SeriesDAO;
 import db.DBConnection;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import model.Series;
-import dao.SeriesDAO;
-import static utils.Validator.isValidInteger;
-import static utils.Validator.isValidString;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
-/**
- * Servlet to handle adding a new series.
- *
- * @author HaiDD-dev
- */
-@WebServlet(name = "AddSeriesServlet", urlPatterns = {"/addSeries"})
+import static utils.Validator.*;
+
+@WebServlet(name = "AddSeriesServlet", urlPatterns = { "/addSeries" })
+@MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 5 * 1024 * 1024, maxRequestSize = 10 * 1024 * 1024)
 public class AddSeriesServlet extends HttpServlet {
 
     private SeriesDAO seriesDAO;
+    private CategoryDAO categoryDAO;
 
     @Override
     public void init() {
         try {
             seriesDAO = new SeriesDAO(DBConnection.getConnection());
+            categoryDAO = new CategoryDAO(DBConnection.getConnection());
         } catch (SQLException | ClassNotFoundException e) {
             throw new RuntimeException(e);
         }
@@ -43,7 +49,8 @@ public class AddSeriesServlet extends HttpServlet {
      * @throws IOException      if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         try {
             request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
         } catch (Exception e) {
@@ -60,62 +67,131 @@ public class AddSeriesServlet extends HttpServlet {
      * @throws IOException      if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+
+        String seriesTitle = request.getParameter("seriesTitle");
+        String authorName = request.getParameter("authorName");
+        String seriesStatus = request.getParameter("seriesStatus");
+        String seriesDescription = request.getParameter("seriesDescription");
+        String[] genreParamValues = request.getParameterValues("genres");
+        ArrayList<Integer> genreIDs = new ArrayList<>();
+
+        if (!isValidString(authorName)) {
+            request.setAttribute("message", "Author name cannot be empty");
+            request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
+            return;
+        }
+
+        if (!isValidString(seriesTitle)) {
+            request.setAttribute("message", "Series title cannot be empty");
+            request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
+            return;
+        }
+
+        if (!isValidString(seriesStatus)) {
+            request.setAttribute("message", "Series status cannot be empty");
+            request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
+            return;
+        }
+
+        if (!isValidString(seriesDescription)) {
+            request.setAttribute("message", "Series description cannot be empty");
+            request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
+            return;
+        }
+
+        if (genreParamValues != null) {
+            for (String idStr : genreParamValues) {
+                try {
+                    genreIDs.add(Integer.parseInt(idStr));
+                } catch (NumberFormatException e) {
+                    e.printStackTrace();
+                }
+            }
+        }
+
+        Part filePart = request.getPart("coverImage");
+        String submittedFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
+
+        if (submittedFileName.trim().isEmpty()) {
+            request.setAttribute("message", "Please select a cover image.");
+            request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
+            return;
+        }
+
+        String uploadPath = getServletContext().getRealPath("/assets/images/") + File.separator;
+        File uploadDir = new File(uploadPath);
+        if (!uploadDir.exists())
+            uploadDir.mkdirs();
+
+        String baseName;
+        int lastDotIndex = submittedFileName.lastIndexOf('.');
+        if (lastDotIndex > 0 && lastDotIndex < submittedFileName.length() - 1) {
+            baseName = submittedFileName.substring(0, lastDotIndex);
+        } else {
+            baseName = submittedFileName;
+        }
+
+        String uniqueID = UUID.randomUUID().toString().substring(0, 8);
+        String avifFileName = baseName + "-" + uniqueID + ".avif";
+        String tempFileName = baseName + "-" + uniqueID + "_temp." + getExtension(submittedFileName);
+
+        File tempImageFile = new File(uploadPath + tempFileName);
+        filePart.write(tempImageFile.getAbsolutePath());
+
+        File avifImageFile = new File(uploadPath + avifFileName);
+        ProcessBuilder pb = new ProcessBuilder("avifenc", tempImageFile.getAbsolutePath(),
+                avifImageFile.getAbsolutePath());
+
         try {
-            // Retrieve parameters from the request
-            String authorName = request.getParameter("authorName");
-            String seriesTitle = request.getParameter("seriesTitle");
-            String seriesStatus = request.getParameter("seriesStatus");
-            String seriesDescription = request.getParameter("seriesDescription");
-            String seriesCoverImageURL = request.getParameter("seriesCoverImageURL");
-    
-            // Validate input parameters
-            if (!isValidString(authorName)) {
-                request.setAttribute("error", "Author name cannot be empty");
+            Process process = pb.start();
+            int exitCode = process.waitFor();
+            if (exitCode != 0) {
+                request.setAttribute("message", "Error! Cannot convert image to AVIF format.");
                 request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
                 return;
-            }
-            
-            if (!isValidString(seriesTitle)) {
-                request.setAttribute("error", "Series title cannot be empty");
-                request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
-                return;
-            }
-            
-            if (!isValidInteger(seriesStatus)) {
-                request.setAttribute("error", "Series status must be a valid integer");
-                request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
-                return;
-            }
-            
-            if (!isValidString(seriesDescription)) {
-                request.setAttribute("error", "Series description cannot be empty");
-                request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
-                return;
-            }
-            
-            if (!isValidString(seriesCoverImageURL)) {
-                request.setAttribute("error", "Series cover image URL cannot be empty");
-                request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
-                return;
-            }
-    
-            // Create a new Series object and insert it into the database
-            Series series = new Series(authorName, seriesTitle, seriesStatus, seriesDescription, seriesCoverImageURL);
-            boolean success = seriesDAO.insertSeries(series);
-    
-            // Check if the insertion was successful
-            if (success) {
-                request.setAttribute("message", "Series added successfully");
-                response.sendRedirect("/WEB-INF/views/adminDashboard");
-            } else {
-                request.setAttribute("message", "An error occurred while adding the series");
-                request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
             }
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Cannot add the Series Information.");
-            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
+            request.setAttribute("message", "Image processing error: " + e.getMessage());
+            request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
+            return;
+        } finally {
+            tempImageFile.delete();
         }
+
+        String imageUrl = "assets/images/" + avifFileName;
+
+        Series newSeries = new Series();
+        newSeries.setSeriesTitle(seriesTitle);
+        newSeries.setAuthorName(authorName);
+        newSeries.setStatus(seriesStatus);
+        newSeries.setDescription(seriesDescription);
+        newSeries.setCoverImageUrl(imageUrl);
+
+        int insertedId = 0;
+        try {
+            insertedId = seriesDAO.insertAndReturnId(newSeries);
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (!genreIDs.isEmpty()) {
+            try {
+                categoryDAO.addCategories(insertedId, genreIDs);
+            } catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        response.sendRedirect(request.getContextPath() + "/adminDashboard");
+    }
+
+    private String getExtension(String filename) {
+        int dotIndex = filename.lastIndexOf('.');
+        if (dotIndex >= 0)
+            return filename.substring(dotIndex + 1).toLowerCase();
+        return "";
     }
 }

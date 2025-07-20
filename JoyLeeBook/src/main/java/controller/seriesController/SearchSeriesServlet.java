@@ -1,9 +1,11 @@
 package controller.seriesController;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.ArrayList;
 
+import dao.GenreDAO;
 import dao.SeriesDAO;
 import db.DBConnection;
 import jakarta.servlet.ServletException;
@@ -11,7 +13,9 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import model.Genre;
 import model.Series;
+import static utils.Validator.*;
 
 /**
  * Servlet to handle searching for series.
@@ -20,20 +24,6 @@ import model.Series;
  */
 @WebServlet(name = "SearchSeriesServlet", urlPatterns = {"/search"})
 public class SearchSeriesServlet extends HttpServlet {
-
-    private SeriesDAO seriesDAO;
-
-    /**
-     * Initializes the servlet and sets up the SeriesDAO.
-     */
-    @Override
-    public void init() {
-        try {
-            seriesDAO = new SeriesDAO(DBConnection.getConnection());
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code> methods.
@@ -44,25 +34,48 @@ public class SearchSeriesServlet extends HttpServlet {
      * @throws IOException      if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException, SQLException {
-        try {
-            // Retrieve the search query from the request
-            String searchQuery = request.getParameter("searchQuery");
-            List<Series> seriesList;
-    
-            // If searchQuery is not null or empty, search for series; otherwise, get all series
-            if (searchQuery != null && !searchQuery.isEmpty()) {
-                seriesList = seriesDAO.searchSeries(searchQuery);
-            } else {
-                seriesList = seriesDAO.getAllSeries();
+        final int RESULTS_PER_PAGE = 6;
+
+        String searchQuery = request.getParameter("searchQuery");
+        if (searchQuery == null) {
+            searchQuery = "";
+        }
+
+        int currentPage = 1;
+        String pageParam = request.getParameter("page");
+        if (pageParam != null) {
+            try {
+                if (isValidInteger(pageParam)) {
+                    currentPage = Integer.parseInt(pageParam);
+                }
+            } catch (NumberFormatException e) {
+                currentPage = 1;
             }
-    
-            // Set the series list as a request attribute and forward to the index page
+        }
+
+        try (Connection conn = DBConnection.getConnection()) {
+            SeriesDAO seriesDAO = new SeriesDAO(conn);
+            GenreDAO genreDAO = new GenreDAO(conn);
+
+            int totalResults = seriesDAO.getTotalSeriesCount(searchQuery);
+            int totalPages = (int) Math.ceil((double) totalResults / RESULTS_PER_PAGE);
+
+            ArrayList<Series> seriesList = seriesDAO.searchSeries(searchQuery, currentPage, RESULTS_PER_PAGE);
+            ArrayList<Genre> genreList = genreDAO.getAll();
+
+            // MỚI: Gửi các thông tin phân trang tới JSP
             request.setAttribute("seriesList", seriesList);
-            request.getRequestDispatcher("/views/series/searchSeries.jsp").forward(request, response);
-        } catch (Exception e) {
+            request.setAttribute("genres", genreList);
+            request.setAttribute("currentPage", currentPage);
+            request.setAttribute("totalPages", totalPages);
+            request.setAttribute("searchQuery", searchQuery); // Giữ lại query để tạo link phân trang
+
+            request.getRequestDispatcher("/WEB-INF/views/series/searchSeries.jsp").forward(request, response);
+
+        } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
-            request.setAttribute("error", "Cannot get the Series Information.");
-            request.getRequestDispatcher("/views/error.jsp").forward(request, response);
+            request.setAttribute("error", "Database error while searching for series.");
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         }
     }
 
@@ -98,15 +111,5 @@ public class SearchSeriesServlet extends HttpServlet {
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
     }
 }

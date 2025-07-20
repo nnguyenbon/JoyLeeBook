@@ -1,6 +1,7 @@
 package controller.seriesController;
 
 import java.io.IOException;
+
 import dao.SeriesDAO;
 import db.DBConnection;
 import jakarta.servlet.ServletException;
@@ -10,7 +11,6 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.User;
-import utils.Validator;
 import static utils.Validator.isValidInteger;
 
 /**
@@ -36,9 +36,9 @@ public class RemoveSavedSeriesServlet extends HttpServlet {
             if (user == null) {
                 response.sendRedirect(request.getContextPath() + "/login");
                 return;
-            }       
+            }
             int userId = user.getUserId();
-            
+
             String seriesIdStr = request.getParameter("seriesId");
             if (!isValidInteger(seriesIdStr)) {
                 request.setAttribute("error", "Invalid series ID.");
@@ -46,7 +46,7 @@ public class RemoveSavedSeriesServlet extends HttpServlet {
                 return;
             }
             int seriesId = Integer.parseInt(seriesIdStr);
-            
+
             try {
                 SeriesDAO seriesDAO = new SeriesDAO(DBConnection.getConnection());
                 boolean isSeriesSaved = seriesDAO.isSeriesSaved(seriesId, userId);
@@ -69,7 +69,8 @@ public class RemoveSavedSeriesServlet extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
             }
         } else {
-            response.sendRedirect(request.getContextPath() + "/login"); //cho nay quay ve login.jsp hay /login (= controller)?
+            response.sendRedirect(request.getContextPath() + "/login"); // cho nay quay ve login.jsp hay /login (=
+                                                                        // controller)?
         }
     }
 }

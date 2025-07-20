@@ -1,11 +1,5 @@
-<%-- 
-    Document   : addSeries
-    Created on : Jul 17, 2025, 10:40:42 AM
-    Author     : HaiDD-dev
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@taglib prefix="c" uri="jakarta.tags.core" %>
 
 <%@ page import="model.User" %>
 <%
@@ -118,13 +112,31 @@
             </div>
         </main>
 
-        <jsp:include page="/WEB-INF/views/components/footer.jsp" />
-        <script src="${pageContext.request.contextPath}/js/index.js"></script>
-        <script>
-            $(document).ready(function () {
-                $('#genreSelect').select2({
-                    placeholder: "Select genres"
-                });
+<footer class="main-footer text-white">
+    <div class="description-footer pt-2 pb-4 ps-2 pe-2 text-center">
+        <h5 class="w-50 mx-auto m-3"><b>ABOUT US</b></h5>
+        <p class="w-50 mx-auto">JoyLeeBook is a platform for manga enthusiasts. We provide a space to explore, share, and discuss stories from various genres and cultures. Discover your next favorite series with us!</p>
+    </div>
+
+    <div class="main-context social-footer w-100 h-100 p-2 d-flex justify-content-center align-items-center">
+        <div class="left-social-footer w-100 d-flex justify-content-end me-3"></div>
+        <a href="#" class="text-white"><i class="instagram-icon fab fa-instagram fa-2x"></i></a>
+        <a href="#" class="text-white"><i class="facebook-icon fab fa-facebook fa-2x m-3"></i></a>
+        <a href="#" class="text-white"><i class="tiktok-icon fab fa-tiktok fa-2x"></i></a>
+        <div class="right-social-footer w-100 d-flex justify-content-end ms-3">
+            <!-- Back to Top -->
+            <a href="#header" class="d-flex align-items-center justify-content-center"><i class="fas fa-arrow-up fa-md"></i></a>
+        </div>
+    </div>
+</footer>
+
+<script src="../../js/index.js"></script> 
+<script src="../../js/jQuery.js"></script>
+<script>
+    $(document).ready(function () {
+        $('#genreSelect').select2({
+            placeholder: "Select genres"
+        });
 
                 $('#coverImage').on('change', function (event) {
                     const file = event.target.files[0];

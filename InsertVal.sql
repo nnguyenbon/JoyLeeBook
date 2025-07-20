@@ -719,3 +719,23 @@ VALUES
 (4, 11, 8),
 (5, 12, 1),
 (4, 19, 1);
+
+UPDATE Series SET cover_image_url = 'assets/images/cau_be_thong_minh.avif' WHERE series_id = 1;
+UPDATE Series SET cover_image_url = 'assets/images/The_Legend_of_Mai_An_Tiem.avif' WHERE series_id = 2;
+UPDATE Series SET cover_image_url = 'assets/images/monarch_of_time-7711e1bd.avif' WHERE series_id = 3;
+UPDATE Series SET cover_image_url = 'assets/images/shadow_slave.avif' WHERE series_id = 4;
+UPDATE Series SET cover_image_url = 'assets/images/so_dua.avif' WHERE series_id = 5;
+UPDATE Series SET cover_image_url = 'assets/images/dungeon_diver_stealing_a_monster.avif' WHERE series_id = 6;
+UPDATE Series SET cover_image_url = 'assets/images/Embers_Ad_Infinitum.avif' WHERE series_id = 7;
+UPDATE Series SET cover_image_url = 'assets/images/Evolving_infinitely_from_ground_zero.avif' WHERE series_id = 8;
+UPDATE Series SET cover_image_url = 'assets/images/goddess_medical_doctor.avif' WHERE series_id = 9;
+UPDATE Series SET cover_image_url = 'assets/images/sorce_stone.avif' WHERE series_id = 10;
+UPDATE Series SET cover_image_url = 'assets/images/Infinite_Mana_In_The_Apocalypse.avif' WHERE series_id = 11;
+UPDATE Series SET cover_image_url = 'assets/images/Son_Tinh_Thuy_Tinh.avif' WHERE series_id = 12;
+UPDATE Series SET cover_image_url = 'assets/images/supreme-magus-webnovel.avif' WHERE series_id = 13;
+UPDATE Series SET cover_image_url = 'assets/images/tensei_shitara_slime_datta_ken.avif' WHERE series_id = 14;
+UPDATE Series SET cover_image_url = 'assets/images/thanh_giong.avif' WHERE series_id = 15;
+UPDATE Series SET cover_image_url = 'assets/images/the_epi_of_leviathan.avif' WHERE series_id = 16;
+UPDATE Series SET cover_image_url = 'assets/images/the-legendary-mechanic-novel.avif' WHERE series_id = 17;
+UPDATE Series SET cover_image_url = 'assets/images/The_Mech_Touch.avif' WHERE series_id = 18;
+UPDATE Series SET cover_image_url = 'assets/images/the-world-of-otome-games-is-toug.avif' WHERE series_id = 19;

@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller.chapterController;
 
 import dao.CategoryDAO;
@@ -15,8 +11,10 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Connection;
 import model.Chapter;
 import model.Series;
+import static utils.Validator.*;
 
 /**
  *
@@ -25,7 +23,6 @@ import model.Series;
 @WebServlet(name = "AddChapterServlet", urlPatterns = {"/addChapter"})
 public class AddChapterServlet extends HttpServlet {
 
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -37,28 +34,31 @@ public class AddChapterServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        Connection conn = null;
         try {
             //Chua check admin
             // Check id if user operate with url
-            String idParam = request.getParameter("seriesId");
-            if (idParam == null || idParam.isEmpty()) {
-                request.getRequestDispatcher("views/error.jsp").forward(request, response);
+            String seriesIdParam = request.getParameter("seriesId");
+            if (!isValidInteger(seriesIdParam)) {
+                request.setAttribute("errorMessage", "Invalid seriesId or chapterIndex.");
+                request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
                 return;
             }
 
-            SeriesDAO seriesDAO = new SeriesDAO(DBConnection.getConnection());
-            ChapterDAO chapterDAO = new ChapterDAO(DBConnection.getConnection());
-            CategoryDAO categoryDAO = new CategoryDAO(DBConnection.getConnection());
-
-            int seriesId = Integer.parseInt(idParam);
+            int seriesId = Integer.parseInt(seriesIdParam);
+            conn = DBConnection.getConnection();
+            SeriesDAO seriesDao = new SeriesDAO(conn);
+            ChapterDAO chapterDao = new ChapterDAO(conn);
+            CategoryDAO categoryDAO = new CategoryDAO(conn);
             request.setAttribute("seriesId", seriesId);
+            request.getRequestDispatcher("/WEB-INF/views/addChapter.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Cannot get the Series Id.");
-            request.getRequestDispatcher("views/error.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         }
     }
-
+    
     /**
      * Handles the HTTP <code>POST</code> method.
      *
@@ -78,16 +78,23 @@ public class AddChapterServlet extends HttpServlet {
             String content = request.getParameter("content");
 
             // Validate parameters (basic check)
-            if (seriesIdParam == null || chapterIndexParam == null || chapterTitle == null || content == null
-                    || seriesIdParam.isEmpty() || chapterIndexParam.isEmpty() || chapterTitle.isEmpty() || content.isEmpty()) {
-                request.setAttribute("error", "All fields are required.");
-                request.getRequestDispatcher("views/addChapter.jsp").forward(request, response);
+            if (!isValidInteger(seriesIdParam) || !isValidInteger(chapterIndexParam)
+                    || !isValidString(chapterTitle) || !isValidString(content)) {
+
+                request.setAttribute("message", "All fields are required and must be valid.");
+                request.getRequestDispatcher("/WEB-INF/views/addChapter.jsp").forward(request, response);
                 return;
             }
 
             // Parse integers
             int seriesId = Integer.parseInt(seriesIdParam);
             int chapterIndex = Integer.parseInt(chapterIndexParam);
+
+            if (chapterIndex <= 0) {
+                request.setAttribute("message", "Chapter index must be greater than 0.");
+                request.getRequestDispatcher("/WEB-INF/views/addChapter.jsp").forward(request, response);
+                return;
+            }
 
             // Create Chapter object
             Chapter newChapter = new Chapter(seriesId, chapterIndex, chapterTitle, content);
@@ -99,26 +106,14 @@ public class AddChapterServlet extends HttpServlet {
             // Redirect to the chapter list or series detail page
             response.sendRedirect(request.getContextPath() + "/adminListChapter?seriesId=" + seriesId);
         } catch (NumberFormatException e) {
-            // Handle number format errors from parsing integers
             e.printStackTrace();
-            request.setAttribute("error", "Invalid chapter index or series ID.");
-            request.getRequestDispatcher("views/addChapter.jsp").forward(request, response);
+            request.setAttribute("message", "Invalid chapter index or series ID.");
+            request.getRequestDispatcher("/WEB-INF/views/addChapter.jsp").forward(request, response);
         } catch (Exception e) {
-            // Handle any other exception
             e.printStackTrace();
             request.setAttribute("error", "An error occurred while adding the chapter.");
-            request.getRequestDispatcher("views/error.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
 
 }

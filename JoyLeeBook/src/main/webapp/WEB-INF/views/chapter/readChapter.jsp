@@ -1,12 +1,9 @@
-<%-- 
-    Document   : readChapter
-    Created on : Jul 5, 2025, 10:42:33 AM
-    Author     : PC
---%>
-
 <%@page import="model.Chapter"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
+<jsp:include page="/WEB-INF/views/components/_header.jsp" />
 <!DOCTYPE html>
 <html lang="en">
 
@@ -16,7 +13,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
 
         <style>
             .reader-container {
@@ -119,8 +116,10 @@
                 </div>
             </div>
         </main>
-                    
-        <jsp:include page="/WEB-INF/views/components/footer.jsp" />
+        <br>
+        <script src="${pageContext.request.contextPath}/js/index.js"></script> 
+        <script src="${pageContext.request.contextPath}/js/jQuery.js"></script>
+        <jsp:include page="/WEB-INF/views/components/_footer.jsp" />
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 
@@ -154,3 +153,4 @@
         </div>
     </div>
 </div>
+

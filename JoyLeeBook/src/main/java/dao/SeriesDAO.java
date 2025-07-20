@@ -5,6 +5,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
@@ -14,8 +15,7 @@ import model.Series;
 /**
  * DAO class for handling database operations related to Series entity. Provides
  * methods to insert, update, delete, and retrieve Series records from the
- * database.
- * Assumes the Series table has columns: series_id (PK), author_name,
+ * database. Assumes the Series table has columns: series_id (PK), author_name,
  * series_title, status, description, cover_image_url, created_at.
  *
  * @author Trunguyen
@@ -26,6 +26,8 @@ public class SeriesDAO {
 
     /**
      * Constructor to initialize SeriesDAO with a database connection.
+     *
+     * @param connection
      */
     public SeriesDAO(Connection connection) {
         this.connection = connection;
@@ -36,8 +38,8 @@ public class SeriesDAO {
      *
      * @return List of Series objects.
      */
-    public List<Series> getAllSeries() throws SQLException {
-        List<Series> listSeries = new ArrayList<>();
+    public ArrayList<Series> getAllSeries() throws SQLException {
+        ArrayList<Series> listSeries = new ArrayList<>();
         String sql = "SELECT * FROM Series";
         try (PreparedStatement stmt = connection.prepareStatement(sql); ResultSet rs = stmt.executeQuery()) {
             while (rs.next()) {
@@ -123,27 +125,77 @@ public class SeriesDAO {
     }
 
     /**
-     * Searches for series by a partial title or author match.
+     * Searches for series by keyword with pagination support.
      *
-     * @param keyword Keyword to search in series titles.
-     * @return List of Series matching the keyword.
+     * @param keyword    The keyword to search for in the title or author name.
+     * @param pageNumber The current page to retrieve (starting from 1).
+     * @param pageSize   The number of results per page.
+     * @return A list of Series objects for the current page.
+     * @throws SQLException If a database access error occurs.
      */
-    public List<Series> searchSeries(String keyword) throws SQLException {
-        List<Series> list = new ArrayList<>();
-        String sql = "SELECT * FROM Series WHERE series_title LIKE ? OR author_name LIKE ?";
+    public ArrayList<Series> searchSeries(String keyword, int pageNumber, int pageSize) throws SQLException {
+        ArrayList<Series> list = new ArrayList<>();
+
+        // Base SQL query for searching
+        String baseSql = "SELECT * FROM Series WHERE series_title LIKE ? OR author_name LIKE ?";
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            baseSql += " WHERE series_title LIKE ? OR author_name LIKE ?";
+        }
+
+        // Append ordering and pagination clauses for SQL Server
+        String sql = baseSql + " ORDER BY series_id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-            String searchPattern = "%" + keyword + "%";
-            stmt.setString(1, searchPattern);
-            stmt.setString(2, searchPattern);
+            int paramIndex = 1;
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String searchPattern = "%" + keyword + "%";
+                stmt.setString(paramIndex++, searchPattern);
+                stmt.setString(paramIndex++, searchPattern);
+            }
+
+            // Calculate the offset based on the page number and page size
+            int offset = (pageNumber - 1) * pageSize;
+            stmt.setInt(paramIndex++, offset);
+            stmt.setInt(paramIndex++, pageSize);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
+                    // Reuse your mapping method to avoid code duplication
                     list.add(mappingSeriesFromResultSet(rs));
                 }
             }
         }
         return list;
+    }
+
+    /**
+     * Counts the total number of series that match the search keyword.
+     *
+     * @param keyword The keyword to search for in the series title and author name.
+     * @return The total number of series found.
+     * @throws SQLException If a database access error occurs.
+     */
+    public int getTotalSeriesCount(String keyword) throws SQLException {
+        // If the keyword is null or empty, we count all series.
+        String sql = "SELECT COUNT(*) FROM Series";
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql += " WHERE series_title LIKE ? OR author_name LIKE ?";
+        }
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String searchPattern = "%" + keyword + "%";
+                stmt.setString(1, searchPattern);
+                stmt.setString(2, searchPattern);
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1); // Return the value of the first column (the COUNT result)
+                }
+            }
+        }
+        return 0; // Return 0 if no results are found
     }
 
     /**
@@ -161,6 +213,33 @@ public class SeriesDAO {
             stmt.setString(1, seriesTitle);
             try (ResultSet rs = stmt.executeQuery()) {
                 return !rs.next(); // true if the title is not used (available)
+            }
+        }
+    }
+
+    public int insertAndReturnId(Series series) throws SQLException {
+        String sql = "INSERT INTO Series (author_name, series_title, status, description, cover_image_url) " +
+                "VALUES (?, ?, ?, ?, ?)";
+
+        try (PreparedStatement ps = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS)) {
+            ps.setString(1, series.getAuthorName());
+            ps.setString(2, series.getSeriesTitle());
+            ps.setString(3, series.getStatus());
+            ps.setString(4, series.getDescription());
+            ps.setString(5, series.getCoverImageUrl());
+
+            int affectedRows = ps.executeUpdate();
+
+            if (affectedRows == 0) {
+                throw new SQLException("Inserting series failed, no rows affected.");
+            }
+
+            try (ResultSet generatedKeys = ps.getGeneratedKeys()) {
+                if (generatedKeys.next()) {
+                    return generatedKeys.getInt(1); // return generated series_id
+                } else {
+                    throw new SQLException("Inserting series failed, no ID obtained.");
+                }
             }
         }
     }

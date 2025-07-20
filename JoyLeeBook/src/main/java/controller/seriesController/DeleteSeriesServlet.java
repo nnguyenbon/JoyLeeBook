@@ -1,6 +1,7 @@
 package controller.seriesController;
 
 import java.io.IOException;
+import java.sql.Connection;
 import java.sql.SQLException;
 
 import dao.CategoryDAO;
@@ -9,7 +10,6 @@ import dao.HistoryReadingDAO;
 import dao.LibraryDAO;
 import dao.SeriesDAO;
 import db.DBConnection;
-import java.sql.Connection;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -21,15 +21,15 @@ import static utils.Validator.isValidInteger;
  *
  * @author PC
  */
-@WebServlet(name = "DeleteSeriesServlet", urlPatterns = {"/deleteSeries"})
+@WebServlet(name = "DeleteSeriesServlet", urlPatterns = { "/deleteSeries" })
 public class DeleteSeriesServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

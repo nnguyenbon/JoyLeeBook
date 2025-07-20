@@ -1,15 +1,15 @@
 package controller.chapterController;
 
+import java.io.IOException;
+import java.util.ArrayList;
+
 import dao.ChapterDAO;
 import db.DBConnection;
-import java.io.IOException;
-import java.io.PrintWriter;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.util.ArrayList;
 import model.Chapter;
 import static utils.Validator.isValidInteger;
 
@@ -17,15 +17,15 @@ import static utils.Validator.isValidInteger;
  *
  * @author KHAI TOAN
  */
-@WebServlet(name = "PreviousChapterServlet", urlPatterns = {"/previousChapter"})
+@WebServlet(name = "PreviousChapterServlet", urlPatterns = { "/previousChapter" })
 public class PreviousChapterServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -37,7 +37,7 @@ public class PreviousChapterServlet extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
                 return;
             }
-            
+
             int chapterId = Integer.parseInt(chapterIdStr);
             ChapterDAO chapterDAO = new ChapterDAO(DBConnection.getConnection());
             Chapter currentChapter = chapterDAO.getChapterById(chapterId);
@@ -49,7 +49,8 @@ public class PreviousChapterServlet extends HttpServlet {
             }
 
             ArrayList<Chapter> allChapterOfSeries = chapterDAO.getAllChaptersBySeriesId(currentChapter.getSeriesId());
-            Chapter newChapter = chapterDAO.getPreviousChapter(currentChapter.getSeriesId(), currentChapter.getChapterIndex());
+            Chapter newChapter = chapterDAO.getPreviousChapter(currentChapter.getSeriesId(),
+                    currentChapter.getChapterIndex());
             request.setAttribute("firstIndex", chapterDAO.getFirstChapterIndex(currentChapter.getSeriesId()));
             request.setAttribute("lastIndex", chapterDAO.getLastChapterIndex(currentChapter.getSeriesId()));
             request.setAttribute("chapter", newChapter);

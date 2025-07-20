@@ -8,14 +8,17 @@
 <footer class="main-footer text-white">
     <div class="description-footer pt-2 pb-4 ps-2 pe-2 text-center">
         <h5 class="w-50 mx-auto m-3"><b>ABOUT US</b></h5>
-        <p class="w-50 mx-auto">
-            JoyLeeBook is a Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-            ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut
-            aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore
-            eu fugiat nulla pariatur.
-        </p>
+        <p class="w-50 mx-auto">JoyLeeBook is a Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+            eiusmod tempor incididunt
+            ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+            nisi ut
+            aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+            cillum
+            dolore
+            eu fugiat nulla pariatur.</p>
     </div>
-    <div class="py-3 w-100" style="background-color: #517594;">
+
+   <div class="py-3 w-100" style="background-color: #517594;">
         <div class="container">
             <!-- Desktop layout -->
             <div class="d-none d-md-block">

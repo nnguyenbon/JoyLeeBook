@@ -29,21 +29,24 @@
 
     <body>
 
+        <jsp:include page="/WEB-INF/views/components/_header.jsp" />
+
+        
         <main class="main-main d-flex align-items-center justify-content-center">
             <div class="content mt-4 mb-4 d-flex align-items-center justify-content-center">
 
-                <div id="sub-authentication-layout" class="login-layout w-50 sub-authentication-layout">
+                <div id="sub-authentication-layout" class="login-layout w-50 sub-authentication-layout d-flex flex-column align-items-center justify-content-center">
                     <div class="login-header w-100 mb-4">
                         <h1 class="text-center" name="login">WELCOME BACK</h1>
                     </div>
                     <div class="login-body w-100 d-flex flex-column gap-4 align-items-center justify-content-center">
                         <p class="w-75 mb-2">It's great to see you again. We hope you will have an enjoyable and chill moment here.</p>
                         <p class="w-75">Don't have an account?</p>
-                        <a href="/register" class="w-75 d-flex align-items-center justify-content-center">SIGNUP</a>
+                        <a href="${pageContext.request.contextPath}/register" class="w-75 d-flex align-items-center justify-content-center">SIGNUP</a>
                     </div>
                 </div>
 
-                <div id="authentication-layout" class="login-layout w-50 authentication-layout">
+                <div id="authentication-layout" class="login-layout w-50 authentication-layout d-flex flex-column align-items-center justify-content-center">
                     <div class="login-header w-100 mb-4">
                         <h1 class="text-center">LOGIN</h1>
                     </div>
@@ -62,11 +65,11 @@
                         </form>
                     </div>
                 </div>
-
             </div>
-
         </main>
-        <%--<jsp:include page="/views/footer/_footer.jsp" />--%>
+
+        <jsp:include page="/WEB-INF/views/components/_footer.jsp" />
+
         <script lang="text/javascript" src="${pageContext.request.contextPath}/js/index.js?v=<%= System.currentTimeMillis()%>"></script>
 
     </body>

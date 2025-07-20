@@ -9,12 +9,12 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
-
+import java.util.ArrayList;
 import model.HistoryReading;
 
 /**
  * not done yet
- * 
+ *
  * @author PC
  */
 public class HistoryReadingDAO {
@@ -33,6 +33,38 @@ public class HistoryReadingDAO {
         this.connection = connection;
     }
 
+    public ArrayList<HistoryReading> getAllHistoryByUserId(int userId) {
+        ArrayList<HistoryReading> histories = new ArrayList<>();
+
+        String query = "SELECT h.user_id, h.series_id, h.chapter_id, s.title AS series_title, "
+                + "c.title AS chapter_title, h.last_read_at "
+                + "FROM HistoryReading h "
+                + "JOIN Series s ON h.series_id = s.series_id "
+                + "JOIN Chapter c ON h.chapter_id = c.chapter_id "
+                + "WHERE h.user_id = ? "
+                + "ORDER BY h.last_read_at DESC";
+
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    HistoryReading history = new HistoryReading();
+                    history.setUserId(rs.getInt("user_id"));
+                    history.setSeriesId(rs.getInt("series_id"));
+                    history.setChapterId(rs.getInt("chapter_id"));
+                    history.setSeriesTitle(rs.getString("series_title"));
+                    history.setChapterTitle(rs.getString("chapter_title"));
+                    history.setLastReadAt(rs.getTimestamp("last_read_at"));
+                    histories.add(history);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return histories;
+    }
+
     /**
      * Saves or updates the user's reading history.
      *
@@ -41,35 +73,32 @@ public class HistoryReadingDAO {
      * creates a new history record.
      *
      * @param history The HistoryReading object containing user ID, series ID,
-     *                chapter ID, and last read timestamp.
+     * chapter ID.
      */
     public void saveOrUpdateHistory(HistoryReading history) {
         String checkExistQuery = "SELECT history_id FROM HistoryReading WHERE user_id = ? AND series_id = ?";
-        String updateQuery = "UPDATE HistoryReading SET chapter_id = ?, last_read_at = ? WHERE user_id = ? AND series_id = ?";
-        String insertQuery = "INSERT INTO HistoryReading (user_id, series_id, chapter_id, last_read_at) VALUES (?, ?, ?, ?)";
+        String updateQuery = "UPDATE HistoryReading SET chapter_id = ?, last_read_at = GETDATE() WHERE user_id = ? AND series_id = ?";
+        String insertQuery = "INSERT INTO HistoryReading (user_id, series_id, chapter_id) VALUES (?, ?, ?)";
 
         try (PreparedStatement checkStmt = connection.prepareStatement(checkExistQuery)) {
-            // Check if the history record already exists for this user and series
             checkStmt.setInt(1, history.getUserId());
             checkStmt.setInt(2, history.getSeriesId());
 
-            try (ResultSet rs = checkStmt.executeQuery();) {
+            try (ResultSet rs = checkStmt.executeQuery()) {
                 if (rs.next()) {
-                    // Record exists – update the existing entry
+                    // Đã tồn tại
                     try (PreparedStatement updateStmt = connection.prepareStatement(updateQuery)) {
                         updateStmt.setInt(1, history.getChapterId());
-                        updateStmt.setTimestamp(2, history.getLastReadAt());
-                        updateStmt.setInt(3, history.getUserId());
-                        updateStmt.setInt(4, history.getSeriesId());
+                        updateStmt.setInt(2, history.getUserId());
+                        updateStmt.setInt(3, history.getSeriesId());
                         updateStmt.executeUpdate();
                     }
                 } else {
-                    // Record does not exist – insert a new entry
+                    // Chưa có
                     try (PreparedStatement insertStmt = connection.prepareStatement(insertQuery)) {
                         insertStmt.setInt(1, history.getUserId());
                         insertStmt.setInt(2, history.getSeriesId());
                         insertStmt.setInt(3, history.getChapterId());
-                        insertStmt.setTimestamp(4, history.getLastReadAt());
                         insertStmt.executeUpdate();
                     }
                 }
@@ -84,10 +113,10 @@ public class HistoryReadingDAO {
      *
      * This is used to resume reading from the last saved point.
      *
-     * @param userId   The ID of the user.
+     * @param userId The ID of the user.
      * @param seriesId The ID of the series.
      * @return An Optional containing the HistoryReading object if found;
-     *         otherwise, Optional.empty().
+     * otherwise, Optional.empty().
      */
     public Optional<HistoryReading> getLastReadChapter(int userId, int seriesId) {
         String query = "SELECT h.user_id, h.series_id, h.chapter_id, s.title AS series_title, c.title AS chapter_title, h.last_read_at "

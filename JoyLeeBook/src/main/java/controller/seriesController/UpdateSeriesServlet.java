@@ -1,11 +1,18 @@
 package controller.seriesController;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.file.Paths;
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.UUID;
+import java.util.stream.Collectors;
+
 import dao.CategoryDAO;
 import dao.GenreDAO;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.sql.SQLException;
-
 import dao.SeriesDAO;
 import db.DBConnection;
 import jakarta.servlet.ServletException;
@@ -15,18 +22,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.util.ArrayList;
-import java.util.List;
-import java.nio.file.Paths;
-import java.sql.Connection;
-import java.util.UUID;
-import java.util.logging.Level;
-import java.util.logging.Logger;
-import java.util.stream.Collectors;
 import model.Genre;
 import model.Series;
 import static utils.Validator.isValidInteger;
@@ -36,7 +31,7 @@ import static utils.Validator.isValidString;
  *
  * @author PC
  */
-@WebServlet(name = "UpdateSeriesServlet", urlPatterns = {"/updateSeries"})
+@WebServlet(name = "UpdateSeriesServlet", urlPatterns = { "/updateSeries" })
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, // 1MB
         maxFileSize = 5 * 1024 * 1024, // 5MB
         maxRequestSize = 10 * 1024 * 1024 // 10MB
@@ -45,10 +40,10 @@ public class UpdateSeriesServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -60,15 +55,15 @@ public class UpdateSeriesServlet extends HttpServlet {
             GenreDAO genreDao = new GenreDAO(conn);
             CategoryDAO categoryDao = new CategoryDAO(conn);
 
-         String seriesIdStr = request.getParameter("seriesId");
-         if (!isValidInteger(seriesIdStr)) {
-            request.setAttribute("errorMessage", "Invalid series ID.");
-            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
-            return;
-        }
-        
-        int seriesId = Integer.parseInt(seriesIdStr);
-        Series series = seriesDao.getSeriesById(seriesId);
+            String seriesIdStr = request.getParameter("seriesId");
+            if (!isValidInteger(seriesIdStr)) {
+                request.setAttribute("errorMessage", "Invalid series ID.");
+                request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
+                return;
+            }
+
+            int seriesId = Integer.parseInt(seriesIdStr);
+            Series series = seriesDao.getSeriesById(seriesId);
             series.setGenres(categoryDao.getGenresBySeriesId(series.getSeriesId()));
             ArrayList<Genre> genres = genreDao.getAll();
             request.setAttribute("genres", genres);
@@ -82,10 +77,10 @@ public class UpdateSeriesServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -100,11 +95,11 @@ public class UpdateSeriesServlet extends HttpServlet {
             GenreDAO genreDao = new GenreDAO(conn);
 
             String seriesIdStr = request.getParameter("seriesId");
-        if (!isValidInteger(seriesIdStr)) {
-            forwardWithError(request, response, "Invalid series ID", series, genreDao);
-            return;
-        }
-        int seriesId = Integer.parseInt(seriesIdStr);
+            if (!isValidInteger(seriesIdStr)) {
+                forwardWithError(request, response, "Invalid series ID", series, genreDao);
+                return;
+            }
+            int seriesId = Integer.parseInt(seriesIdStr);
 
             String authorName = request.getParameter("authorName");
             String seriesTitle = request.getParameter("seriesTitle");
@@ -142,11 +137,11 @@ public class UpdateSeriesServlet extends HttpServlet {
             request.setAttribute("genres", genreDao.getAll());
 
             if (!isValidString(authorName) || !isValidString(seriesTitle)
-                || !isValidString(status) || !isValidString(description)) {
-            request.setAttribute("message", "All fields are required.");
-            request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
-            return;
-        }
+                    || !isValidString(status) || !isValidString(description)) {
+                request.setAttribute("message", "All fields are required.");
+                request.getRequestDispatcher("/WEB-INF/views/series/editSeries.jsp").forward(request, response);
+                return;
+            }
 
             Part filePart = request.getPart("coverImage");
             imageUrl = existingImageUrl;
@@ -176,8 +171,7 @@ public class UpdateSeriesServlet extends HttpServlet {
                 ProcessBuilder pb = new ProcessBuilder(
                         avifencPath,
                         tempImageFile.getAbsolutePath(),
-                        avifImageFile.getAbsolutePath()
-                );
+                        avifImageFile.getAbsolutePath());
                 Process process = null;
                 try {
                     process = pb.start();
@@ -188,7 +182,8 @@ public class UpdateSeriesServlet extends HttpServlet {
                         String errorOutput = new BufferedReader(new InputStreamReader(errorStream))
                                 .lines().collect(Collectors.joining("\n"));
 
-                        request.setAttribute("errorMessage", "Không thể chuyển ảnh sang AVIF. Chi tiết: " + errorOutput + "Lỗi! Không thể chuyển ảnh sang định dạng AVIF.");
+                        request.setAttribute("errorMessage", "Không thể chuyển ảnh sang AVIF. Chi tiết: " + errorOutput
+                                + "Lỗi! Không thể chuyển ảnh sang định dạng AVIF.");
                         request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
                         return;
                     }
@@ -255,7 +250,8 @@ public class UpdateSeriesServlet extends HttpServlet {
         }
     }
 
-    private void forwardWithError(HttpServletRequest request, HttpServletResponse response, String message, Series series, GenreDAO genreDao)
+    private void forwardWithError(HttpServletRequest request, HttpServletResponse response, String message,
+            Series series, GenreDAO genreDao)
             throws ServletException, IOException, SQLException {
         request.setAttribute("errorMessage", message);
         request.setAttribute("series", series);
