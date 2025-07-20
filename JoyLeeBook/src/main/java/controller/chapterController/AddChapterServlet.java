@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller.chapterController;
 
 import dao.CategoryDAO;
@@ -25,8 +21,6 @@ import static utils.Validator;
  */
 @WebServlet(name = "AddChapterServlet", urlPatterns = {"/addChapter"})
 public class AddChapterServlet extends HttpServlet {
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
