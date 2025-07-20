@@ -14,6 +14,7 @@ import java.io.IOException;
 import java.util.List;
 import model.Chapter;
 import model.Series;
+import static utils.Validator.*;
 
 /**
  * Servlet that displays the list of chapters belonging to a specific series.
@@ -38,29 +39,35 @@ public class ListChapterBySeriesServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        Connection conn = null;
         try {
+            // Get parameters from the request
             String seriesIdParam = request.getParameter("seriesId");
 
-            if (seriesIdParam == null || seriesIdParam.isEmpty()) {
-                response.sendRedirect("views/error.jsp");
+            // Validate parameters
+            if (!isValidInteger(seriesIdParam)) {
+                request.setAttribute("error", "Invalid seriesId or chapterIndex.");
+                request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
                 return;
             }
 
             int seriesId = Integer.parseInt(seriesIdParam);
-            ChapterDAO chapterDAO = new ChapterDAO(DBConnection.getConnection());
-            SeriesDAO seriesDAO = new SeriesDAO(DBConnection.getConnection());
+            conn = DBConnection.getConnection();
+            ChapterDAO chapterDAO = new ChapterDAO(conn);
+            SeriesDAO seriesDAO = new SeriesDAO(conn);
+            
             ArrayList<Chapter> chapterList = chapterDAO.getAllChaptersBySeriesId(seriesId);
             Series series = seriesDAO.getSeriesById(seriesId);
 
             request.setAttribute("seriesTitle", series.getSeriesTitle());
             request.setAttribute("chapterList", chapterList);
             request.setAttribute("seriesId", seriesId);
-            request.getRequestDispatcher("WEB-INF/views/chapter/adminListChapter.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/chapter/adminListChapter.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Cannot get Chapter List.");
-            request.getRequestDispatcher("WEB-INF/views/error.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         }
     }
 
@@ -90,15 +97,5 @@ public class ListChapterBySeriesServlet extends HttpServlet {
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         processRequest(request, response);
-    }
-
-    /**
-     * Returns a short description of this servlet.
-     *
-     * @return A string containing servlet description.
-     */
-    @Override
-    public String getServletInfo() {
-        return "Servlet that handles displaying chapter list for a given series ID in admin view";
     }
 }
