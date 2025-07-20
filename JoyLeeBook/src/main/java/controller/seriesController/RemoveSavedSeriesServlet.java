@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import model.User;
+import utils.Validator;
 
 /**
  *
@@ -32,8 +33,20 @@ public class RemoveSavedSeriesServlet extends HttpServlet {
         HttpSession session = request.getSession(false);
         if (session != null) {
             User user = (User) session.getAttribute("loggedInUser");
+            if (user == null) {
+                response.sendRedirect(request.getContextPath() + "/login");
+                return;
+            }       
             int userId = user.getUserId();
-            int seriesId = Integer.parseInt(request.getParameter("seriesId"));
+            
+            String seriesIdStr = request.getParameter("seriesId");
+            if (!isValidInteger(seriesIdStr)) {
+                request.setAttribute("error", "Invalid series ID.");
+                request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
+                return;
+            }
+            int seriesId = Integer.parseInt(seriesIdStr);
+            
             try {
                 SeriesDAO seriesDAO = new SeriesDAO(DBConnection.getConnection());
                 boolean isSeriesSaved = seriesDAO.isSeriesSaved(seriesId, userId);
