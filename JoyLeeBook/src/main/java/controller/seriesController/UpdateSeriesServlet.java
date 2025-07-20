@@ -29,7 +29,7 @@ import java.util.logging.Logger;
 import java.util.stream.Collectors;
 import model.Genre;
 import model.Series;
-import static utils.Validator;
+import static utils.Validator.*;
 
 /**
  *

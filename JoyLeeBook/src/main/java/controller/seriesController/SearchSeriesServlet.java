@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Genre;
 import model.Series;
+import static utils.Validator.*;
 
 /**
  * Servlet to handle searching for series.
@@ -44,7 +45,7 @@ public class SearchSeriesServlet extends HttpServlet {
         String pageParam = request.getParameter("page");
         if (pageParam != null) {
             try {
-                if (Validator.isValidInteger(pageParam)) {
+                if (isValidInteger(pageParam)) {
                     currentPage = Integer.parseInt(pageParam);
                 }
             } catch (NumberFormatException e) {

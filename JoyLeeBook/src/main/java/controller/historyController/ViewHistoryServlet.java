@@ -32,7 +32,7 @@ public class ViewHistoryServlet extends HttpServlet {
 
         try {
             UserDAO userDAO = new UserDAO(DBConnection.getConnection());
-            User user = userDAO.getUserByName(username);
+            User user = userDAO.getUserByUsername(username);
 
             if (user == null) {
                 response.sendRedirect("login");
@@ -40,7 +40,7 @@ public class ViewHistoryServlet extends HttpServlet {
             }
 
             HistoryReadingDAO dao = new HistoryReadingDAO(DBConnection.getConnection());
-            ArrayList<HistoryReading> historyList = dao.getAllByUser(user.getUserId());
+            ArrayList<HistoryReading> historyList = dao.getAllHistoryByUserId(user.getUserId());
 
             request.setAttribute("historyList", historyList);
             request.getRequestDispatcher("/WEB-INF/views/user/history.jsp").forward(request, response);

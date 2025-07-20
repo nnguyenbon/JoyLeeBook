@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import model.Chapter;
 import model.Genre;
 import model.Series;
-import utils.Validator.*;
+import static utils.Validator.*;
 
 /**
  * This servlet handles requests to view detailed information about a specific
@@ -48,7 +48,7 @@ public class ViewSeriesInfoServlet extends HttpServlet {
         try {
             String seriesIdStr = request.getParameter("seriesId");
 
-            if (!Validator.isValidInteger(seriesIdStr)) {
+            if (!isValidInteger(seriesIdStr)) {
                 throw new IllegalArgumentException("Invalid series ID.");
             }
 

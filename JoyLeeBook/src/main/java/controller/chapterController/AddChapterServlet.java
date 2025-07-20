@@ -11,6 +11,7 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.sql.Connection;
 import model.Chapter;
 import model.Series;
 import static utils.Validator.*;
@@ -21,6 +22,7 @@ import static utils.Validator.*;
  */
 @WebServlet(name = "AddChapterServlet", urlPatterns = {"/addChapter"})
 public class AddChapterServlet extends HttpServlet {
+
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -42,8 +44,8 @@ public class AddChapterServlet extends HttpServlet {
                 request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
                 return;
             }
-    
-            int seriesId = Integer.parseInt(idParam);
+
+            int seriesId = Integer.parseInt(seriesIdParam);
             conn = DBConnection.getConnection();
             SeriesDAO seriesDao = new SeriesDAO(conn);
             ChapterDAO chapterDao = new ChapterDAO(conn);
@@ -56,7 +58,7 @@ public class AddChapterServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         }
     }
-
+    
     /**
      * Handles the HTTP <code>POST</code> method.
      *
@@ -76,8 +78,8 @@ public class AddChapterServlet extends HttpServlet {
             String content = request.getParameter("content");
 
             // Validate parameters (basic check)
-            if (!isValidInteger(seriesIdParam) || !isValidInteger(chapterIndexParam) ||
-                !isValidString(chapterTitle) || !isValidString(content)) {
+            if (!isValidInteger(seriesIdParam) || !isValidInteger(chapterIndexParam)
+                    || !isValidString(chapterTitle) || !isValidString(content)) {
 
                 request.setAttribute("message", "All fields are required and must be valid.");
                 request.getRequestDispatcher("/WEB-INF/views/addChapter.jsp").forward(request, response);
@@ -85,9 +87,6 @@ public class AddChapterServlet extends HttpServlet {
             }
 
             // Parse integers
-            int seriesId = Integer.parseInt(seriesIdParam);
-            int chapterIndex = Integer.parseInt(chapterIndexParam);
-
             int seriesId = Integer.parseInt(seriesIdParam);
             int chapterIndex = Integer.parseInt(chapterIndexParam);
 
@@ -107,15 +106,14 @@ public class AddChapterServlet extends HttpServlet {
             // Redirect to the chapter list or series detail page
             response.sendRedirect(request.getContextPath() + "/adminListChapter?seriesId=" + seriesId);
         } catch (NumberFormatException e) {
-            // Handle number format errors from parsing integers
             e.printStackTrace();
             request.setAttribute("message", "Invalid chapter index or series ID.");
             request.getRequestDispatcher("/WEB-INF/views/addChapter.jsp").forward(request, response);
         } catch (Exception e) {
-            // Handle any other exception
             e.printStackTrace();
             request.setAttribute("error", "An error occurred while adding the chapter.");
             request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         }
     }
+
 }

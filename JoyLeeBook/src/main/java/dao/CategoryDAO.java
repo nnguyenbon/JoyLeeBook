@@ -96,7 +96,7 @@ public class CategoryDAO {
     public boolean updateGenreOfSeries(int seriesId, ArrayList<Integer> newGenresId) throws SQLException {
         try {
             deleteBySeriesId(seriesId);
-            addCategories(seriedId, newGenresId);
+            addCategories(seriesId, newGenresId);
             return true;
         } catch (SQLException e) {
             e.printStackTrace();

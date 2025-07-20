@@ -17,6 +17,7 @@ import java.util.List;
 import model.Library;
 import model.Series;
 import model.User;
+import static utils.Validator.*;
 
 /**
  *
@@ -67,7 +68,7 @@ public class SaveSeriesServlet extends HttpServlet {
 
             String pageParam = request.getParameter("page");
             int currentPage = 1;
-            if (pageParam != null && Validator.isValidInteger(pageParam)) {
+            if (pageParam != null && isValidInteger(pageParam)) {
                 currentPage = Integer.parseInt(pageParam);
             }
 
@@ -81,7 +82,7 @@ public class SaveSeriesServlet extends HttpServlet {
             int startIndex = (currentPage - 1) * itemsPerPage;
             int endIndex = Math.min(startIndex + itemsPerPage, totalItems);
 
-            ArrayList<Series> paginatedSeries = librarySeries.subList(startIndex, endIndex);
+            ArrayList<Series> paginatedSeries = (ArrayList<Series>) librarySeries.subList(startIndex, endIndex);
             request.setAttribute("librarySeries", paginatedSeries);
             request.setAttribute("currentPage", currentPage);
             request.setAttribute("totalPages", totalPages);
@@ -110,7 +111,7 @@ public class SaveSeriesServlet extends HttpServlet {
         }
     
         String seriesIdStr = request.getParameter("seriesId");
-        if (!Validator.isValidInteger(seriesIdStr)) {
+        if (!isValidInteger(seriesIdStr)) {
             request.setAttribute("error", "Invalid series ID.");
             request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
             return;

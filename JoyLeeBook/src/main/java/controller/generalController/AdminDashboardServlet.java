@@ -60,7 +60,7 @@ public class AdminDashboardServlet extends HttpServlet {
             int startIndex = (currentPage - 1) * itemsPerPage;
             int endIndex = Math.min(startIndex + itemsPerPage, totalItems);
 
-            List<Series> paginatedSeries = allSeries.subList(startIndex, endIndex);
+            ArrayList<Series> paginatedSeries = (ArrayList<Series>) allSeries.subList(startIndex, endIndex);
 
             request.setAttribute("allSeries", paginatedSeries);
             request.setAttribute("currentPage", currentPage);

@@ -31,7 +31,7 @@ public class SaveHistoryServlet extends HttpServlet {
 
         try {
             UserDAO userDAO = new UserDAO(DBConnection.getConnection());
-            User user = userDAO.getUserByName(username);
+            User user = userDAO.getUserByUsername(username);
 
             if (user == null) {
                 response.sendRedirect("views/authorization/login");
@@ -62,7 +62,7 @@ public class SaveHistoryServlet extends HttpServlet {
             history.setChapterTitle(chapterTitle.trim());
 
             HistoryReadingDAO dao = new HistoryReadingDAO(DBConnection.getConnection());
-            dao.saveOrUpdate(history);
+            dao.saveOrUpdateHistory(history);
 
             response.sendRedirect("readChapter?chapterId=" + chapterId);
 
