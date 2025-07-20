@@ -36,10 +36,17 @@
     <head>
         <meta charset="UTF-8">
         <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
-              integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+        <!-- jQuery -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <!-- Bootstrap CDN -->
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- AJAX Icon -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <!-- Select2 CSS -->
+        <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <!-- Select2 JS -->
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <!-- Style CSS -->
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=<%= System.currentTimeMillis()%>">
         <title><%= pageType.toUpperCase()%></title>
         <style>
@@ -55,12 +62,11 @@
                 background-color: #8aab52;
                 color: white;
             }
-
         </style>
     </head>
 
-    <body>
-        <main>
+    <body class="bg-white">
+        <main class="mb-4 d-flex flex-column align-items-center justify-content-center">
             <div class="container my-5">
                 <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
 
@@ -113,9 +119,11 @@
             </div>
 
 
-            <div class="container mb-5">
+
+
+            <div class="content d-flex flex-column align-items-center justify-content-between">
                 <div class="section-title text-center m-4"> LAST RELEASED </div>
-                <div class="row row-cols-2 row-cols-md-4 g-5 mx-5">
+                <div class="card-container">
                     <%
                         int MAXIMUM_SERIES_IN_PAGE = 20;
                         if (seriesList != null && !seriesList.isEmpty()) {
@@ -128,15 +136,17 @@
                             for (int i = start; i < end; i++) {
                                 Series s = seriesList.get(i);
                     %>
-                    <div class="col">
-                        <a href="viewSeriesInfo?seriesId=<%= s.getSeriesId()%>">
-                            <div class="card">
-                                <img src="${pageContext.request.contextPath}/<%= s.getCoverImageUrl()%>"
-                                     class="card-img-top carousel-image" alt="<%=s.getSeriesTitle()%>">
+                    <div class="card-layout">
+                        <a href="viewSeriesInfo?seriesId=<%= s.getSeriesId()%>" class="text-decoration-none text-dark">
+                            <div class="card manga-card">
+                                <div class="card-img-layout">
+                                    <img src="${pageContext.request.contextPath}/<%= s.getCoverImageUrl()%>"
+                                         class="card-img-top manga-cover" alt="<%=s.getSeriesTitle()%>">
+                                </div>
                                 <div class="card-body">
-                                    <h6 class="card-title mb-0 text-truncate"><%=s.getSeriesTitle()%></h6>
+                                    <h6 class="card-title mb-0"><%=s.getSeriesTitle()%></h6>
                                     <div class="d-flex justify-content-between text-muted small px-1">
-                                        <div> Ch. <%=s.getTotalChapters()%></div>
+                                        <div>Ch. <%=s.getTotalChapters()%></div>
                                         <div><em><%=s.getLatestChapterDate()%></em></div>
                                     </div>
                                 </div>
@@ -145,52 +155,53 @@
                     </div>
                     <% }%>
                 </div>
-                <%
-                    int MAXIMUM_PAGE_NUMBER = (int) Math.ceil((double) seriesListSize / MAXIMUM_SERIES_IN_PAGE);
-                    int previousPage = currentPage > 1 ? currentPage - 1 : 1;
-                    int nextPage = currentPage < MAXIMUM_PAGE_NUMBER ? currentPage + 1 : MAXIMUM_PAGE_NUMBER;
-                    if (MAXIMUM_PAGE_NUMBER > 1) {
-                %>
+            </div>
+            <%
+                int MAXIMUM_PAGE_NUMBER = (int) Math.ceil((double) seriesListSize / MAXIMUM_SERIES_IN_PAGE);
+                int previousPage = currentPage > 1 ? currentPage - 1 : 1;
+                int nextPage = currentPage < MAXIMUM_PAGE_NUMBER ? currentPage + 1 : MAXIMUM_PAGE_NUMBER;
+                if (MAXIMUM_PAGE_NUMBER > 1) {
+            %>
 
-                <nav aria-label="Page navigation example">
-                    <ul class="pagination justify-content-center mt-4">
+            <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-center mt-4">
 
-                        <!-- Previous -->
-                        <li class="page-item <%= currentPage == 1 ? "disabled" : ""%>">
-                            <a class="page-link" href="?page=<%= previousPage%>">&laquo;</a>
-                        </li>
+                    <!-- Previous -->
+                    <li class="page-item <%= currentPage == 1 ? "disabled" : ""%>">
+                        <a class="page-link" href="?page=<%= previousPage%>">&laquo;</a>
+                    </li>
 
-                        <!-- Page numbers (3 numbers max: prev - current - next) -->
-                        <% if (currentPage > 1) {%>
-                        <li class="page-item">
-                            <a class="page-link" href="?page=<%= currentPage - 1%>"><%= currentPage - 1%></a>
-                        </li>
-                        <% }%>
+                    <!-- Page numbers (3 numbers max: prev - current - next) -->
+                    <% if (currentPage > 1) {%>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<%= currentPage - 1%>"><%= currentPage - 1%></a>
+                    </li>
+                    <% }%>
 
-                        <!-- Current page -->
-                        <li class="page-item active">
-                            <a class="page-link" href="#"><%= currentPage%></a>
-                        </li>
+                    <!-- Current page -->
+                    <li class="page-item active">
+                        <a class="page-link" href="#"><%= currentPage%></a>
+                    </li>
 
-                        <% if (currentPage < MAXIMUM_PAGE_NUMBER) {%>
-                        <li class="page-item">
-                            <a class="page-link" href="?page=<%= currentPage + 1%>"><%= currentPage + 1%></a>
-                        </li>
-                        <% }%>
+                    <% if (currentPage < MAXIMUM_PAGE_NUMBER) {%>
+                    <li class="page-item">
+                        <a class="page-link" href="?page=<%= currentPage + 1%>"><%= currentPage + 1%></a>
+                    </li>
+                    <% }%>
 
-                        <!-- Next -->
-                        <li class="page-item <%= currentPage == MAXIMUM_PAGE_NUMBER ? "disabled" : ""%>">
-                            <a class="page-link" href="?page=<%= nextPage%>">&raquo;</a>
-                        </li>
+                    <!-- Next -->
+                    <li class="page-item <%= currentPage == MAXIMUM_PAGE_NUMBER ? "disabled" : ""%>">
+                        <a class="page-link" href="?page=<%= nextPage%>">&raquo;</a>
+                    </li>
 
-                    </ul>
-                </nav>
-                <%
-                    }
-                } else {
-                %>
-                <p class="text-center">No manga series found.</p>
-                <% }%>
+                </ul>
+            </nav>
+            <%
+                }
+            } else {
+            %>
+            <p class="text-center">No manga series found.</p>
+            <% }%>
         </main>
 
 
