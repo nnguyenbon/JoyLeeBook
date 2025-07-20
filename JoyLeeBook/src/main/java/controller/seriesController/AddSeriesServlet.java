@@ -12,8 +12,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import model.Series;
 import dao.SeriesDAO;
 
-import static utils.Validator.isValidInteger;
-import static utils.Validator.isValidString;
+import static utils.Validator;
 
 /**
  * Servlet to handle adding a new series.
@@ -82,7 +81,7 @@ public class AddSeriesServlet extends HttpServlet {
                 return;
             }
     
-            if (isValidInteger(Integer.valueOf(seriesStatus))) {
+            if (isValidInteger(seriesStatus)) {
                 request.setAttribute("error", "Series status cannot be empty");
                 request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
                 return;
@@ -118,15 +117,4 @@ public class AddSeriesServlet extends HttpServlet {
             request.getRequestDispatcher("views/error.jsp").forward(request, response);
         }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }
