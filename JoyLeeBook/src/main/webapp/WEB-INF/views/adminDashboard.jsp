@@ -1,9 +1,3 @@
-<%-- 
-    Document   : adminDashboard
-    Created on : Jul 5, 2025, 10:37:14 AM
-    Author     : PC
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="jakarta.tags.core" %>
 <%
