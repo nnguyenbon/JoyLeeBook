@@ -126,8 +126,8 @@ public class AuthenticationFilter implements Filter {
         if ("admin".equals(userRole)) {
             return true;
         }
-        if ("user".equals(userRole)) {
-            return !(requestPath.endsWith("/adminDashboard.jsp") || requestPath.contains("add") || requestPath.contains("delete") || requestPath.contains("update"));
+        if ("reader".equals(userRole)) {
+            return !(requestPath.endsWith("/adminDashboard.jsp") || !requestPath.contains("add") || !requestPath.contains("delete") || !requestPath.contains("update"));
         }
         return false;
     }
