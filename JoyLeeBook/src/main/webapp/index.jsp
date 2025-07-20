@@ -11,21 +11,26 @@
          errorPage=""
          isErrorPage="false" %>
 
-<%@ page import="java.util.List, model.Series" %>
+<%@ page import="java.util.List, model.Series, model.User" %>
 
 <%
     /*
     Note:
     pageType: Name of folder contained main page
      */
-
     String[] pageTypeArray = ((String) request.getRequestURI()).split("/");
     String pageType = pageTypeArray[pageTypeArray.length - 1].replace(".jsp", "");
 
     request.setAttribute("pageType", pageType);
     List<Series> seriesList = (List<Series>) request.getAttribute("seriesList");
-
+    User user = (User) request.getSession().getAttribute("loggedInUser");
 %>
+<% if (user != null) { %>
+<jsp:include page="/WEB-INF/views/components/header_loggedIn.jsp" />
+<% } else { %>
+<jsp:include page="/WEB-INF/views/components/header_unLoggedIn.jsp" />
+<% }%>
+
 <!DOCTYPE html>
 <html lang="en">
     <head>
@@ -55,36 +60,6 @@
     </head>
 
     <body>
-        <header>
-            <nav class="navbar navbar-expand-lg navbar-dark border-bottom sticky-top">
-                <div class="container">
-                    <!-- Logo -->
-                    <a class="navbar-brand fw-bold" href="#">
-                        <i class="bi bi-book"></i> <strong>JoyLeeBook</strong>
-                    </a>
-
-                    <!-- Toggler (Mobile) -->
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-
-                    <!-- Main content -->
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <!-- Search form: Center -->
-                        <form class="d-flex mx-auto my-2 my-lg-0" role="search">
-                            <input class="form-control me-2" type="search" placeholder="Search manga..." aria-label="Search">
-                            <button class="btn btn-outline-light" type="submit">Search</button>
-                        </form>
-
-                        <!-- Buttons: Right -->
-                        <div class="d-flex">
-                            <a class="btn btn-outline-light me-2" href="#">LOGIN</a>
-                            <a class="btn btn-primary" href="#">SIGN UP</a>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        </header>
         <main>
             <div class="container my-5">
                 <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
@@ -92,16 +67,16 @@
                     <!-- Nội dung slide -->
                     <div class="carousel-inner">
                         <%
-                            if (seriesList != null && !seriesList.isEmpty()) {
-                                int maxSlide = Math.min(3, seriesList.size());
-                                for (int i = 0; i < maxSlide; i++) {
-                                    Series s = seriesList.get(i);
-                                    boolean isActive = (i == 0);
+                            int maxSlide = Math.min(3, seriesList.size());
+                            for (int i = 0; i < maxSlide; i++) {
+                                boolean isActive = (i == 0);
+                                Series s = seriesList.get(i);
                         %>
                         <div class="carousel-item <%= isActive ? "active" : ""%>">
-                            <div class="carousel-slide d-flex flex-wrap align-items-center p-4 mb-5 bg-primary-subtle rounded shadow" >
+                            <div class="d-flex flex-wrap align-items-center p-4 mb-5 bg-primary-subtle rounded shadow"
+                                 style="max-width: 1150px; margin: auto;">                                
                                 <!-- Text -->
-                                <div class="flex-grow-1 mx-5 w-50">
+                                <div class="information-series flex-grow-1 mx-5">  
                                     <span class="badge bg-light text-primary mb-2">New</span>
                                     <h3 class="fw-bold"><%= s.getSeriesTitle()%></h3>
                                     <span class="text-muted">Ch. <%= s.getTotalChapters()%></span>
@@ -112,28 +87,26 @@
                                     </div>
                                 </div>
                                 <!-- Image -->
-                                <div class="mx-5">
-                                    <!--<img class="carousel-image" src="${pageContext.request.contextPath}/<%= s.getCoverImageUrl()%>" class="img-fluid rounded" style="max-height: 250px;" alt="<%= s.getSeriesTitle()%>">-->
-                                    <img class="carousel-image rounded" src="${pageContext.request.contextPath}/<%= s.getCoverImageUrl()%>" alt="<%= s.getSeriesTitle()%>">
+                                <div class="image-series mx-5">
+                                    <img class="carousel-image rounded" src="${pageContext.request.contextPath}/<%= s.getCoverImageUrl()%>" class="img-fluid rounded" style="max-height: 250px;" alt="<%= s.getSeriesTitle()%>">
+                                    <!--<img class="carousel-image rounded" src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3" alt="<%= s.getSeriesTitle()%>">-->
                                 </div>
                             </div>
                         </div>
-                        <%
-                            }
-                        } else {
-                        %>
-                        <p class="text-center">No data available for slideshow.</p>
-                        <% } %>
+                        <% } %> 
                     </div>
 
                     <!-- Nút điều hướng -->
-                    <button class="carousel-control-prev" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                    <button class="carousel-control-prev custom-control border border-black" type="button"
+                            data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
                         <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden"></span>
+                        <span class="visually-hidden">Previous</span>
                     </button>
-                    <button class="carousel-control-next" type="button" data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+
+                    <button class="carousel-control-next custom-control border border-black" type="button"
+                            data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
                         <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                        <span class="visually-hidden"></span>
+                        <span class="visually-hidden">Next</span>
                     </button>
 
                 </div>
@@ -221,7 +194,7 @@
         </main>
 
 
-        <%--<jsp:include page="/WEB-INF/views/footer/_footer.jsp" />--%>
+        <jsp:include page="/WEB-INF/views/components/footer.jsp" />
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
 
         <script lang="text/javascript" src="${pageContext.request.contextPath}/js/index.js?v=<%= System.currentTimeMillis()%>"></script>
