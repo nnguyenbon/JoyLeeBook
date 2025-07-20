@@ -63,25 +63,25 @@ public class AddSeriesServlet extends HttpServlet {
         ArrayList<Integer> genreIDs = new ArrayList<>();
 
         if (!isValidString(authorName)) {
-            request.setAttribute("error", "Author name cannot be empty");
+            request.setAttribute("message", "Author name cannot be empty");
             request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
             return;
         }
 
         if (!isValidString(seriesTitle)) {
-            request.setAttribute("error", "Series title cannot be empty");
+            request.setAttribute("message", "Series title cannot be empty");
             request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
             return;
         }
 
         if (!isValidString(seriesStatus)) {
-            request.setAttribute("error", "Series status cannot be empty");
+            request.setAttribute("message", "Series status cannot be empty");
             request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
             return;
         }
 
         if (!isValidString(seriesDescription)) {
-            request.setAttribute("error", "Series description cannot be empty");
+            request.setAttribute("message", "Series description cannot be empty");
             request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
             return;
         }
@@ -100,7 +100,7 @@ public class AddSeriesServlet extends HttpServlet {
         String submittedFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
 
         if (submittedFileName.trim().isEmpty()) {
-            request.setAttribute("error", "Please select a cover image.");
+            request.setAttribute("message", "Please select a cover image.");
             request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
             return;
         }
@@ -131,13 +131,13 @@ public class AddSeriesServlet extends HttpServlet {
             Process process = pb.start();
             int exitCode = process.waitFor();
             if (exitCode != 0) {
-                request.setAttribute("error", "Error! Cannot convert image to AVIF format.");
+                request.setAttribute("message", "Error! Cannot convert image to AVIF format.");
                 request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
                 return;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Image processing error: " + e.getMessage());
+            request.setAttribute("message", "Image processing error: " + e.getMessage());
             request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
             return;
         } finally {
