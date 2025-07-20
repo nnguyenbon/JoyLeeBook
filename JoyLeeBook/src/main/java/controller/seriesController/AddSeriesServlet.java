@@ -100,7 +100,7 @@ public class AddSeriesServlet extends HttpServlet {
 
         if (submittedFileName.trim().isEmpty()) {
             request.setAttribute("error", "Vui lòng chọn ảnh bìa.");
-            request.getRequestDispatcher("/view/addSeries.jsp").forward(request, response);
+            request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
             return;
         }
 
@@ -137,13 +137,13 @@ public class AddSeriesServlet extends HttpServlet {
             int exitCode = process.waitFor();
             if (exitCode != 0) {
                 request.setAttribute("error", "Error! cannot convert image to AVIF format.");
-                request.getRequestDispatcher("/view/addSeries.jsp").forward(request, response);
+                request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
                 return;
             }
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Lỗi xử lý ảnh: " + e.getMessage());
-            request.getRequestDispatcher("/view/addSeries.jsp").forward(request, response);
+            request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
             return;
         } finally {
             // Xóa ảnh tạm
