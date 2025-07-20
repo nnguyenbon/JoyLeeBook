@@ -9,7 +9,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Optional;
-
+import java.util.ArrayList;
 import model.HistoryReading;
 
 /**
@@ -31,6 +31,38 @@ public class HistoryReadingDAO {
      */
     public HistoryReadingDAO(Connection connection) {
         this.connection = connection;
+    }
+
+    public ArrayList<HistoryReading> getAllHistoryByUserId(int userId) {
+        ArrayList<HistoryReading> histories = new ArrayList<>();
+        
+        String query = "SELECT h.user_id, h.series_id, h.chapter_id, s.title AS series_title, " +
+                       "c.title AS chapter_title, h.last_read_at " +
+                       "FROM HistoryReading h " +
+                       "JOIN Series s ON h.series_id = s.series_id " +
+                       "JOIN Chapter c ON h.chapter_id = c.chapter_id " +
+                       "WHERE h.user_id = ? " +
+                       "ORDER BY h.last_read_at DESC";
+    
+        try (PreparedStatement stmt = connection.prepareStatement(query)) {
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    HistoryReading history = new HistoryReading();
+                    history.setUserId(rs.getInt("user_id"));
+                    history.setSeriesId(rs.getInt("series_id"));
+                    history.setChapterId(rs.getInt("chapter_id"));
+                    history.setSeriesTitle(rs.getString("series_title"));
+                    history.setChapterTitle(rs.getString("chapter_title"));
+                    history.setLastReadAt(rs.getTimestamp("last_read_at"));
+                    histories.add(history);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    
+        return histories;
     }
 
     /**
