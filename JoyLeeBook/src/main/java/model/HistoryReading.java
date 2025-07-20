@@ -36,6 +36,24 @@ public class HistoryReading {
         this.chapterTitle = chapterTitle;
         this.lastReadAt = lastReadAt;
     }
+    
+    /**
+     * Constructs a HistoryReading object with the specified details.
+     *
+     * @param userId       the ID of the user
+     * @param seriesId     the ID of the series
+     * @param chapterId    the ID of the chapter
+     * @param seriesTitle  the title of the series
+     * @param chapterTitle the title of the chapter
+     * @param lastReadAt   the timestamp of the last time the chapter was read
+     */
+    public HistoryReading(int userId, int seriesId, int chapterId, String seriesTitle, String chapterTitle) {
+        this.userId = userId;
+        this.seriesId = seriesId;
+        this.chapterId = chapterId;
+        this.seriesTitle = seriesTitle;
+        this.chapterTitle = chapterTitle;
+    }
 
     /**
      * Default constructor for HistoryReading.
