@@ -26,7 +26,7 @@ import model.User;
  * @author KHAI TOAN
  */
 @WebFilter(filterName = "AuthenticationFilter", urlPatterns = {"/addChapter", "/deleteChapter", "/updateChapter", "/chapterList",
-    "/adminDashboard", "/home", "/saveHistory", "/viewHistory", "/addSeries", "/deleteSeries", "/removeSavedSeries", "/saveSeries",
+    "/adminDashboard", "/saveHistory", "/viewHistory", "/addSeries", "/deleteSeries", "/removeSavedSeries", "/saveSeries",
     "/updateSeries",})
 public class AuthenticationFilter implements Filter {
 
