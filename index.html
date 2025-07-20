@@ -4,60 +4,51 @@
 
 <head>
   <meta charset="UTF-8">
-  <title>MangaVerse - Home</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <!-- jQuery -->
+  <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+  <!-- Bootstrap CDN -->
   <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+  <!-- AJAX Icon -->
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-
-  <link rel="stylesheet" href="css/style.css">
-  <style>
-    .section-title {
-      font-weight: bold;
-      font-size: 1.3rem;
-      margin-top: 0.5rem;
-    }
-
-    .manga-card {
-      border-radius: 0.5rem;
-      overflow: hidden;
-      box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-      width: 250px;
-    }
-
-    .manga-cover {
-      object-fit: cover;
-      height: 300px;
-    }
-  </style>
+  <!-- Select2 CSS -->
+  <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+  <!-- Select2 JS -->
+  <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+  <!-- Style CSS -->
+  <link rel="stylesheet" href="css/styles.css">
 </head>
 
 <body class="bg-white">
   <header>
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg border-bottom sticky-top">
-      <div class="container">
-        <a class="navbar-brand fw-bold text-white" href="#"><i class="bi bi-book"></i> <strong>JoyLeeBook</strong></a>
-        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-          <span class="navbar-toggler-icon"></span>
-        </button>
-        <div class="collapse navbar-collapse" id="navbarNav">
-          <ul class="navbar-nav me-auto">
-            <li class="nav-item"><a class="nav-link  text-white" href="home.html">Home</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="genre.html">Genres</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="#">History</a></li>
-            <li class="nav-item"><a class="nav-link text-white" href="#">Library</a></li>
-          </ul>
-          <form class="d-flex me-3">
-            <input class="form-control me-2" type="search" placeholder="Search manga..." aria-label="Search">
+    <nav class="navbar navbar-expand-lg sticky-top">
+      <div class="navbar-layout w-100 pt-2 pb-2 ps-4 pe-4">
+        <div class="mobile-header d-flex align-items-center justify-content-between">
+          <a class="navbar-brand fw-bold text-white" href="#"><i class="bi bi-book"></i>
+            <strong>JoyLeeBook</strong>
+          </a>
+
+          <label id="menu-icon" class="menu-icon text-white fa-2x">&#9776;</label>
+        </div>
+
+        <div class="menu justify-content-end" id="navbarNav">
+          <form class="d-flex me-3 pt-2 pb-2 bg-white">
+            <input class="ps-3 pe-2 bg-white border-none outline-none" placeholder="Search manga..."
+              aria-label="Search">
+
+            <button class="search-submit pe-3 bg-white">
+              <i class="fas fa-search fa-2x"></i>
+            </button>
           </form>
-          <a class="btn me-2 login" href="authorization/login.html">LOGIN</a>
-          <a class="btn signup " href="authorization/register.html">SIGN UP</a>
-            
+          <a class="btn me-2 login" href="#">LOGIN</a>
+          <a class="btn signup " href="#">SIGN UP</a>
         </div>
       </div>
     </nav>
   </header>
-  <main>
+
+  <main class="mb-4 d-flex flex-column align-items-center justify-content-center">
     <!-- Carousel -->
     <div class="container my-5">
       <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
@@ -66,71 +57,29 @@
         <div class="carousel-inner">
 
           <!-- Slide 1 -->
-          <div class="carousel-item active ">
+          <div class="carousel-item active">
             <div class="d-flex flex-wrap align-items-center p-4 mb-5 bg-primary-subtle rounded shadow"
               style="max-width: 1150px; margin: auto;">
               <!-- Text -->
-              <div class="flex-grow-1 mx-5 w-50">
-                <span class="badge bg-light text-primary mb-2">Hot</span>
+              <div class="information-series flex-grow-1 mx-5">
+                <span class="badge bg-light text-primary mt-2 mb-2">Hot</span>
                 <h3 class="fw-bold">Tên truyện 1</h3>
-                <p class="text-muted"></p>
-                <div class="d-flex gap-2 mt-2">
+                <span class="text-muted">Ch. 15 - 13m ago</span>
+
+                <div class="d-flex gap-2 mt-2 mb-2">
                   <a href="read.html" class="btn btn-primary" style="background-color: #0070d2; border: none;">Read</a>
                   <a href="#" class="btn btn-outline-dark">Add library</a>
                 </div>
               </div>
+              
               <!-- Ảnh -->
-              <div class="mx-5" style="flex-shrink: 0;">
+              <div class="image-series mx-5" >
                 <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
                   alt="cover" class="rounded" style="height: 300px; object-fit: cover;">
               </div>
             </div>
           </div>
 
-          <!-- Slide 2 -->
-          <div class="carousel-item ">
-            <div class="d-flex flex-wrap align-items-center p-4 mb-5 bg-primary-subtle rounded shadow"
-              style="max-width: 1150px; margin: auto;">
-              <!-- Text -->
-              <div class="flex-grow-1 mx-5 w-50">
-                <span class="badge bg-light text-primary mb-2">Hot</span>
-                <h3 class="fw-bold">Tên truyện 1</h3>
-                <span class="text-muted">Ch. 15</span>
-                <span class="text-muted">13 ago</span>
-
-                <div class="d-flex gap-2 mt-2">
-                  <a href="read.html" class="btn btn-primary" style="background-color: #0070d2; border: none;">Read</a>
-                  <a href="#" class="btn btn-outline-dark">Add library</a>
-                </div>
-              </div>
-              <!-- Ảnh -->
-              <div class="mx-5" style="flex-shrink: 0;">
-                <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
-                  alt="cover" class="rounded" style="height: 300px; object-fit: cover;">
-              </div>
-            </div>
-          </div>
-          <!-- Slide 3 -->
-          <div class="carousel-item ">
-            <div class="d-flex flex-wrap align-items-center p-4 mb-5 bg-primary-subtle rounded shadow"
-              style="max-width: 1150px; margin: auto;">
-              <!-- Text -->
-              <div class="flex-grow-1 mx-5 w-50">
-                <span class="badge bg-light text-primary mb-2">Hot</span>
-                <h3 class="fw-bold">Tên truyện 1</h3>
-                <p class="text-muted"></p>
-                <div class="d-flex gap-2 mt-2">
-                  <a href="read.html" class="btn btn-primary" style="background-color: #0070d2; border: none;">Read</a>
-                  <a href="#" class="btn btn-outline-dark">Add library</a>
-                </div>
-              </div>
-              <!-- Ảnh -->
-              <div class="mx-5" style="flex-shrink: 0;">
-                <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
-                  alt="cover" class="rounded" style="height: 300px; object-fit: cover;">
-              </div>
-            </div>
-          </div>
 
         </div>
 
@@ -150,11 +99,13 @@
       </div>
     </div>
 
-    <div class="container">
-      <div class="section-title text-center m-4"> LASR RELEASED</div>
-      <div class="row row-cols-2 row-cols-md-4 g-5 mx-5">
-        <div class="col">
-          <a href="detail.html" class="text-decoration-none text-dark">
+    <div class="content d-flex flex-column align-items-center justify-content-between border border-danger">
+      <div class="section-title text-center m-4"> LAST RELEASED </div>
+
+      <div class="card-container">
+
+        <div class="card-layout">
+          <a href="/views/series/viewInfo.html" class="text-decoration-none text-dark">
             <div class="card manga-card">
               <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
                 class="card-img-top manga-cover" alt="">
@@ -168,258 +119,116 @@
             </div>
           </a>
         </div>
-        <div class="col">
-          <div class="card manga-card">
-            <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
-              class="card-img-top manga-cover" alt="">
-            <div class="card-body">
-              <h6 class="card-title mb-0">Shadow Chronicles</h6>
-              <div class="d-flex justify-content-between text-muted small px-1">
-                <div>Ch. 25</div>
-                <div><em>13m ago</em></div>
+        <div class="card-layout">
+          <a href="/views/series/viewInfo.html" class="text-decoration-none text-dark">
+            <div class="card manga-card">
+              <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
+                class="card-img-top manga-cover" alt="">
+              <div class="card-body">
+                <h6 class="card-title mb-0">Azure Realm</h6>
+                <div class="d-flex justify-content-between text-muted small px-1">
+                  <div>Ch. 25</div>
+                  <div><em>13m ago</em></div>
+                </div>
               </div>
             </div>
-          </div>
+          </a>
         </div>
-        <div class="col">
-          <div class="card manga-card">
-            <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
-              class="card-img-top manga-cover" alt="">
-            <div class="card-body">
-              <h6 class="card-title mb-0">Shadow Chronicles</h6>
-              <div class="d-flex justify-content-between text-muted small px-1">
-                <div>Ch. 25</div>
-                <div><em>13m ago</em></div>
+        <div class="card-layout">
+          <a href="/views/series/viewInfo.html" class="text-decoration-none text-dark">
+            <div class="card manga-card">
+              <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
+                class="card-img-top manga-cover" alt="">
+              <div class="card-body">
+                <h6 class="card-title mb-0">Azure Realm</h6>
+                <div class="d-flex justify-content-between text-muted small px-1">
+                  <div>Ch. 25</div>
+                  <div><em>13m ago</em></div>
+                </div>
               </div>
             </div>
-          </div>
+          </a>
         </div>
-        <div class="col">
-          <div class="card manga-card">
-            <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
-              class="card-img-top manga-cover" alt="">
-            <div class="card-body">
-              <h6 class="card-title mb-0">Shadow Chronicles</h6>
-              <div class="d-flex justify-content-between text-muted small px-1">
-                <div>Ch. 25</div>
-                <div><em>13m ago</em></div>
+        <div class="card-layout">
+          <a href="/views/series/viewInfo.html" class="text-decoration-none text-dark">
+            <div class="card manga-card">
+              <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
+                class="card-img-top manga-cover" alt="">
+              <div class="card-body">
+                <h6 class="card-title mb-0">Azure Realm</h6>
+                <div class="d-flex justify-content-between text-muted small px-1">
+                  <div>Ch. 25</div>
+                  <div><em>13m ago</em></div>
+                </div>
               </div>
             </div>
-          </div>
+          </a>
         </div>
-        <div class="col">
-          <div class="card manga-card">
-            <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
-              class="card-img-top manga-cover" alt="">
-            <div class="card-body">
-              <h6 class="card-title mb-0">Shadow Chronicles</h6>
-              <div class="d-flex justify-content-between text-muted small px-1">
-                <div>Ch. 25</div>
-                <div><em>13m ago</em></div>
+        <div class="card-layout">
+          <a href="/views/series/viewInfo.html" class="text-decoration-none text-dark">
+            <div class="card manga-card">
+              <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
+                class="card-img-top manga-cover" alt="">
+              <div class="card-body">
+                <h6 class="card-title mb-0">Azure Realm</h6>
+                <div class="d-flex justify-content-between text-muted small px-1">
+                  <div>Ch. 25</div>
+                  <div><em>13m ago</em></div>
+                </div>
               </div>
             </div>
-          </div>
+          </a>
         </div>
-        <div class="col">
-          <div class="card manga-card">
-            <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
-              class="card-img-top manga-cover" alt="">
-            <div class="card-body">
-              <h6 class="card-title mb-0">Shadow Chronicles</h6>
-              <div class="d-flex justify-content-between text-muted small px-1">
-                <div>Ch. 25</div>
-                <div><em>13m ago</em></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card manga-card">
-            <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
-              class="card-img-top manga-cover" alt="">
-            <div class="card-body">
-              <h6 class="card-title mb-0">Shadow Chronicles</h6>
-              <div class="d-flex justify-content-between text-muted small px-1">
-                <div>Ch. 25</div>
-                <div><em>13m ago</em></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card manga-card">
-            <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
-              class="card-img-top manga-cover" alt="">
-            <div class="card-body">
-              <h6 class="card-title mb-0">Shadow Chronicles</h6>
-              <div class="d-flex justify-content-between text-muted small px-1">
-                <div>Ch. 25</div>
-                <div><em>13m ago</em></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card manga-card">
-            <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
-              class="card-img-top manga-cover" alt="">
-            <div class="card-body">
-              <h6 class="card-title mb-0">Shadow Chronicles</h6>
-              <div class="d-flex justify-content-between text-muted small px-1">
-                <div>Ch. 25</div>
-                <div><em>13m ago</em></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card manga-card">
-            <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
-              class="card-img-top manga-cover" alt="">
-            <div class="card-body">
-              <h6 class="card-title mb-0">Shadow Chronicles</h6>
-              <div class="d-flex justify-content-between text-muted small px-1">
-                <div>Ch. 25</div>
-                <div><em>13m ago</em></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card manga-card">
-            <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
-              class="card-img-top manga-cover" alt="">
-            <div class="card-body">
-              <h6 class="card-title mb-0">Shadow Chronicles</h6>
-              <div class="d-flex justify-content-between text-muted small px-1">
-                <div>Ch. 25</div>
-                <div><em>13m ago</em></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card manga-card">
-            <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
-              class="card-img-top manga-cover" alt="">
-            <div class="card-body">
-              <h6 class="card-title mb-0">Shadow Chronicles</h6>
-              <div class="d-flex justify-content-between text-muted small px-1">
-                <div>Ch. 25</div>
-                <div><em>13m ago</em></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card manga-card">
-            <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
-              class="card-img-top manga-cover" alt="">
-            <div class="card-body">
-              <h6 class="card-title mb-0">Shadow Chronicles</h6>
-              <div class="d-flex justify-content-between text-muted small px-1">
-                <div>Ch. 25</div>
-                <div><em>13m ago</em></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card manga-card">
-            <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
-              class="card-img-top manga-cover" alt="">
-            <div class="card-body">
-              <h6 class="card-title mb-0">Shadow Chronicles</h6>
-              <div class="d-flex justify-content-between text-muted small px-1">
-                <div>Ch. 25</div>
-                <div><em>13m ago</em></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card manga-card">
-            <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
-              class="card-img-top manga-cover" alt="">
-            <div class="card-body">
-              <h6 class="card-title mb-0">Shadow Chronicles</h6>
-              <div class="d-flex justify-content-between text-muted small px-1">
-                <div>Ch. 25</div>
-                <div><em>13m ago</em></div>
-              </div>
-            </div>
-          </div>
-        </div>
-        <div class="col">
-          <div class="card manga-card">
-            <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
-              class="card-img-top manga-cover" alt="">
-            <div class="card-body">
-              <h6 class="card-title mb-0">Shadow Chronicles</h6>
-              <div class="d-flex justify-content-between text-muted small px-1">
-                <div>Ch. 25</div>
-                <div><em>13m ago</em></div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </div>
-    </div>
 
-    <div>
-      <nav aria-label="Page navigation example" class="mt-4 d-flex justify-content-center">
-        <ul class="pagination">
-          <li class="page-item disabled">
-            <a class="page-link">&lt&lt </a>
-          </li>
-          <li class="page-item active"><a class="page-link" href="#">1</a></li>
-          <li class="page-item"><a class="page-link" href="#">2</a></li>
-          <li class="page-item"><a class="page-link" href="#">3</a></li>
-          <li class="page-item">
-            <a class="page-link" href="#">&gt&gt</a>
-          </li>
-        </ul>
-      </nav>
-    </div>
+      </div>
+
+
+      <div>
+        <nav aria-label="Page navigation example" class="mt-4 d-flex justify-content-center">
+          <ul class="pagination">
+            <li class="page-item disabled">
+              <a class="page-link">&lt&lt </a>
+            </li>
+            <li class="page-item active"><a class="page-link" href="#">1</a></li>
+            <li class="page-item"><a class="page-link" href="#">2</a></li>
+            <li class="page-item"><a class="page-link" href="#">3</a></li>
+            <li class="page-item">
+              <a class="page-link" href="#">&gt&gt</a>
+            </li>
+          </ul>
+        </nav>
+      </div>
   </main>
 
-  <footer class="mt-5">
-    <!-- Section About -->
-    <div class="text-white py-4" style="background-color: #8DA7C0;">
-      <div class="container text-center">
-        <h5 class="fw-bold mb-3">ABOUT US</h5>
-        <p class="mx-auto mb-0" style="max-width: 1000px;">
-          JoyLeeBook is a Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut
-          labore et dolore magna aliqua.
-          Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.
-          Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-        </p>
-      </div>
+  <footer class="main-footer text-white">
+    <div class="description-footer pt-2 pb-4 ps-2 pe-2 text-center">
+      <h5 class="w-50 mx-auto m-3"><b>ABOUT US</b></h5>
+      <p class="w-50 mx-auto">JoyLeeBook is a Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+        eiusmod tempor incididunt
+        ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+        nisi ut
+        aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+        cillum
+        dolore
+        eu fugiat nulla pariatur.</p>
     </div>
 
-    <!-- Section Social + Back to top -->
-    <div class="py-3 w-100" style="background-color: #517594;  justify-self: center;">
-      <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
-
-        <!-- Social icons -->
-        <div class="offset-md-2 col-md-7 d-flex justify-content-center gap-4 mb-3 mb-md-0">
-          <a href="#" class="text-dark fs-4"><i class="fab fa-instagram"></i></a>
-          <a href="#" class="text-dark fs-4"><i class="fab fa-facebook"></i></a>
-          <a href="#" class="text-dark fs-4"><i class="fab fa-tiktok"></i></a>
-        </div>
-
-        <!-- Back to top -->
-        <a href="#header" class="btn btn-light rounded-circle d-flex align-items-center justify-content-center"
-          style="width: 40px; height: 40px;">
-          <i class="fas fa-arrow-up text-dark"></i>
-        </a>
+    <div class="main-context social-footer w-100 h-100 p-2 d-flex justify-content-center align-items-center">
+      <div class="left-social-footer w-100 d-flex justify-content-end me-3"></div>
+      <a href="#" class="text-white"><i class="instagram-icon fab fa-instagram fa-2x"></i></a>
+      <a href="#" class="text-white"><i class="facebook-icon fab fa-facebook fa-2x m-3"></i></a>
+      <a href="#" class="text-white"><i class="tiktok-icon fab fa-tiktok fa-2x"></i></a>
+      <div class="right-social-footer w-100 d-flex justify-content-end ms-3">
+        <!-- View Page -->
+        <a href="#header" class="d-flex align-items-center justify-content-center"><i
+            class="fas fa-arrow-up fa-md"></i></a>
       </div>
     </div>
   </footer>
 
+  <script src="js/index.js"></script>
 
-
-  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+  <!-- Bootstrap JS -->
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
-
 </html>

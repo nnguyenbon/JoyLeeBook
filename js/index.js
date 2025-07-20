@@ -11,7 +11,7 @@ window.addEventListener('load', () => {
 
     displayElement({
         name: userProfile,
-        ico: 'user-profile-icon',
+        icon: 'user-profile-icon',
         isShow: false
     })
 

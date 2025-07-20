@@ -40,6 +40,10 @@ a {
     text-decoration: none;
 }
 
+header, footer {
+    min-width: 550px;
+}
+
 body {
     height: 100%;
     min-width: 500px;
@@ -141,10 +145,11 @@ body {
 }
 
 .user-profile {
+    width: 10%;
     display: none;
     flex-direction: column;
     position: absolute;
-    transform: translate(-30%, 0);
+    transform: translate(-75%, 0);
 }
 
 .user-profile>a {
@@ -175,8 +180,8 @@ body {
 }
 
 .content {
-    width: 60%;
-    min-width: 450px;
+    width: 80%;
+    min-width: 550px;
 }
 
 /* =================================== HOME/DASHBOARD =================================== */
@@ -528,17 +533,41 @@ body {
     margin-top: 0.5rem;
 }
 
+.card-container {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, 250px);
+    gap: 25px;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+}
+
+.card-layout {
+    min-width: 250px;
+}
+
 .manga-card {
+    width: 250px;
     border-radius: 0.5rem;
     overflow: hidden;
     box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
-    width: 250px;
 }
 
 .manga-cover {
-    object-fit: cover;
     height: 300px;
+    object-fit: cover;
 }
+
+.search-container {
+    display: flex;
+
+}
+
+.search-series {
+    min-width: 400px;
+}
+
 
 /* =========================================================== FOOTER =========================================================== */
 .main-footer {
@@ -561,17 +590,23 @@ a[href="#header"] {
     background: white;
 }
 
-/* =========================================================== ANIMATION =========================================================== */
-@keyframes moveLeft {}
 
 /* =========================================================== RESPONSIVE =========================================================== */
+@media (max-width: 1200px) {
+    .search-container {
+        flex-direction: column;
+    }
+    
+    .search-series {
+        width: 100%;
+    }
+}
+
+
 /* MEDIA TABLET */
 @media (max-width: 768px) {
 
     /* =========================================================== MAIN =========================================================== */
-    .content {
-        width: 70%;
-    }
 
     .mobile-header {
         width: 100%;
@@ -630,5 +665,22 @@ a[href="#header"] {
         width: 100%;
     }
 
+    .login, .signup {
+        width: 100%;
+    }
 
+    .information-series {
+        width: 100%;
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .image-series {
+        width: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
 }

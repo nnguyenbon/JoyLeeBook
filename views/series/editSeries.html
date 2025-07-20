@@ -22,23 +22,24 @@
 <body class="bg-white">
     <header>
         <!-- Navbar -->
-        <nav class="navbar navbar-expand-lg border-bottom sticky-top">
-            <div class="container">
-                <a class="navbar-brand fw-bold text-white" href="#"><i class="bi bi-book"></i>
-                    <strong>JoyLeeBook</strong></a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarNav">
-                    <ul class="navbar-nav me-auto">
-                        <li class="nav-item"><a class="nav-link  text-white" href="homeAdmin.html">Home</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="genre.html">Genres</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="#">History</a></li>
-                        <li class="nav-item"><a class="nav-link text-white" href="#">Library</a></li>
-                    </ul>
-                    <form class="d-flex me-3">
-                        <input class="form-control me-2" type="search" placeholder="Search manga..."
+        <nav class="navbar navbar-expand-lg sticky-top">
+            <div class="navbar-layout w-100 pt-2 pb-2 ps-4 pe-4">
+                <div class="mobile-header d-flex align-items-center justify-content-between">
+                    <a class="navbar-brand fw-bold text-white" href="#"><i class="bi bi-book"></i>
+                        <strong>JoyLeeBook</strong>
+                    </a>
+
+                    <label id="menu-icon" class="menu-icon text-white fa-2x">&#9776;</label>
+                </div>
+
+                <div class="menu pt-2" id="navbarNav">
+                    <form class="d-flex me-3 pt-2 pb-2 bg-white">
+                        <input class="ps-3 pe-2 bg-white border-none outline-none" placeholder="Search manga..."
                             aria-label="Search">
+
+                        <button class="search-submit pe-3 bg-white">
+                            <i class="fas fa-search fa-2x"></i>
+                        </button>
                     </form>
                     <a class="btn me-2 login" href="#">LOGIN</a>
                     <a class="btn signup " href="#">SIGN UP</a>
@@ -46,6 +47,7 @@
             </div>
         </nav>
     </header>
+
     <main>
         <div class="container my-5">
             <h3 class="fw-bold mb-4">Chỉnh sửa truyện</h3>
@@ -56,16 +58,14 @@
                     <!-- <div class="col-md-4">
                     
                 </div> -->
-                    <div class="col-md-4">
+                    <div class="col-md-4 d-flex flex-column">
 
-                        <label class="form-label fw-semibold">Ảnh bìa</label><br>
+                        <label class="form-label fw-semibold">Ảnh bìa</label>
                         <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
-                            class="img-fluid rounded shadow mb-2" alt="Cover" style="width: 350px">
-                        <div class="mb-3">
-                            <input class="form-control" type="file" id="coverImage" name="coverImage" accept="image/*"
-                                style="width: 350px">
+                            class="img-fluid rounded shadow mb-2" alt="Cover">
+                        <div class="file-edit-series mb-3">
+                            <input class="form-control" type="file" id="coverImage" name="coverImage" accept="image/*">
                         </div>
-
 
                     </div>
 
@@ -93,7 +93,7 @@
 
                         <div class="mb-3">
                             <label class="form-label">Thể loại</label>
-                            <select class="form-select" id="genreSelect" name="genres" multiple>
+                            <select class="form-select" id="genreSelect" name="genres" style="width: 100%;" multiple>
                                 <option>Action</option>
                                 <option>Adventure</option>
                                 <option>Comedy</option>
@@ -152,7 +152,7 @@
                         <!-- Action Buttons -->
                         <div class="d-flex gap-2">
                             <!-- <button type="submit" class="btn btn-success"></button> -->
-                            <a href="detailAdmin.html">Lưu</a>
+                            <a href="detailAdmin.html" class="btn btn-success">Lưu</a>
                             <button type="reset" class="btn btn-secondary">Đặt lại</button>
                             <button type="button" class="btn btn-danger"
                                 onclick="confirm('Xác nhận xoá truyện này?') && deleteStory();">Xoá</button>
@@ -163,39 +163,28 @@
         </div>
     </main>
 
-    <footer class="mt-5">
-        <!-- Section About -->
-        <div class="text-white py-4" style="background-color: #8DA7C0;">
-            <div class="container text-center">
-                <h5 class="fw-bold mb-3">ABOUT US</h5>
-                <p class="mx-auto mb-0" style="max-width: 1000px;">
-                    JoyLeeBook is a Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                    incididunt ut
-                    labore et dolore magna aliqua.
-                    Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                    consequat.
-                    Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                    pariatur.
-                </p>
-            </div>
+    <footer class="main-footer text-white">
+        <div class="description-footer pt-2 pb-4 ps-2 pe-2 text-center">
+            <h5 class="w-50 mx-auto m-3"><b>ABOUT US</b></h5>
+            <p class="w-50 mx-auto">JoyLeeBook is a Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do
+                eiusmod tempor incididunt
+                ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris
+                nisi ut
+                aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse
+                cillum
+                dolore
+                eu fugiat nulla pariatur.</p>
         </div>
 
-        <!-- Section Social + Back to top -->
-        <div class="py-3 w-100" style="background-color: #517594;  justify-self: center;">
-            <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
-
-                <!-- Social icons -->
-                <div class="offset-md-2 col-md-7 d-flex justify-content-center gap-4 mb-3 mb-md-0">
-                    <a href="#" class="text-dark fs-4"><i class="fab fa-instagram"></i></a>
-                    <a href="#" class="text-dark fs-4"><i class="fab fa-facebook"></i></a>
-                    <a href="#" class="text-dark fs-4"><i class="fab fa-tiktok"></i></a>
-                </div>
-
-                <!-- Back to top -->
-                <a href="#header" class="btn btn-light rounded-circle d-flex align-items-center justify-content-center"
-                    style="width: 40px; height: 40px;">
-                    <i class="fas fa-arrow-up text-dark"></i>
-                </a>
+        <div class="main-context social-footer w-100 h-100 p-2 d-flex justify-content-center align-items-center">
+            <div class="left-social-footer w-100 d-flex justify-content-end me-3"></div>
+            <a href="#" class="text-white"><i class="instagram-icon fab fa-instagram fa-2x"></i></a>
+            <a href="#" class="text-white"><i class="facebook-icon fab fa-facebook fa-2x m-3"></i></a>
+            <a href="#" class="text-white"><i class="tiktok-icon fab fa-tiktok fa-2x"></i></a>
+            <div class="right-social-footer w-100 d-flex justify-content-end ms-3">
+                <!-- View Page -->
+                <a href="#header" class="d-flex align-items-center justify-content-center"><i
+                        class="fas fa-arrow-up fa-md"></i></a>
             </div>
         </div>
     </footer>
