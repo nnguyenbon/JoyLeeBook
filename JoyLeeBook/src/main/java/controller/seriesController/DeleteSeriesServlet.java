@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller.seriesController;
 
 import java.io.IOException;
@@ -13,6 +9,7 @@ import dao.HistoryReadingDAO;
 import dao.LibraryDAO;
 import dao.SeriesDAO;
 import db.DBConnection;
+import java.sql.Connection;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
@@ -25,35 +22,6 @@ import jakarta.servlet.http.HttpServletResponse;
  */
 @WebServlet(name = "DeleteSeriesServlet", urlPatterns = {"/deleteSeries"})
 public class DeleteSeriesServlet extends HttpServlet {
-
-    /**
-     * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
-     * methods.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-    }
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
-    // + sign on the left to edit the code.">
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
-    @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-    }
-
     /**
      * Handles the HTTP <code>POST</code> method.
      *
@@ -65,7 +33,7 @@ public class DeleteSeriesServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        java.sql.Connection conn = null;
+        Connection conn = null;
         try {
             conn = DBConnection.getConnection();
 
@@ -76,7 +44,13 @@ public class DeleteSeriesServlet extends HttpServlet {
             ChapterDAO chapterDao = new ChapterDAO(conn);
             LibraryDAO libraryDao = new LibraryDAO(conn);
 
-            int seriesId = Integer.parseInt(request.getParameter("seriesId"));
+            String seriesIdRaw = request.getParameter("seriesId");
+            if (!isValidInteger(seriesIdRaw)) {
+                request.setAttribute("error", "Invalid series ID.");
+                request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
+                return;
+            }
+            int seriesId = Integer.parseInt(seriesIdRaw);
             boolean isDeletedCategory = categoryDao.deleteBySeriesId(seriesId);
             boolean isDeletedHistory = historyDao.deleteBySeriesId(seriesId);
             boolean isDeletedLibrary = libraryDao.deleteBySeriesId(seriesId);
@@ -87,13 +61,12 @@ public class DeleteSeriesServlet extends HttpServlet {
                 conn.commit();
             } else {
                 conn.rollback();
-                request.setAttribute("errorMessage", "Delete failed. Please check log for details.");
+                request.setAttribute("error", "Delete failed. Please check log for details.");
                 request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
             }
             response.sendRedirect(request.getContextPath() + "/adminDashboard");
         } catch (Exception e) {
             e.printStackTrace();
-            // Đảm bảo rollback nếu có ngoại lệ không mong muốn xảy ra
             if (conn != null) {
                 try {
                     conn.rollback();
@@ -101,12 +74,11 @@ public class DeleteSeriesServlet extends HttpServlet {
                     ex.printStackTrace();
                 }
             }
-            request.setAttribute("message", "An error occurred during deletion.");
+            request.setAttribute("error", "An error occurred during deletion.");
             request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         } finally {
             if (conn != null) {
                 try {
-
                     conn.setAutoCommit(true);
                     conn.close();
                 } catch (SQLException e) {
@@ -115,15 +87,4 @@ public class DeleteSeriesServlet extends HttpServlet {
             }
         }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }
