@@ -106,7 +106,7 @@
                             <c:when test="${sessionScope.role != null and sessionScope.role eq 'admin'}">
                                 <div class="d-flex gap-2 my-5">
                                     <a class="btn btn-warning" href="${pageContext.request.contextPath}/updateSeries?seriesId=${series.seriesId}"><i class="bi bi-pen"></i> Edit</a>
-                                    <button type="button" class commem class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                    <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
                                             data-id="${series.seriesId}" data-type="series" data-url="deleteSeries"><i class="bi bi-trash3-fill"></i> Delete</button>
                                 </div>
                             </c:when>
@@ -157,15 +157,15 @@
                                         <div class="text-muted small mt-1"><fmt:formatDate value="${chapter.createdAt}" pattern="dd/MM/yyyy" /></div>
                                     </div>
                                 </div>
-                                <%--<c:if test="${sessionScope.role != null and sessionScope.role eq 'admin'}">--%>
-                                <div class="action-buttons gap-2">
-                                    <a href="${pageContext.request.contextPath}/updateChapter?chapterId=${chapter.chapterId}" class="btn btn-sm btn-outline-warning" onclick="event.stopPropagation()"><i class="bi bi-pen"></i></a>
-                                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                            data-id="${chapter.chapterId}" data-series-id="${chapter.seriesId}" data-type="chapter" data-url="deleteChapter" onclick="event.stopPropagation()">
-                                        <i class="bi bi-trash3-fill"></i>
-                                    </button>
-                                </div>
-                                <%--</c:if>--%>
+                                <c:if test="${sessionScope.role != null and sessionScope.role eq 'admin'}">
+                                    <div class="action-buttons gap-2">
+                                        <a href="${pageContext.request.contextPath}/updateChapter?chapterId=${chapter.chapterId}" class="btn btn-sm btn-outline-warning" onclick="event.stopPropagation()"><i class="bi bi-pen"></i></a>
+                                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                                data-id="${chapter.chapterId}" data-series-id="${chapter.seriesId}" data-type="chapter" data-url="deleteChapter" onclick="event.stopPropagation()">
+                                            <i class="bi bi-trash3-fill"></i>
+                                        </button>
+                                    </div>
+                                </c:if>
                             </div>
                         </c:forEach>
                     </div>

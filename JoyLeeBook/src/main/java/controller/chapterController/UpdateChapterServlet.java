@@ -92,15 +92,14 @@ public class UpdateChapterServlet extends HttpServlet {
             }
             ChapterDAO chapterDAO = new ChapterDAO(DBConnection.getConnection());
             if (chapterDAO.updateChapter(chapter)) {
-                request.setAttribute("message", "updated successfully!");
+                request.getSession().setAttribute("message", "update successfully.");
             } else {
                 request.setAttribute("message", "Update failed!");
                 request.setAttribute("chapter", chapter);
                 request.getRequestDispatcher("WEB-INF/views/chapter/editChapter.jsp").forward(request, response);
                 return;
             }
-            request.getRequestDispatcher("WEB-INF/views/chapter/readChapter.jsp").forward(request, response);
-
+            response.sendRedirect(request.getContextPath() + "/viewSeriesInfo?seriesId=" + seriesId);
         } catch (Exception e) {
             e.printStackTrace();
 
