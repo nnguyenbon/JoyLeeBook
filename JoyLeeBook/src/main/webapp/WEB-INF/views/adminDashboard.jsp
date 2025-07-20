@@ -111,7 +111,16 @@
                                         <span class="badge text-dark">${series.totalChapters}</span>
                                     </td>
                                     <td class="text-center">
-                                        <span class="badge bg-warning text-dark">${series.status}</span>
+                                        <span class="badge bg-warning text-dark">
+                                            <c:choose>
+                                                <c:when test="${series.status == 0}">
+                                                    Ongoing
+                                                </c:when>
+                                                <c:otherwise>
+                                                    Completed
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </span>
                                     </td>
                                     <td class="text-center">
                                         <span class="badge text-dark">${series.createdAt}</span>
@@ -194,5 +203,4 @@
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
-
 </html>
