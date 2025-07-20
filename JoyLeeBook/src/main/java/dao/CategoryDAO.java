@@ -6,7 +6,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
 import model.Genre;
 
 /**
@@ -62,17 +61,19 @@ public class CategoryDAO {
                 + "WHERE c.series_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, seriesId);
-            ResultSet rs = ps.executeQuery();
-            while (rs.next()) {
-                Genre genre = new Genre();
-                genre.setGenreId(rs.getInt("genre_id"));
-                genre.setGenreName(rs.getString("genre_name"));
-                genres.add(genre);
+            try (ResultSet rs = ps.executeQuery();) {
+                while (rs.next()) {
+                    Genre genre = new Genre();
+                    genre.setGenreId(rs.getInt("genre_id"));
+                    genre.setGenreName(rs.getString("genre_name"));
+                    genres.add(genre);
+                }
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         return genres;
+
     }
 
     /**

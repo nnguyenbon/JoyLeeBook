@@ -41,11 +41,11 @@ public class HomeSeriesListServlet extends HttpServlet {
                 series.setTotalChapters(chapterDAO.getTotalChaptersBySeriesId(series.getSeriesId()));
                 series.setLatestChapterDate(chapterDAO.getLatestDate(series.getSeriesId()));
             }
-
             // Sort in day
             Collections.sort(seriesList, (Series s1, Series s2) -> s2.getLatestChapterDate().compareTo(s1.getLatestChapterDate()));
 
             request.setAttribute("seriesList", seriesList);
+            System.out.println("home");
             request.getRequestDispatcher("index.jsp").forward(request, response);
             return;
         } catch (Exception e) {

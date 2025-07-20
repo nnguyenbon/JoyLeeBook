@@ -12,3 +12,4 @@
         <welcome-file>/WEB-INF/views/authorization/login.jsp</welcome-file>
     </welcome-file-list>
 </web-app>
+

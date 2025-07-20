@@ -1,7 +1,6 @@
 package controller.seriesController;
 
 import java.io.IOException;
-
 import dao.SeriesDAO;
 import db.DBConnection;
 import jakarta.servlet.ServletException;
