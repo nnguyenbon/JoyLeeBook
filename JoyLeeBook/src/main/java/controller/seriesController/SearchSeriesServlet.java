@@ -3,7 +3,7 @@ package controller.seriesController;
 import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
-import java.util.List;
+import java.util.ArrayList;
 
 import dao.GenreDAO;
 import dao.SeriesDAO;
@@ -44,7 +44,9 @@ public class SearchSeriesServlet extends HttpServlet {
         String pageParam = request.getParameter("page");
         if (pageParam != null) {
             try {
-                currentPage = Integer.parseInt(pageParam);
+                if (Validator.isValidInteger(pageParam)) {
+                    currentPage = Integer.parseInt(pageParam);
+                }
             } catch (NumberFormatException e) {
                 currentPage = 1;
             }
@@ -57,8 +59,8 @@ public class SearchSeriesServlet extends HttpServlet {
             int totalResults = seriesDAO.getTotalSeriesCount(searchQuery);
             int totalPages = (int) Math.ceil((double) totalResults / RESULTS_PER_PAGE);
 
-            List<Series> seriesList = seriesDAO.searchSeries(searchQuery, currentPage, RESULTS_PER_PAGE);
-            List<Genre> genreList = genreDAO.getAll();
+            ArrayList<Series> seriesList = seriesDAO.searchSeries(searchQuery, currentPage, RESULTS_PER_PAGE);
+            ArrayList<Genre> genreList = genreDAO.getAll();
 
             // MỚI: Gửi các thông tin phân trang tới JSP
             request.setAttribute("seriesList", seriesList);
@@ -67,12 +69,12 @@ public class SearchSeriesServlet extends HttpServlet {
             request.setAttribute("totalPages", totalPages);
             request.setAttribute("searchQuery", searchQuery); // Giữ lại query để tạo link phân trang
 
-            request.getRequestDispatcher("/views/series/searchSeries.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/series/searchSeries.jsp").forward(request, response);
 
         } catch (SQLException | ClassNotFoundException e) {
             e.printStackTrace();
             request.setAttribute("error", "Database error while searching for series.");
-            request.getRequestDispatcher("/views/error.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         }
     }
 
