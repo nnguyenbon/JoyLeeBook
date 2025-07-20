@@ -185,7 +185,7 @@ body {
     min-width: 550px;
 }
 
-/* =================================== HOME/DASHBOARD =================================== */
+/* =================================== HOME/DASHBOARD/INDEX =================================== */
 .header-main {
     background-color: var(--light-blue-gray);
 }
@@ -507,7 +507,6 @@ body {
     justify-content: end;
 }
 
-
 .genre-badge {
     border-radius: 1rem;
     font-size: 0.8rem;
@@ -555,6 +554,7 @@ body {
     margin-top: 0.5rem;
 }
 
+/* =================================== HOME/DASHBOARD/INDEX =================================== */
 .card-container {
     width: 100%;
     display: grid;
@@ -569,6 +569,10 @@ body {
     min-width: 250px;
 }
 
+.card-img-layout {
+    height: 300px;
+}
+
 .manga-card {
     width: 250px;
     border-radius: 0.5rem;
@@ -577,8 +581,8 @@ body {
 }
 
 .manga-cover {
-    height: 300px;
-    object-fit: cover;
+    width: 100%;
+    height: 100%;
 }
 
 .search-container {
@@ -588,6 +592,24 @@ body {
 
 .search-series {
     min-width: 400px;
+}
+
+/* =================================== Admin List Chapter =================================== */
+.reader-container {
+    max-width: 900px;
+    margin: auto;
+    padding: 2rem 1rem;
+}
+
+.reader-img {
+    width: 100%;
+    margin-bottom: 1rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.nav-reader {
+    margin-bottom: 1.5rem;
 }
 
 
