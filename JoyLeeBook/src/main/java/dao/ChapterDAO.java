@@ -12,7 +12,6 @@ import model.Chapter;
  * DAO class for handling database operations related to Chapter entity.
  * Provides methods to insert, update, delete, and retrieve chapter records from
  * the database.
- *
  * Assumes the Chapter table has columns: chapter_id (PK), series_id (FK),
  * chapter_index, chapter_title, content, created_at
  *
@@ -72,7 +71,6 @@ public class ChapterDAO {
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, chapterId);
             try (ResultSet rs = ps.executeQuery()) {
-
                 if (rs.next()) {
                     Chapter chapter = new Chapter();
                     chapter.setChapterId(rs.getInt("chapter_id"));
@@ -82,6 +80,27 @@ public class ChapterDAO {
                     chapter.setCreatedAt(rs.getTimestamp("created_at"));
                     chapter.setContent(rs.getString("content"));
                     chapter.setSeriesTitle(rs.getString("series_title"));
+                    return chapter;
+                }
+            }
+        }
+        return null;
+    }
+
+    public Chapter getChapterByIndex(int seriesId, int chapterIndex) throws SQLException {
+        String sql = "SELECT * FROM Chapters WHERE series_id = ? AND chapter_index = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, seriesId);
+            ps.setInt(2, chapterIndex);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Chapter chapter = new Chapter();
+                    chapter.setChapterId(rs.getInt("chapter_id"));
+                    chapter.setSeriesId(rs.getInt("series_id"));
+                    chapter.setChapterIndex(rs.getInt("chapter_index"));
+                    chapter.setChapterTitle(rs.getString("chapter_title"));
+                    chapter.setCreatedAt(rs.getTimestamp("created_at"));
+                    chapter.setContent(rs.getString("content"));
                     return chapter;
                 }
             }
@@ -129,7 +148,7 @@ public class ChapterDAO {
      * Deletes a chapter from the database by its ID.
      *
      * @param chapterId The ID of the chapter to delete.
-     * @return
+     * @return true if deletion was successful, false if no record was deleted
      * @throws SQLException If a database access error occurs.
      */
     public boolean deleteChapter(int chapterId) throws SQLException {
@@ -162,7 +181,6 @@ public class ChapterDAO {
 
     /**
      * Get latest date chapter of Series
-     *
      * @param seriesId id of series
      * @return latest date or null
      * @throws SQLException If a database access error occurs.
@@ -180,8 +198,17 @@ public class ChapterDAO {
         return null;
     }
 
-    public Chapter getChapterByIndex(int seriesId, int chapterIndex) throws SQLException {
-        String sql = "SELECT * FROM Chapters WHERE series_id = ? AND chapter_index = ?";
+    /**
+     * Retrieves the next chapter in a series based on the chapter index.
+     * 
+     * @param seriesId     the ID of the series
+     * @param chapterIndex the index of the current chapter
+     * @return the next Chapter object if it exists, or null if there is no next
+     *         chapter.
+     * @throws SQLException If a database access error occurs.
+     */
+    public Chapter getNextChapter(int seriesId, int chapterIndex) throws SQLException {
+        String sql = "SELECT TOP 1 * FROM Chapters WHERE series_id = ? AND chapter_index > ? ORDER BY chapter_index ";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, seriesId);
             ps.setInt(2, chapterIndex);
@@ -201,4 +228,85 @@ public class ChapterDAO {
         return null;
     }
 
+    /**
+     * Retrieves the previous chapter in a series based on the chapter index.
+     * 
+     * @param seriesId     the ID of the series
+     * @param chapterIndex the index of the current chapter
+     * @return the previous Chapter object if it exists, or null if there is no
+     *         previous chapter.
+     * @throws SQLException If a database access error occurs.
+     */
+    public Chapter getPreviousChapter(int seriesId, int chapterIndex) throws SQLException {
+        String sql = "SELECT TOP 1 * FROM Chapters WHERE series_id = ? AND chapter_index < ? ORDER BY chapter_index DESC";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, seriesId);
+            ps.setInt(2, chapterIndex);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    Chapter chapter = new Chapter();
+                    chapter.setChapterId(rs.getInt("chapter_id"));
+                    chapter.setSeriesId(rs.getInt("series_id"));
+                    chapter.setChapterIndex(rs.getInt("chapter_index"));
+                    chapter.setChapterTitle(rs.getString("chapter_title"));
+                    chapter.setCreatedAt(rs.getTimestamp("created_at"));
+                    chapter.setContent(rs.getString("content"));
+                    return chapter;
+                }
+            }
+        }
+        return null;
+    }
+
+    /**
+     * Retrieves the index of the first chapter in a series.
+     * 
+     * @param seriesId the ID of the series
+     * @return the index of the first chapter, or -1 if no chapters exist.
+     * @throws SQLException If a database access error occurs.
+     */
+    public int getFirstChapterIndex(int seriesId) throws SQLException {
+        String sql = "SELECT MIN(chapter_index) FROM Chapters WHERE series_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, seriesId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return -1;
+    }
+
+    /**
+     * Retrieves the index of the last chapter in a series.
+     * 
+     * @param seriesId the ID of the series
+     * @return the index of the last chapter, or -1 if no chapters exist.
+     * @throws SQLException If a database access error occurs.
+     */
+    public int getLastChapterIndex(int seriesId) throws SQLException {
+        String sql = "SELECT MAX(chapter_index) FROM Chapters WHERE series_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, seriesId);
+            try (ResultSet rs = ps.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return -1;
+    }
+
+    public boolean deleteBySeriesId(int seriesId) throws SQLException {
+        String sql = "DELETE FROM Chapters WHERE series_id = ?";
+        try (PreparedStatement ps = connection.prepareStatement(sql)) {
+            ps.setInt(1, seriesId);
+            return ps.executeUpdate() > 0;
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

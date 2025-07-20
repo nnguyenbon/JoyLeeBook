@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.ArrayList;
 import model.Chapter;
+import static utils.Validator.*;
 
 /**
  * Servlet for handling requests to read a specific chapter in a series. It
@@ -38,9 +39,9 @@ public class ReadChapterServlet extends HttpServlet {
             String seriesIdParam = request.getParameter("seriesId");
 
             // Validate parameters
-            if (chapterIndexParam == null || chapterIndexParam.isEmpty()
-                    || seriesIdParam == null || seriesIdParam.isEmpty()) {
-                response.sendRedirect(request.getContextPath() + "/error.jsp");
+            if (!isValidInteger(seriesIdParam) || !isValidInteger(chapterIndexParam)) {
+                request.setAttribute("error", "Invalid seriesId or chapterIndex.");
+                request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
                 return;
             }
 
@@ -50,24 +51,27 @@ public class ReadChapterServlet extends HttpServlet {
             // Initialize DAOs
             ChapterDAO chapterDAO = new ChapterDAO(DBConnection.getConnection());
             SeriesDAO seriesDAO = new SeriesDAO(DBConnection.getConnection());
-            // Retrieve chapter and list of chapters
+            // Retrieve chapter and set series title
             Chapter chapter = chapterDAO.getChapterByIndex(seriesId, chapterIndex);
             chapter.setSeriesTitle(seriesDAO.getSeriesById(seriesId).getSeriesTitle());
 
-            ArrayList<Chapter> listChapter = chapterDAO.getAllChaptersBySeriesId(seriesId);
-            int firstIndex = listChapter.get(0).getChapterIndex();
-            int lastIndex = listChapter.get(listChapter.size() - 1).getChapterIndex();
+            // Retrieve all chapters in series
+            ArrayList<Chapter> chapters = chapterDAO.getAllChaptersBySeriesId(seriesId);
+
+            // Compute first and last chapter indexes
+            int firstIndex = chapters.get(0).getChapterIndex();
+            int lastIndex = chapters.get(chapters.size() - 1).getChapterIndex();
 
             // Set attributes and forward to JSP
             request.setAttribute("firstIndex", firstIndex);
             request.setAttribute("lastIndex", lastIndex);
             request.setAttribute("chapter", chapter);
-            request.setAttribute("listChapter", listChapter);
+            request.setAttribute("chapters", chapters);
             request.getRequestDispatcher("/WEB-INF/views/chapter/readChapter.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             // Redirect to error page if parameters are not valid integers
-            response.sendRedirect("/WEB-INF/views/error.jsp");
-
+            request.setAttribute("error", "Invalid seriesId or chapterIndex.");
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         } catch (Exception e) {
             // Log exception and forward to error view
             e.printStackTrace();

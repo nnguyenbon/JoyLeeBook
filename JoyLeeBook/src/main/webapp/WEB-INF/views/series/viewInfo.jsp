@@ -1,9 +1,9 @@
 <%@page import="model.Genre"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" session="true" %>
-<%@ page import="java.util.List, model.Series, model.Chapter" %>
-<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<%@ page import="java.util.ArrayList, model.Series, model.Chapter" %>
+<%@ taglib uri="https://jakarta.ee/tags/core" prefix="c" %>
+<%@ taglib uri="https://jakarta.ee/tags/fmt" prefix="fmt" %>
+<%@ taglib uri="https://jakarta.ee/tags/functions" prefix="fn" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -227,7 +227,7 @@
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-                                                const deleteModal = document.getElementById('deleteModal');
+                                               const deleteModal = document.getElementById('deleteModal');
                                                 deleteModal.addEventListener('show.bs.modal', function (event) {
                                                     const button = event.relatedTarget;
                                                     const itemId = button.getAttribute('data-id');

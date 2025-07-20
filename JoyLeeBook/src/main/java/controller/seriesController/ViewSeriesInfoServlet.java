@@ -1,8 +1,3 @@
-/**
- * Servlet to handle requests for viewing series information and its chapters.
- * Retrieves series details, chapters, and genres based on seriesId parameter,
- * then forwards to the series information JSP page.
- */
 package controller.seriesController;
 
 import dao.CategoryDAO;
@@ -20,7 +15,16 @@ import java.util.ArrayList;
 import model.Chapter;
 import model.Genre;
 import model.Series;
+import utils.Validator.*;
 
+/**
+ * This servlet handles requests to view detailed information about a specific
+ * series. It retrieves the series based on its ID, including its list of
+ * chapters and genres, and forwards the data to the viewInfo.jsp page for
+ * display.
+ * 
+ * @author
+ */
 @WebServlet(name = "ViewSeriesInfoServlet", urlPatterns = {"/viewSeriesInfo"})
 public class ViewSeriesInfoServlet extends HttpServlet {
 
@@ -34,8 +38,7 @@ public class ViewSeriesInfoServlet extends HttpServlet {
      * @param request The HTTP request object.
      * @param response The HTTP response object.
      * @throws ServletException If a servlet-specific error occurs.
-     * @throws IOException If an I/O error occurs. >>>>>>>
-     * 3bd5a2337f29d17099b0232a1ea85d2a8f037888
+     * @throws IOException If an I/O error occurs.
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -43,65 +46,50 @@ public class ViewSeriesInfoServlet extends HttpServlet {
         response.setContentType("text/html;charset=UTF-8");
 
         try {
-            // Validate seriesId parameter
-            String seriesIdParam = request.getParameter("seriesId");
-            if (seriesIdParam == null || seriesIdParam.trim().isEmpty()) {
-                throw new IllegalArgumentException("Series ID is missing.");
+            String seriesIdStr = request.getParameter("seriesId");
+
+            if (!Validator.isValidInteger(seriesIdStr)) {
+                throw new IllegalArgumentException("Invalid series ID.");
             }
 
-            int seriesId;
-            try {
-                seriesId = Integer.parseInt(seriesIdParam);
-                if (seriesId <= 0) {
-                    throw new IllegalArgumentException("Invalid Series ID.");
+            int seriesId = Integer.parseInt(seriesIdStr);
+
+            try (Connection conn = DBConnection.getConnection()) {
+                SeriesDAO seriesDAO = new SeriesDAO(conn);
+                ChapterDAO chapterDAO = new ChapterDAO(conn);
+                CategoryDAO categoryDAO = new CategoryDAO(conn);
+
+                Series series = seriesDAO.getSeriesById(seriesId);
+                if (series == null) {
+                    throw new Exception("Series not found.");
                 }
-            } catch (NumberFormatException e) {
-                throw new IllegalArgumentException("Series ID must be a valid number.");
+
+                ArrayList<Chapter> listChapter = chapterDAO.getAllChaptersBySeriesId(seriesId);
+                ArrayList<Genre> listGenre = categoryDAO.getGenresBySeriesId(seriesId);
+
+                series.setTotalChapters(listChapter != null ? listChapter.size() : 0);
+                series.setGenres(listGenre != null ? listGenre : new ArrayList<>());
+
+                request.setAttribute("series", series);
+                request.setAttribute("listChapter", listChapter);
+
+                // Define genre colors
+                String[] colorGenre = {
+                    "bg-primary-subtle text-primary",
+                    "bg-secondary-subtle text-secondary",
+                    "bg-danger-subtle text-danger",
+                    "bg-info-subtle text-info",
+                    "bg-light-subtle text-dark"
+                };
+                request.setAttribute("colors", colorGenre);
+
+                request.getRequestDispatcher(VIEW_JSP).forward(request, response);
             }
-
-            // Initialize DAOs with a single database connection
-            Connection conn = DBConnection.getConnection();
-            SeriesDAO seriesDAO = new SeriesDAO(conn);
-            ChapterDAO chapterDAO = new ChapterDAO(conn);
-            CategoryDAO categoryDAO = new CategoryDAO(conn);
-
-            // Retrieve series data
-            Series series = seriesDAO.getSeriesById(seriesId);
-            if (series == null) {
-                throw new Exception("Series not found.");
-            }
-
-            // Retrieve chapters and genres
-            ArrayList<Chapter> listChapter = chapterDAO.getAllChaptersBySeriesId(seriesId);
-            ArrayList<Genre> listGenre = categoryDAO.getGenresBySeriesId(seriesId);
-
-            // Set series attributes
-            series.setTotalChapters(listChapter != null ? listChapter.size() : 0);
-            series.setGenres(listGenre != null ? listGenre : new ArrayList<>());
-
-            // Set request attributes
-            request.setAttribute("series", series);
-            request.setAttribute("listChapter", listChapter);
-
-            // Define genre colors
-            String[] colorGenre = {
-                "bg-primary-subtle text-primary",
-                "bg-secondary-subtle text-secondary",
-                "bg-danger-subtle text-danger",
-                "bg-info-subtle text-info",
-                "bg-light-subtle text-dark"
-            };
-            request.setAttribute("colors", colorGenre);
-
-            // Forward to JSP
-            request.getRequestDispatcher(VIEW_JSP).forward(request, response);
 
         } catch (IllegalArgumentException e) {
-            // Handle invalid input
             request.setAttribute("error", e.getMessage());
             request.getRequestDispatcher(ERROR_JSP).forward(request, response);
         } catch (Exception e) {
-            // Handle other errors
             e.printStackTrace();
             request.setAttribute("error", "Cannot retrieve series information: " + e.getMessage());
             request.getRequestDispatcher(ERROR_JSP).forward(request, response);
@@ -109,14 +97,12 @@ public class ViewSeriesInfoServlet extends HttpServlet {
     }
 
     /**
-     * <<<<<<< HEAD Handles the HTTP POST method. Currently not implemented.
+     * Handles the HTTP POST method. Currently not implemented.
      *
      * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs ======= Handles the HTTP POST
-     * method (just calls doGet). >>>>>>>
-     * 3bd5a2337f29d17099b0232a1ea85d2a8f037888
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

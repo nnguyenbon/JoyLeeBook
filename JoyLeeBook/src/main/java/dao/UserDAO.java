@@ -12,12 +12,12 @@ import java.util.ArrayList;
 import java.util.List;
 
 import model.User;
+import utils.PasswordUtil;
 
 /**
  * DAO class for handling database operations related to User entity. Provides
  * methods to insert, update, delete, and retrieve Users records from the
  * database.
- *
  * Assumes the Users table has columns: user_id (PK), role_name, username,
  * email, password.
  *
@@ -42,8 +42,8 @@ public class UserDAO {
      * @return List of all users.
      * @throws java.sql.SQLException
      */
-    public List<User> getAllUser() throws SQLException {
-        List<User> listUser = new ArrayList<>();
+    public ArrayList<User> getAllUser() throws SQLException {
+        ArrayList<User> listUser = new ArrayList<>();
         String sql = "SELECT * FROM Users";
         try (PreparedStatement pstmt = connection.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
@@ -81,7 +81,7 @@ public class UserDAO {
      * @throws java.sql.SQLException
      */
     public boolean insertUser(User user) throws SQLException {
-        String sql = "INSERT INTO Users(role_name, username, email, password) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO Users(role_name, username, email, user_password) VALUES (?, ?, ?, ?)";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, user.getRoleName());
             pstmt.setString(2, user.getUsername());
@@ -99,7 +99,7 @@ public class UserDAO {
      * @throws java.sql.SQLException
      */
     public boolean updateUser(User user) throws SQLException {
-        String sql = "UPDATE Users SET role_name = ?, username = ?, email = ?, password = ? WHERE user_id = ?;";
+        String sql = "UPDATE Users SET role_name = ?, username = ?, email = ?, user_password = ? WHERE user_id = ?;";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, user.getRoleName());
             pstmt.setString(2, user.getUsername());
@@ -134,10 +134,11 @@ public class UserDAO {
      * @throws java.sql.SQLException
      */
     public User checkLogin(String username, String password) throws SQLException {
-        String sql = "SELECT * FROM Users WHERE username = ? AND password = ?";
+        String hashPassword = PasswordUtil.hashPassword(password);
+        String sql = "SELECT * FROM Users WHERE username = ? AND user_password = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, username);
-            pstmt.setString(2, password);
+            pstmt.setString(2, hashPassword);
             try (ResultSet rs = pstmt.executeQuery()) {
                 if (rs.next()) {
                     return extractUserFromResultSet(rs);
@@ -148,38 +149,35 @@ public class UserDAO {
     }
 
     /**
-     * Checks if a user name is available (i.e., not already used in the
-     * database).
+     * Checks if a username is a duplicate in the database.
      *
-     * @param userName The user name of the User to check.
-     * @return true if the user name is not used (available), false if it
-     * already exists.
+     * @param username The username to check for duplicates.
+     * @return true if the username already exists, false otherwise.
      * @throws SQLException If a database access error occurs.
      */
-    public boolean checkUserName(String userName) throws SQLException {
+    public boolean isDuplicateUsername(String username) throws SQLException {
         String sql = "SELECT * FROM Users WHERE username = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
-            pstmt.setString(1, userName);
+            pstmt.setString(1, username);
             try (ResultSet rs = pstmt.executeQuery()) {
-                return !rs.next();
+                return rs.next();
             }
         }
     }
 
     /**
-     * Checks if a email is available (i.e., not already used in the database).
+     * Checks if an email is a duplicate in the database.
      *
-     * @param email The email of the User to check.
-     * @return true if the email is not used (available), false if it already
-     * exists.
+     * @param email The email to check for duplicates.
+     * @return true if the email already exists, false otherwise.
      * @throws SQLException If a database access error occurs.
      */
-    public boolean checkEmail(String email) throws SQLException {
+    public boolean isDuplicateEmail(String email) throws SQLException {
         String sql = "SELECT * FROM Users WHERE email = ?";
         try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
             pstmt.setString(1, email);
             try (ResultSet rs = pstmt.executeQuery()) {
-                return !rs.next();
+                return rs.next();
             }
         }
     }
@@ -197,7 +195,25 @@ public class UserDAO {
         user.setRoleName(rs.getString("role_name"));
         user.setUsername(rs.getString("username"));
         user.setEmail(rs.getString("email"));
-        user.setPassword(rs.getString("password"));
+        user.setPassword(rs.getString("user_password"));
         return user;
+    }
+
+    public User getUserByUsername(String username) throws SQLException {
+        String sql = "SELECT * FROM Users WHERE username = ?";
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setString(1, username);
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    User user = new User();
+                    user.setUserId(rs.getInt("user_id"));
+                    user.setUsername(rs.getString("username"));
+                    user.setPassword(rs.getString("user_password"));
+                    user.setRoleName(rs.getString("role_name"));
+                    return user;
+                }
+            }
+        }
+        return null;
     }
 }

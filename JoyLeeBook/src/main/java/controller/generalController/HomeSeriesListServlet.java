@@ -1,7 +1,3 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller.generalController;
 
 import dao.ChapterDAO;
@@ -14,7 +10,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.util.Collections;
-import java.util.List;
+import java.util.ArrayList;
 import model.Series;
 
 /**
@@ -23,9 +19,6 @@ import model.Series;
  */
 @WebServlet(name = "HomeSeriesListServlet", urlPatterns = {"/home"})
 public class HomeSeriesListServlet extends HttpServlet {
-
-    // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
-    // + sign on the left to edit the code.">
     /**
      * Handles the HTTP <code>GET</code> method.
      *
@@ -37,15 +30,18 @@ public class HomeSeriesListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        Connection conn = null;
         try {
-            SeriesDAO seriesDAO = new SeriesDAO(DBConnection.getConnection());
-            ChapterDAO chapterDAO = new ChapterDAO(DBConnection.getConnection());
-            List<Series> seriesList = seriesDAO.getAllSeries();
+            conn = DBConnection.getConnection();
+            SeriesDAO seriesDAO = new SeriesDAO(conn);
+            ChapterDAO chapterDAO = new ChapterDAO(conn);
+            
+            ArrayList<Series> seriesList = seriesDAO.getAllSeries();
             for (Series series : seriesList) {
                 series.setTotalChapters(chapterDAO.getTotalChaptersBySeriesId(series.getSeriesId()));
                 series.setLatestChapterDate(chapterDAO.getLatestDate(series.getSeriesId()));
             }
-
+            // Sort in day
             Collections.sort(seriesList, (Series s1, Series s2) -> s2.getLatestChapterDate().compareTo(s1.getLatestChapterDate()));
 
             request.setAttribute("seriesList", seriesList);
@@ -55,18 +51,7 @@ public class HomeSeriesListServlet extends HttpServlet {
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Cannot get the Series List.");
-            request.getRequestDispatcher("WEB-INF/views/error.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         }
     }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Short description";
-    }// </editor-fold>
-
 }

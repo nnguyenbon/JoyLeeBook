@@ -2,8 +2,11 @@ package model;
 
 import java.util.Date;
 
+import java.util.Objects;
+
 /**
- * Represents a single chapter of a series. Includes details such as chapter index,
+ * Represents a single chapter of a series. Includes details such as chapter
+ * index,
  * title, content, creation date, and the associated series information.
  */
 public class Chapter {
@@ -27,10 +30,10 @@ public class Chapter {
      * Constructor that initializes a new Chapter with the given series ID,
      * chapter index, title, and content. Automatically sets the creation date.
      *
-     * @param seriesId The ID of the series this chapter belongs to.
+     * @param seriesId     The ID of the series this chapter belongs to.
      * @param chapterIndex The index or order of the chapter within the series.
      * @param chapterTitle The title of the chapter.
-     * @param content The textual content of the chapter.
+     * @param content      The textual content of the chapter.
      */
     public Chapter(int seriesId, int chapterIndex, String chapterTitle, String content) {
         this.seriesId = seriesId;
@@ -165,4 +168,5 @@ public class Chapter {
     public void setSeriesTitle(String seriesTitle) {
         this.seriesTitle = seriesTitle;
     }
+
 }

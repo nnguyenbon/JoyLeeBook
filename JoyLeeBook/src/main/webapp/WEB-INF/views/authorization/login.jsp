@@ -1,5 +1,5 @@
-<%@ page language="java"
-         contentType="text/html; charset=UTF-8"
+<%@ page language="java" 
+         contentType="text/html; charset=UTF-8" 
          pageEncoding="UTF-8"
          session="true"
          errorPage=""
@@ -9,7 +9,6 @@
     Note:
     pageType: Name of folder contained main page
      */
-
     String[] pageTypeArray = ((String) request.getRequestURI()).split("/");
     String pageType = pageTypeArray[pageTypeArray.length - 1].replace(".jsp", "");
 
@@ -29,7 +28,6 @@
     </head>
 
     <body>
-        <jsp:include page="/views/header/_header.jsp" />
 
         <main class="main-main d-flex align-items-center justify-content-center">
             <div class="content mt-4 mb-4 d-flex align-items-center justify-content-center">
@@ -41,7 +39,7 @@
                     <div class="login-body w-100 d-flex flex-column gap-4 align-items-center justify-content-center">
                         <p class="w-75 mb-2">It's great to see you again. We hope you will have an enjoyable and chill moment here.</p>
                         <p class="w-75">Don't have an account?</p>
-                        <a href="register.jsp" class="w-75 d-flex align-items-center justify-content-center">SIGNUP</a>
+                        <a href="/register" class="w-75 d-flex align-items-center justify-content-center">SIGNUP</a>
                     </div>
                 </div>
 
@@ -51,10 +49,16 @@
                     </div>
 
                     <div class="login-body w-100">
-                        <form action="/login" method="POST" class="w-100 d-flex flex-column gap-4 align-items-center justify-content-center">
-                            <input type="text" class="w-75 ps-4" name="username" placeholder="Username">
-                            <input type="password" class="w-75 ps-4" name="password" placeholder="Password">
-                            <input type="submit" class="w-75" value="LOGIN" />
+                        <form action="${pageContext.request.contextPath}/login" method="POST" class="w-100 d-flex flex-column gap-4 align-items-center justify-content-center">
+                            <input type="text" class="w-75 ps-4" name="username" placeholder="Username" value="${rememberedUser != null ? rememberedUser : ''}" required>
+                            <input type="password" class="w-75 ps-4" name="password" placeholder="Password" required>
+                            <div class="remember-me w-75">
+                                <label>
+                                    <input type="checkbox" name="rememberMe" value="on" ${rememberedUser != null ? 'checked' : ''}>
+                                    <span>Remember Me</span>
+                                </label>
+                            </div>
+                            <input type="submit" class="w-75" value="LOGIN" />  
                         </form>
                     </div>
                 </div>
@@ -62,11 +66,8 @@
             </div>
 
         </main>
-
-        <jsp:include page="/views/footer/_footer.jsp" />
+        <%--<jsp:include page="/views/footer/_footer.jsp" />--%>
         <script lang="text/javascript" src="${pageContext.request.contextPath}/js/index.js?v=<%= System.currentTimeMillis()%>"></script>
 
     </body>
-
 </html>
-

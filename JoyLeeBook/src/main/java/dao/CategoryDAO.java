@@ -26,14 +26,14 @@ public class CategoryDAO {
     }
 
     /**
-     * Adds multiple category relationships to the database.
-     * Each category links a series with a genre.
+     * Adds multiple category relationships to the database. Each category links
+     * a series with a genre.
      *
      * @param seriesId The ID of the series to associate genres with.
      * @param genreIds A list of genre IDs to be associated with the series.
      * @throws SQLException If a database access error occurs.
      */
-    public void addCategories(int seriesId, List<Integer> genreIds) throws SQLException {
+    public void addCategories(int seriesId, ArrayList<Integer> genreIds) throws SQLException {
         String sql = "INSERT INTO Categories (series_id, genre_id) VALUES (?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             for (int genreId : genreIds) {
@@ -82,13 +82,25 @@ public class CategoryDAO {
      * @param seriesId The ID of the series whose categories should be removed.
      * @throws SQLException If a database access error occurs.
      */
-    public void deleteBySeriesId(int seriesId) throws SQLException {
+    public boolean deleteBySeriesId(int seriesId) throws SQLException {
         String sql = "DELETE FROM Categories WHERE series_id = ?";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             ps.setInt(1, seriesId);
-            ps.executeUpdate();
+            return ps.executeUpdate() > 0;
         } catch (Exception e) {
             e.printStackTrace();
         }
+        return false;
+    }
+
+    public boolean updateGenreOfSeries(int seriesId, ArrayList<Integer> newGenresId) throws SQLException {
+        try {
+            deleteBySeriesId(seriesId);
+            addCategories(seriedId, newGenresId);
+            return true;
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return false;
     }
 }
