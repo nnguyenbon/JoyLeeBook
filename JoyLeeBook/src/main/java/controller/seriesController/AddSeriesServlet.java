@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-import static utils.Validator;
+import static utils.Validator.*;
 
 @WebServlet(name = "AddSeriesServlet", urlPatterns = {"/addSeries"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024,
@@ -43,6 +43,14 @@ public class AddSeriesServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Handles the HTTP <code>GET</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
@@ -52,6 +60,14 @@ public class AddSeriesServlet extends HttpServlet {
         }
     }
 
+    /**
+     * Handles the HTTP <code>POST</code> method.
+     *
+     * @param request servlet request
+     * @param response servlet response
+     * @throws ServletException if a servlet-specific error occurs
+     * @throws IOException if an I/O error occurs
+     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 

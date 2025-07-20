@@ -5,8 +5,7 @@
          errorPage=""
          isErrorPage="false" %>
 
-<%@ page import="java.util.ArrayList, model.Series, model.User" %>
-
+<%@ page import="java.util.ArrayList, model.Series" %>
 <%
     /*
     Note:
@@ -36,6 +35,9 @@
         <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=<%= System.currentTimeMillis()%>">
         <title><%= pageType.toUpperCase()%></title>
         <style>
+            body {
+                background-color: #eef4fe;
+            }
             .navbar {
                 background-color: #517594;
             }
@@ -48,11 +50,33 @@
                 background-color: #8aab52;
                 color: white;
             }
-
         </style>
     </head>
 
     <body>
+        <header>
+            <<<<<<< HEAD
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg border-bottom sticky-top">
+                <div class="container">
+                    <a class="navbar-brand fw-bold text-white" href="home"><strong
+                            class="fs-3">JoyLeeBook</strong></a>
+                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                        <span class="navbar-toggler-icon"></span>
+                    </button>
+                    <div class="collapse navbar-collapse " id="navbarNav">
+                        <div class="d-flex ms-auto justify-content-center" style="max-width: 600px; width: 100%;">
+                            <form class="d-flex flex-grow-1 me-2">
+                                <input class="form-control w-100 me-3 " type="search" placeholder="Search manga..."
+                                       aria-label="Search" />
+                            </form>
+                            <a class="btn me-2 login" href="authorization/login.html">LOGIN</a>
+                            <a class="btn signup" href="authorization/register.html">SIGN UP</a>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+        </header>
         <main>
             <div class="container my-5">
                 <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
@@ -60,6 +84,7 @@
                     <!-- Nội dung slide -->
                     <div class="carousel-inner">
                         <%
+                            ArrayList< Series> seriesList = (ArrayList<Series>) request.getAttribute("seriesList");
                             int maxSlide = Math.min(3, seriesList.size());
                             for (int i = 0; i < maxSlide; i++) {
                                 boolean isActive = (i == 0);
@@ -76,7 +101,10 @@
                                     <span class="text-muted mx-3">Updated: <%= s.getLatestChapterDate()%></span>
                                     <div class="d-flex gap-2 mt-3">
                                         <a href="viewSeriesInfo?seriesId=<%= s.getSeriesId()%>" class="btn btn-primary">Read</a>
+                                        <% if (session.getAttribute("role") == "user") {%>
+
                                         <a href="saveHistory?seriesId=<%= s.getSeriesId()%>" class="btn btn-outline-dark">Add library</a>
+                                        <%}%>
                                     </div>
                                 </div>
                                 <!-- Image -->
@@ -107,6 +135,18 @@
 
 
             <div class="container mb-5">
+                <div class="section-title text-center m-4"> LASR RALEASED </div>
+                <div class="row row-cols-2 row-cols-md-4 g-5 mx-5">
+                    <%
+                        int MAXIMUM_SERIES_IN_PAGE = 20;
+
+                        int seriesListSize = seriesList.size();
+
+                        int currentPage = request.getParameter("page") == null
+                                || request.getParameter("page").equals("1") ? 1 : Integer.parseInt(request.getParameter("page"));
+
+                        for (int i = (currentPage - 1) * MAXIMUM_SERIES_IN_PAGE + 3; i < currentPage * MAXIMUM_SERIES_IN_PAGE - 1; i++) {
+                            Series s = seriesList.get(i);
                 <div class="section-title text-center m-4"> LAST RELEASED </div>
                 <div class="row row-cols-2 row-cols-md-4 g-5 mx-5">
                     <%
@@ -192,3 +232,4 @@
     </body>
 
 </html>
+

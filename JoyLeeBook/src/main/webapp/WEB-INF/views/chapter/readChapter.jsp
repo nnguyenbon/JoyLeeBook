@@ -1,12 +1,7 @@
-<%-- 
-    Document   : readChapter
-    Created on : Jul 5, 2025, 10:42:33 AM
-    Author     : PC
---%>
-
 <%@page import="model.Chapter"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="jakarta.tags.core" %>
+<%@ taglib uri="https://jakarta.ee/tags/functions" prefix="fn" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -214,3 +209,4 @@
         </div>
     </div>
 </div>
+

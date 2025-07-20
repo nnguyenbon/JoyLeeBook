@@ -14,8 +14,7 @@ import model.Series;
 /**
  * DAO class for handling database operations related to Series entity. Provides
  * methods to insert, update, delete, and retrieve Series records from the
- * database.
- * Assumes the Series table has columns: series_id (PK), author_name,
+ * database. Assumes the Series table has columns: series_id (PK), author_name,
  * series_title, status, description, cover_image_url, created_at.
  *
  * @author Trunguyen
@@ -26,6 +25,8 @@ public class SeriesDAO {
 
     /**
      * Constructor to initialize SeriesDAO with a database connection.
+     *
+     * @param connection
      */
     public SeriesDAO(Connection connection) {
         this.connection = connection;
@@ -135,7 +136,7 @@ public class SeriesDAO {
         ArrayList<Series> list = new ArrayList<>();
 
         // Base SQL query for searching
-        String baseSql = "SELECT * FROM Series";
+        String baseSql = "SELECT * FROM Series WHERE series_title LIKE ? OR author_name LIKE ?";
         if (keyword != null && !keyword.trim().isEmpty()) {
             baseSql += " WHERE series_title LIKE ? OR author_name LIKE ?";
         }

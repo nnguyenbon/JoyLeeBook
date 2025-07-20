@@ -14,13 +14,18 @@ import model.Series;
 import static utils.Validator.*;
 
 /**
- *
+ * Servlet xử lý cập nhật thông tin chapter.
+ * Hiển thị form sửa (GET) và xử lý cập nhật (POST).
+ * 
  * @author PC
  */
 @WebServlet(name = "UpdateChapterServlet", urlPatterns = {"/updateChapter"})
 public class UpdateChapterServlet extends HttpServlet {
+    
     /**
      * Handles the HTTP <code>GET</code> method.
+     * 
+     * Lấy thông tin chapter theo ID để hiển thị form sửa.
      *
      * @param request servlet request
      * @param response servlet response
@@ -68,6 +73,8 @@ public class UpdateChapterServlet extends HttpServlet {
 
     /**
      * Handles the HTTP <code>POST</code> method.
+     * 
+     * Xử lý cập nhật dữ liệu chapter sau khi người dùng submit form.
      *
      * @param request servlet request
      * @param response servlet response
@@ -77,6 +84,7 @@ public class UpdateChapterServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+
         String seriesIdParam = request.getParameter("seriesId");
         String chapterIdParam = request.getParameter("chapterId");
         String seriesTitle = request.getParameter("seriesTitle");
@@ -85,10 +93,11 @@ public class UpdateChapterServlet extends HttpServlet {
         String content = request.getParameter("chapterContent");
 
         Chapter chapter = new Chapter();
+
         try {
-            // Validate required fields
             if (!isValidInteger(seriesIdParam) || !isValidInteger(chapterIdParam) || !isValidInteger(chapterIndexParam)
                     || !isValidString(chapterTitle) || !isValidString(content)) {
+
                 chapter.setChapterId(isValidInteger(chapterIdParam) ? Integer.parseInt(chapterIdParam) : 0);
                 chapter.setChapterIndex(isValidInteger(chapterIndexParam) ? Integer.parseInt(chapterIndexParam) : 0);
                 chapter.setSeriesId(isValidInteger(seriesIdParam) ? Integer.parseInt(seriesIdParam) : 0);

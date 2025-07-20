@@ -112,6 +112,7 @@ public class ChapterDAO {
      * Insert a new chapter into the database.
      *
      * @param chapter the chapter object containing the data to insert.
+     * @return
      * @throws SQLException If a database access error occurs.
      */
     public boolean insertChapter(Chapter chapter) throws SQLException {

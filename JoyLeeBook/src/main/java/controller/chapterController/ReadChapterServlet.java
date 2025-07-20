@@ -35,7 +35,7 @@ public class ReadChapterServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             // Get parameters from the request
-            String chapterIdParam = request.getParameter("chapterId");
+            String chapterIndexParam = request.getParameter("chapterIndex");
             String seriesIdParam = request.getParameter("seriesId");
 
             // Validate parameters
@@ -50,12 +50,17 @@ public class ReadChapterServlet extends HttpServlet {
 
             // Initialize DAOs
             ChapterDAO chapterDAO = new ChapterDAO(DBConnection.getConnection());
-
-            // Retrieve chapter and list of chapters
+            SeriesDAO seriesDAO = new SeriesDAO(DBConnection.getConnection());
+            // Retrieve chapter and set series title
             Chapter chapter = chapterDAO.getChapterByIndex(seriesId, chapterIndex);
+            chapter.setSeriesTitle(seriesDAO.getSeriesById(seriesId).getSeriesTitle());
+
+            // Retrieve all chapters in series
             ArrayList<Chapter> chapters = chapterDAO.getAllChaptersBySeriesId(seriesId);
-            int firstIndex = chapterDAO.getFirstChapterIndex(seriesId);
-            int lastIndex = chapterDAO.getLastChapterIndex(seriesId);
+
+            // Compute first and last chapter indexes
+            int firstIndex = chapters.get(0).getChapterIndex();
+            int lastIndex = chapters.get(chapters.size() - 1).getChapterIndex();
 
             // Set attributes and forward to JSP
             request.setAttribute("firstIndex", firstIndex);

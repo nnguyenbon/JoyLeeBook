@@ -2,7 +2,6 @@ package controller.chapterController;
 
 import java.io.IOException;
 import java.sql.SQLException;
-
 import dao.ChapterDAO;
 import db.DBConnection;
 import jakarta.servlet.ServletException;
@@ -11,7 +10,6 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.User;
-
 import static utils.Validator.isValidInteger;
 
 /**
@@ -34,40 +32,37 @@ public class DeleteChapterServlet extends HttpServlet {
         try {
             chapterDAO = new ChapterDAO(DBConnection.getConnection());
         } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
+            throw new ServletException("Failed to initialize ChapterDAO.", e);
         }
     }
 
     /**
-     * Handles the HTTP <code>GET</code> method.
+     * Handles the HTTP GET method (not supported for deletion).
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException      if an I/O error occurs
      */
     @Override
-    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        try {
-            request.getRequestDispatcher("/WEB-INF/views/chapter/editChapter.jsp").forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("error", "Cannot redirect to delete chapter page.");
-            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
-        }
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED, "GET method is not supported for deletion.");
     }
 
     /**
-     * Handles the HTTP <code>POST</code> method.
+     * Handles the HTTP POST method to delete a chapter.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
      * @throws IOException      if an I/O error occurs
      */
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
         try {
+            // Kiểm tra đăng nhập và quyền admin
             User user = (User) request.getSession().getAttribute("user");
             if (user == null || !"admin".equalsIgnoreCase(user.getRoleName())) {
                 request.setAttribute("error", "Unauthorized access.");
@@ -76,39 +71,37 @@ public class DeleteChapterServlet extends HttpServlet {
             }
 
             String chapterId = request.getParameter("chapterId");
+            String seriesId = request.getParameter("seriesId");
 
-            // Validate chapterId
+            // Kiểm tra hợp lệ
             if (!isValidInteger(chapterId)) {
                 request.setAttribute("error", "Invalid chapter ID.");
                 request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
                 return;
             }
+            if (!isValidInteger(seriesId)) {
+                request.setAttribute("error", "Invalid series ID.");
+                request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
+                return;
+            }
 
-            // Attempt to delete the chapter
+            // Thực hiện xóa
             int id = Integer.parseInt(chapterId);
             boolean isDeleted = chapterDAO.deleteChapter(id);
+
             if (isDeleted) {
-                request.setAttribute("message", "Chapter deleted successfully.");
+                request.getSession().setAttribute("message", "Chapter deleted successfully.");
             } else {
-                request.setAttribute("error", "Chapter not found or could not be deleted.");
+                request.getSession().setAttribute("message", "Chapter not found or could not be deleted.");
             }
-            request.getRequestDispatcher("/WEB-INF/views/chapter/editChapter.jsp").forward(request, response);
+
+            // Redirect về trang thông tin series
+            response.sendRedirect(request.getContextPath() + "/viewSeriesInfo?seriesId=" + seriesId);
 
         } catch (SQLException e) {
             e.printStackTrace();
             request.setAttribute("error", "A database error occurred while deleting the chapter.");
             request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         }
-
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Handles deletion of chapter records.";
     }
 }
