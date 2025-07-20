@@ -15,6 +15,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
+import model.User;
 
 /**
  *
@@ -49,13 +50,6 @@ public class RemoveSavedSeriesServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
-            response.sendRedirect(request.getContextPath() + "/views/series/viewInfo.jsp");
-        } catch (Exception e) {
-            e.printStackTrace();
-            response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                    "An error occurred while processing your request.");
-        }
     }
 
     /**
@@ -71,34 +65,32 @@ public class RemoveSavedSeriesServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
         if (session != null) {
-            int userId = (Integer) session.getAttribute("userId");
-            int seriesId = Integer.parseInt(request.getParameter("series_id"));
+            User user = (User) session.getAttribute("loggedInUser");
+            int userId = user.getUserId();
+            int seriesId = Integer.parseInt(request.getParameter("seriesId"));
             try {
                 SeriesDAO seriesDAO = new SeriesDAO(DBConnection.getConnection());
                 boolean isSeriesSaved = seriesDAO.isSeriesSaved(seriesId, userId);
                 if (!isSeriesSaved) {
-                    request.setAttribute("errorMessage", "This series is not saved in your library.");
-                    request.setAttribute("seriesId", seriesId);
-                    request.getRequestDispatcher("views/series/viewInfo.jsp").forward(request, response);
+                    request.getSession().setAttribute("errorMessage", "This series is not saved in your library.");
+                    response.sendRedirect(request.getContextPath() + "/saveSeries");
                     return;
                 }
                 boolean isRemoved = seriesDAO.deleteSavedSeries(seriesId, userId);
                 if (isRemoved) {
                     request.getSession().setAttribute("successMessage", "Series removed successfully!");
-                    response.sendRedirect(
-                            request.getContextPath() + "/views/series/viewInfo.jsp?series_id=" + seriesId);
+                    response.sendRedirect(request.getContextPath() + "/saveSeries");
                 } else {
                     request.setAttribute("errorMessage", "Failed to remove the series.");
                     request.setAttribute("seriesId", seriesId);
-                    request.getRequestDispatcher("views/series/viewInfo.jsp").forward(request, response);
+                    request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
                 }
             } catch (Exception e) {
-                e.printStackTrace();
-                response.sendError(HttpServletResponse.SC_INTERNAL_SERVER_ERROR,
-                        "An error occurred while processing your request.");
+                request.setAttribute("errorMessage", e);
+                request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
             }
         } else {
-            response.sendRedirect(request.getContextPath() + "views/authorization/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/login");
         }
     }
 

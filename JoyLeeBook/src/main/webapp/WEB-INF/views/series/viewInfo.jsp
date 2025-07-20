@@ -161,9 +161,22 @@
                         <div class="d-flex gap-2 my-5 ">
                             <div class="d-flex gap-2">
                                 <a class="btn btn-primary text-white" href="readChapter?chapterId=1&seriesId=<%=series.getSeriesId()%>">Start Reading</a>
-                                <a class="btn btn-outline-primary" href="saveSeries?seriesId=<%=series.getSeriesId()%>">Add Library</a>
+                                <form action="saveSeries" method="post" style="display:inline;">
+                                    <input type="hidden" name="seriesId" value="${series.seriesId}">
+                                    <button type="submit" class="btn btn-outline-primary">Add Library</button>
+                                </form>
+                                <!--<a class="btn btn-outline-primary" href="saveSeries?seriesId=<%=series.getSeriesId()%>">Add Library</a>-->
                             </div>
                         </div>
+                        <%
+                            String errorMessage = (String) session.getAttribute("errorMessage");
+                            if (errorMessage != null) {
+                                session.removeAttribute("errorMessage"); // Xóa sau khi lấy
+                        %>
+                        <div class="alert alert-danger"><%= errorMessage%></div>
+                        <%
+                            }
+                        %>
                         <% }%>
                         <!-- Buttons -->
 

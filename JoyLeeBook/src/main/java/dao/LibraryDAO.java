@@ -5,18 +5,18 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List; // Sử dụng List thay vì ArrayList trong interface
+import java.util.List; 
 
-import model.Library; // Đảm bảo import đúng lớp Library
+import model.Library; 
 
 /**
  *
  *
- * @author KHAI TOAN (hoặc tên của bạn)
+ * @author KHAI TOAN 
  */
 public class LibraryDAO {
 
-    private final Connection connection; // Kết nối sẽ được truyền vào qua constructor
+    private final Connection connection;
 
     public LibraryDAO(Connection connection) {
         this.connection = connection;
@@ -24,14 +24,12 @@ public class LibraryDAO {
 
     public ArrayList<Library> getAllLibraries() {
         ArrayList<Library> libraries = new ArrayList<>();
-        // Đảm bảo tên bảng là "UserLibraries" như đã thống nhất
         String sql = "SELECT user_id, series_id FROM UserLibraries";
         try (PreparedStatement statement = connection.prepareStatement(sql);
                 ResultSet resultSet = statement.executeQuery()) {
 
             while (resultSet.next()) {
                 Library library = new Library();
-                // Đảm bảo tên cột khớp với CSDL
                 library.setUserId(resultSet.getInt("user_id"));
                 library.setSeriesId(resultSet.getInt("series_id"));
                 libraries.add(library);
@@ -39,7 +37,7 @@ public class LibraryDAO {
         } catch (SQLException e) {
 
         }
-        return libraries; // Trả về danh sách, dù có lỗi hay không (có thể rỗng)
+        return libraries; 
     }
 
     public ArrayList<Library> getLibrariesByUserId(int userId) {
