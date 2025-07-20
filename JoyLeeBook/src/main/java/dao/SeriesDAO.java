@@ -1,6 +1,7 @@
 package dao;
 
 import db.DBConnection;
+
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+
 import model.Series;
 
 /**
@@ -106,7 +108,7 @@ public class SeriesDAO {
             stmt.setString(5, series.getCoverImageUrl());
             stmt.setInt(6, series.getSeriesId());
             return stmt.executeUpdate() > 0;
-        } 
+        }
     }
 
     /**
@@ -133,34 +135,54 @@ public class SeriesDAO {
      * @return A list of Series objects for the current page.
      * @throws SQLException If a database access error occurs.
      */
-    public ArrayList<Series> searchSeries(String keyword, int pageNumber, int pageSize) throws SQLException {
+    public ArrayList<Series> searchSeries(String keyword, int pageNumber, int pageSize, ArrayList<String> genreIds) throws SQLException {
         ArrayList<Series> list = new ArrayList<>();
 
-        // Base SQL query for searching
-        String baseSql = "SELECT * FROM Series WHERE series_title LIKE ? OR author_name LIKE ?";
-        if (keyword != null && !keyword.trim().isEmpty()) {
-            baseSql += " WHERE series_title LIKE ? OR author_name LIKE ?";
+        StringBuilder sql = new StringBuilder("SELECT DISTINCT s.* FROM Series s");
+
+        if (genreIds != null && !genreIds.isEmpty()) {
+            sql.append(" JOIN Categories c ON s.series_id = c.series_id");
         }
 
-        // Append ordering and pagination clauses for SQL Server
-        String sql = baseSql + " ORDER BY series_id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY";
+        boolean hasWhere = false;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" WHERE (s.series_title LIKE ? OR s.author_name LIKE ?)");
+            hasWhere = true;
+        }
 
-        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        // Logic lọc chính xác theo TẤT CẢ genre đã chọn
+        if (genreIds != null && !genreIds.isEmpty()) {
+            sql.append(hasWhere ? " AND" : " WHERE");
+            sql.append(" s.series_id IN (SELECT series_id FROM Categories WHERE genre_id IN (");
+            for (int i = 0; i < genreIds.size(); i++) {
+                sql.append("?");
+                if (i < genreIds.size() - 1) sql.append(",");
+            }
+            sql.append(") GROUP BY series_id HAVING COUNT(DISTINCT genre_id) = ?)");
+        }
+
+        sql.append(" ORDER BY s.series_id OFFSET ? ROWS FETCH NEXT ? ROWS ONLY");
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
             int paramIndex = 1;
             if (keyword != null && !keyword.trim().isEmpty()) {
                 String searchPattern = "%" + keyword + "%";
                 stmt.setString(paramIndex++, searchPattern);
                 stmt.setString(paramIndex++, searchPattern);
             }
+            if (genreIds != null && !genreIds.isEmpty()) {
+                for (String genreId : genreIds) {
+                    stmt.setInt(paramIndex++, Integer.parseInt(genreId));
+                }
+                stmt.setInt(paramIndex++, genreIds.size()); // Tham số cho HAVING COUNT
+            }
 
-            // Calculate the offset based on the page number and page size
             int offset = (pageNumber - 1) * pageSize;
             stmt.setInt(paramIndex++, offset);
             stmt.setInt(paramIndex++, pageSize);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 while (rs.next()) {
-                    // Reuse your mapping method to avoid code duplication
                     list.add(mappingSeriesFromResultSet(rs));
                 }
             }
@@ -204,7 +226,7 @@ public class SeriesDAO {
      *
      * @param seriesTitle The title of the series to check.
      * @return true if the title is not used (available), false if it already
-     *         exists.
+     * exists.
      * @throws SQLException If a database access error occurs.
      */
     public boolean checkTitleSeries(String seriesTitle) throws SQLException {
@@ -247,7 +269,7 @@ public class SeriesDAO {
     /**
      * Saves a series to the user's library.
      * This method inserts a record into the UserLibraries table linking a user
-     * 
+     *
      * @param seriesId The ID of the series to save.
      * @param userId   The ID of the user saving the series.
      * @return true if the series is successfully saved, false otherwise.
@@ -265,7 +287,7 @@ public class SeriesDAO {
     /**
      * Deletes a saved series from the user's library.
      * This method removes a record from the UserLibraries table for a specific
-     * 
+     *
      * @param seriesId The ID of the series to delete from the user's library.
      * @param userId   The ID of the user whose saved series is being deleted.
      * @return true if the series is successfully deleted, false otherwise.
@@ -289,6 +311,54 @@ public class SeriesDAO {
                 return rs.next();
             }
         }
+    }
+
+    public int getTotalSeriesCount(String keyword, ArrayList<String> genreIds) throws SQLException {
+        StringBuilder sql = new StringBuilder("SELECT COUNT(DISTINCT s.series_id) FROM Series s");
+
+        // Chỉ JOIN khi có lọc theo genre
+        if (genreIds != null && !genreIds.isEmpty()) {
+            sql.append(" JOIN Categories c ON s.series_id = c.series_id");
+        }
+
+        boolean hasWhere = false;
+        if (keyword != null && !keyword.trim().isEmpty()) {
+            sql.append(" WHERE (s.series_title LIKE ? OR s.author_name LIKE ?)");
+            hasWhere = true;
+        }
+
+        // Logic lọc chính xác theo TẤT CẢ genre đã chọn
+        if (genreIds != null && !genreIds.isEmpty()) {
+            sql.append(hasWhere ? " AND" : " WHERE");
+            sql.append(" s.series_id IN (SELECT series_id FROM Categories WHERE genre_id IN (");
+            for (int i = 0; i < genreIds.size(); i++) {
+                sql.append("?");
+                if (i < genreIds.size() - 1) sql.append(",");
+            }
+            sql.append(") GROUP BY series_id HAVING COUNT(DISTINCT genre_id) = ?)");
+        }
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql.toString())) {
+            int paramIndex = 1;
+            if (keyword != null && !keyword.trim().isEmpty()) {
+                String searchPattern = "%" + keyword + "%";
+                stmt.setString(paramIndex++, searchPattern);
+                stmt.setString(paramIndex++, searchPattern);
+            }
+            if (genreIds != null && !genreIds.isEmpty()) {
+                for (String genreId : genreIds) {
+                    stmt.setInt(paramIndex++, Integer.parseInt(genreId));
+                }
+                stmt.setInt(paramIndex++, genreIds.size()); // Tham số cho HAVING COUNT
+            }
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return rs.getInt(1);
+                }
+            }
+        }
+        return 0;
     }
 
     /**
