@@ -13,7 +13,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Chapter;
 import model.Series;
-import static utils.Validator;
+import static utils.Validator.*;
 
 /**
  *
