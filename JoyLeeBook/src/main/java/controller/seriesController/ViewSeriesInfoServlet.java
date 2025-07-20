@@ -14,12 +14,14 @@ import java.util.ArrayList;
 import model.Series;
 import model.Chapter;
 import model.Genre;
+import utils.Validator;
 
 /**
  * This servlet handles requests to view detailed information about a specific
  * series. It retrieves the series based on its ID, including its list of
  * chapters and genres, and forwards the data to the viewInfo.jsp page for
  * display.
+ * author
  */
 @WebServlet(name = "ViewSeriesInfoServlet", urlPatterns = {"/viewSeriesInfo"})
 public class ViewSeriesInfoServlet extends HttpServlet {
@@ -36,53 +38,43 @@ public class ViewSeriesInfoServlet extends HttpServlet {
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         try {
-            String idParam = request.getParameter("seriesId");
-            if (idParam == null || idParam.isEmpty()) {
-                response.sendRedirect(request.getContextPath() + "/WEB-INF/views/error.jsp");
+            String seriesIdStr = request.getParameter("seriesId");
+            if (!Validator.isValidInteger(seriesIdStr)) {
+                request.setAttribute("error", "Invalid series ID.");
+                request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
                 return;
             }
-
-            int seriesId = Integer.parseInt(idParam);
-
-            SeriesDAO seriesDAO = new SeriesDAO(DBConnection.getConnection());
-            ChapterDAO chapterDAO = new ChapterDAO(DBConnection.getConnection());
-            CategoryDAO categoryDAO = new CategoryDAO(DBConnection.getConnection());
-
-            Series series = seriesDAO.getSeriesById(seriesId);
-
-            ArrayList<Chapter> listChapter = chapterDAO.getAllChaptersBySeriesId(seriesId);
-            series.setTotalChapters(listChapter.size()); 
-
-            ArrayList<Genre> listGenre = categoryDAO.getGenresBySeriesId(seriesId);
-            series.setGenres(listGenre);
-
-            request.setAttribute("listChapter", listChapter);
-            request.setAttribute("series", series);
-
-            request.getRequestDispatcher("WEB-INF/views/series/viewInfo.jsp").forward(request, response);
+    
+            int seriesId = Integer.parseInt(seriesIdStr);
+    
+            try (Connection conn = DBConnection.getConnection()) {
+                SeriesDAO seriesDAO = new SeriesDAO(conn);
+                ChapterDAO chapterDAO = new ChapterDAO(conn);
+                CategoryDAO categoryDAO = new CategoryDAO(conn);
+    
+                Series series = seriesDAO.getSeriesById(seriesId);
+                if (series == null) {
+                    request.setAttribute("error", "Series not found.");
+                    request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
+                    return;
+                }
+    
+                ArrayList<Chapter> listChapter = chapterDAO.getAllChaptersBySeriesId(seriesId);
+                series.setTotalChapters(listChapter.size()); 
+    
+                ArrayList<Genre> listGenre = categoryDAO.getGenresBySeriesId(seriesId);
+                series.setGenres(listGenre);
+    
+                request.setAttribute("listChapter", listChapter);
+                request.setAttribute("series", series);
+    
+                request.getRequestDispatcher("/WEB-INF/views/series/viewInfo.jsp").forward(request, response);
+            }
+    
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Cannot get the Series Information.");
-            request.getRequestDispatcher("WEB-INF/views/error.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         }
-    }
-
-    /**
-     * Handles the HTTP POST method (just calls doGet).
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        doGet(request, response);
-    }
-
-    /**
-     * Returns a short description of the servlet.
-     *
-     * @return a String containing servlet description
-     */
-    @Override
-    public String getServletInfo() {
-        return "Servlet that handles displaying detailed series information, including chapters and genres.";
     }
 }
