@@ -42,8 +42,8 @@ public class UserDAO {
      * @return List of all users.
      * @throws java.sql.SQLException
      */
-    public List<User> getAllUser() throws SQLException {
-        List<User> listUser = new ArrayList<>();
+    public ArrayList<User> getAllUser() throws SQLException {
+        ArrayList<User> listUser = new ArrayList<>();
         String sql = "SELECT * FROM Users";
         try (PreparedStatement pstmt = connection.prepareStatement(sql); ResultSet rs = pstmt.executeQuery()) {
             while (rs.next()) {
