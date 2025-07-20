@@ -1,6 +1,7 @@
 package controller.seriesController;
 
 import dao.CategoryDAO;
+import dao.GenreDAO; // Thêm import này
 import dao.SeriesDAO;
 import db.DBConnection;
 import jakarta.servlet.ServletException;
@@ -10,66 +11,50 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.Part;
+import model.Genre; // Thêm import này
 import model.Series;
 
-import java.io.File;
-import java.io.IOException;
+import java.io.*;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
+import java.sql.Connection; // Thêm import này
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 import static utils.Validator.*;
 
-@WebServlet(name = "AddSeriesServlet", urlPatterns = { "/addSeries" })
+/**
+ * @author HaiDD-dev
+ */
+
+@WebServlet(name = "AddSeriesServlet", urlPatterns = {"/addSeries"})
 @MultipartConfig(fileSizeThreshold = 1024 * 1024, maxFileSize = 5 * 1024 * 1024, maxRequestSize = 10 * 1024 * 1024)
 public class AddSeriesServlet extends HttpServlet {
 
-    private SeriesDAO seriesDAO;
-    private CategoryDAO categoryDAO;
-
-    @Override
-    public void init() {
-        try {
-            seriesDAO = new SeriesDAO(DBConnection.getConnection());
-            categoryDAO = new CategoryDAO(DBConnection.getConnection());
-        } catch (SQLException | ClassNotFoundException e) {
-            throw new RuntimeException(e);
-        }
-    }
-
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        try {
+        try (Connection conn = DBConnection.getConnection()) {
+            GenreDAO genreDAO = new GenreDAO(conn);
+            ArrayList<Genre> genres = genreDAO.getAll();
+            request.setAttribute("genres", genres);
             request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            request.setAttribute("error", "Could not load data for the add series page.");
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         }
     }
 
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
 
+        // ... (Phần lấy parameters và validation giữ nguyên) ...
         String seriesTitle = request.getParameter("seriesTitle");
         String authorName = request.getParameter("authorName");
         String seriesStatus = request.getParameter("seriesStatus");
@@ -77,30 +62,12 @@ public class AddSeriesServlet extends HttpServlet {
         String[] genreParamValues = request.getParameterValues("genres");
         ArrayList<Integer> genreIDs = new ArrayList<>();
 
-        if (!isValidString(authorName)) {
-            request.setAttribute("message", "Author name cannot be empty");
-            request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
+        // ... (Validation logic giữ nguyên) ...
+        if (!isValidString(authorName) || !isValidString(seriesTitle) || !isValidString(seriesStatus) || !isValidString(seriesDescription)) {
+            request.setAttribute("message", "All text fields must be filled out.");
+            doGet(request, response);
             return;
         }
-
-        if (!isValidString(seriesTitle)) {
-            request.setAttribute("message", "Series title cannot be empty");
-            request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
-            return;
-        }
-
-        if (!isValidString(seriesStatus)) {
-            request.setAttribute("message", "Series status cannot be empty");
-            request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
-            return;
-        }
-
-        if (!isValidString(seriesDescription)) {
-            request.setAttribute("message", "Series description cannot be empty");
-            request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
-            return;
-        }
-
         if (genreParamValues != null) {
             for (String idStr : genreParamValues) {
                 try {
@@ -110,88 +77,133 @@ public class AddSeriesServlet extends HttpServlet {
                 }
             }
         }
-
+        if (genreIDs.isEmpty()) {
+            request.setAttribute("message", "Please select at least one genre.");
+            doGet(request, response);
+            return;
+        }
         Part filePart = request.getPart("coverImage");
-        String submittedFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
-
+        String submittedFileName = (filePart != null) ? Paths.get(filePart.getSubmittedFileName()).getFileName().toString() : "";
         if (submittedFileName.trim().isEmpty()) {
             request.setAttribute("message", "Please select a cover image.");
-            request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
+            doGet(request, response);
             return;
         }
 
-        String uploadPath = getServletContext().getRealPath("/assets/images/") + File.separator;
-        File uploadDir = new File(uploadPath);
-        if (!uploadDir.exists())
-            uploadDir.mkdirs();
 
-        String baseName;
-        int lastDotIndex = submittedFileName.lastIndexOf('.');
-        if (lastDotIndex > 0 && lastDotIndex < submittedFileName.length() - 1) {
-            baseName = submittedFileName.substring(0, lastDotIndex);
-        } else {
-            baseName = submittedFileName;
-        }
-
-        String uniqueID = UUID.randomUUID().toString().substring(0, 8);
-        String avifFileName = baseName + "-" + uniqueID + ".avif";
-        String tempFileName = baseName + "-" + uniqueID + "_temp." + getExtension(submittedFileName);
-
-        File tempImageFile = new File(uploadPath + tempFileName);
-        filePart.write(tempImageFile.getAbsolutePath());
-
-        File avifImageFile = new File(uploadPath + avifFileName);
-        ProcessBuilder pb = new ProcessBuilder("avifenc", tempImageFile.getAbsolutePath(),
-                avifImageFile.getAbsolutePath());
+        Connection conn = null;
+        Process process = null;
+        File tempImageFile = null;
 
         try {
-            Process process = pb.start();
+            conn = DBConnection.getConnection();
+            conn.setAutoCommit(false);
+
+            // === ĐỊNH NGHĨA 2 ĐƯỜNG DẪN LƯU TRỮ ===
+            // 1. Đường dẫn trong thư mục server (để chạy ứng dụng)
+            String deployedPath = getServletContext().getRealPath("/assets/images/") + File.separator;
+
+            // 2. Đường dẫn trong thư mục mã nguồn (để tiện phát triển)
+            // LƯU Ý: Thay đổi đường dẫn này cho phù hợp với máy của bạn.
+            String projectSourcePath = "/home/haishelby/DATA/FPT University/2025_b_Summer/PRJ301/JoyLeeBook/JoyLeeBook/src/main/webapp/assets/images" + File.separator;
+            // String uploadPath = "D:\\Projects\\JoyLeeBook\\src\\main\\webapp\\assets\\images\\" + File.separator; // windows
+
+            // Tạo cả hai thư mục nếu chúng chưa tồn tại
+            new File(deployedPath).mkdirs();
+            new File(projectSourcePath).mkdirs();
+            // ==========================================
+
+            int lastDotIndex = submittedFileName.lastIndexOf('.');
+            String baseName = (lastDotIndex > 0) ? submittedFileName.substring(0, lastDotIndex) : submittedFileName;
+            String uniqueID = UUID.randomUUID().toString().substring(0, 8);
+            String avifFileName = baseName + "-" + uniqueID + ".avif";
+            String tempFileName = baseName + "-" + uniqueID + "_temp." + getExtension(submittedFileName);
+
+            // Lưu file tạm vào thư mục của server để xử lý
+            tempImageFile = new File(deployedPath + tempFileName);
+            filePart.write(tempImageFile.getAbsolutePath());
+
+            File avifImageFileInDeployedPath = new File(deployedPath + avifFileName);
+            String avifencPath = "avifenc";
+
+            ProcessBuilder pb = new ProcessBuilder(
+                    avifencPath,
+                    tempImageFile.getAbsolutePath(),
+                    avifImageFileInDeployedPath.getAbsolutePath());
+
+            process = pb.start();
             int exitCode = process.waitFor();
+
             if (exitCode != 0) {
-                request.setAttribute("message", "Error! Cannot convert image to AVIF format.");
-                request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
+                // ... (Xử lý lỗi AVIF giữ nguyên) ...
+                InputStream errorStream = process.getErrorStream();
+                String errorOutput = new BufferedReader(new InputStreamReader(errorStream))
+                        .lines().collect(Collectors.joining("\n"));
+                request.setAttribute("error", "Failed to convert image to AVIF. Is 'avifenc' installed? Details: " + errorOutput);
+                request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
+                conn.rollback();
                 return;
             }
+
+            // === SAO CHÉP FILE .AVIF VỀ THƯ MỤC MÃ NGUỒN ===
+            Path sourceFile = avifImageFileInDeployedPath.toPath();
+            Path destinationFile = new File(projectSourcePath + avifFileName).toPath();
+            Files.copy(sourceFile, destinationFile, StandardCopyOption.REPLACE_EXISTING);
+            // =============================================
+
+            String imageUrl = "assets/images/" + avifFileName;
+
+            // ... (Phần code lưu vào CSDL giữ nguyên) ...
+            Series newSeries = new Series();
+            newSeries.setSeriesTitle(seriesTitle);
+            newSeries.setAuthorName(authorName);
+            newSeries.setStatus(seriesStatus);
+            newSeries.setDescription(seriesDescription);
+            newSeries.setCoverImageUrl(imageUrl);
+
+            SeriesDAO seriesDAO = new SeriesDAO(conn);
+            CategoryDAO categoryDAO = new CategoryDAO(conn);
+            int insertedId = seriesDAO.insertAndReturnId(newSeries);
+            categoryDAO.addCategories(insertedId, genreIDs);
+
+            conn.commit();
+            response.sendRedirect(request.getContextPath() + "/adminDashboard");
+
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("message", "Image processing error: " + e.getMessage());
-            request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
-            return;
+            if (conn != null) {
+                try {
+                    conn.rollback();
+                } catch (SQLException ex) {
+                    ex.printStackTrace();
+                }
+            }
+            request.setAttribute("message", "An error occurred while saving the series: " + e.getMessage());
+            doGet(request, response);
         } finally {
-            tempImageFile.delete();
-        }
-
-        String imageUrl = "assets/images/" + avifFileName;
-
-        Series newSeries = new Series();
-        newSeries.setSeriesTitle(seriesTitle);
-        newSeries.setAuthorName(authorName);
-        newSeries.setStatus(seriesStatus);
-        newSeries.setDescription(seriesDescription);
-        newSeries.setCoverImageUrl(imageUrl);
-
-        int insertedId = 0;
-        try {
-            insertedId = seriesDAO.insertAndReturnId(newSeries);
-        } catch (SQLException e) {
-            throw new RuntimeException(e);
-        }
-
-        if (!genreIDs.isEmpty()) {
-            try {
-                categoryDAO.addCategories(insertedId, genreIDs);
-            } catch (SQLException e) {
-                throw new RuntimeException(e);
+            // ... (Phần dọn dẹp tài nguyên giữ nguyên) ...
+            if (process != null) {
+                process.destroy();
+            }
+            if (tempImageFile != null && tempImageFile.exists()) {
+                tempImageFile.delete();
+            }
+            if (conn != null) {
+                try {
+                    conn.setAutoCommit(true);
+                    conn.close();
+                } catch (SQLException e) {
+                    e.printStackTrace();
+                }
             }
         }
-
-        response.sendRedirect(request.getContextPath() + "/adminDashboard");
     }
 
     private String getExtension(String filename) {
         int dotIndex = filename.lastIndexOf('.');
-        if (dotIndex >= 0)
+        if (dotIndex >= 0 && dotIndex < filename.length() - 1) {
             return filename.substring(dotIndex + 1).toLowerCase();
+        }
         return "";
     }
 }
