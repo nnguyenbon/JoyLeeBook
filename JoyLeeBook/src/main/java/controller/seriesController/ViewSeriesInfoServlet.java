@@ -14,78 +14,67 @@ import java.util.ArrayList;
 import model.Series;
 import model.Chapter;
 import model.Genre;
+import utils.Validator;
 
 /**
  * This servlet handles requests to view detailed information about a specific
  * series. It retrieves the series based on its ID, including its list of
  * chapters and genres, and forwards the data to the viewInfo.jsp page for
  * display.
+ * author
  */
 @WebServlet(name = "ViewSeriesInfoServlet", urlPatterns = {"/viewSeriesInfo"})
 public class ViewSeriesInfoServlet extends HttpServlet {
 
     /**
-     * Handles both GET and POST requests. Retrieves the series ID from the
-     * request, fetches the corresponding series from the database along with
-     * its related chapters and genres. If successful, forwards to the series
-     * view page. If the series ID is missing or an error occurs, redirects to
-     * an error page.
-     */
-    protected void processRequest(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        try {
-            // Check id if user operate with url
-            String idParam = request.getParameter("seriesId");
-            if (idParam == null || idParam.isEmpty()) {
-                response.sendRedirect(request.getContextPath() + "/error.jsp");
-                return;
-            }
-
-            SeriesDAO seriesDAO = new SeriesDAO(DBConnection.getConnection());
-            ChapterDAO chapterDAO = new ChapterDAO(DBConnection.getConnection());
-            CategoryDAO categoryDAO = new CategoryDAO(DBConnection.getConnection());
-
-            int seriesId = Integer.parseInt(idParam);
-            Series series = seriesDAO.getSeriesById(seriesId);
-
-            ArrayList<Chapter> listChapter = chapterDAO.getAllChaptersBySeriesId(seriesId);
-            series.setChapter(listChapter);
-
-            ArrayList<Genre> listGenre = categoryDAO.getGenresBySeriesId(seriesId);
-            series.setGenres(listGenre);
-
-            request.setAttribute("series", series);
-            request.getRequestDispatcher("views/series/viewInfo.jsp").forward(request, response);
-        } catch (Exception e) {
-            e.printStackTrace();
-            request.setAttribute("error", "Cannot get the Series Information.");
-            request.getRequestDispatcher("views/error.jsp").forward(request, response);
-        }
-    }
-
-    /**
-     * Handles HTTP GET requests by calling the processRequest method.
+     * Handles the HTTP GET method.
+     *
+     * @param request  The HTTP request object.
+     * @param response The HTTP response object.
+     * @throws ServletException If a servlet-specific error occurs.
+     * @throws IOException      If an I/O error occurs.
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Handles HTTP POST requests by calling the processRequest method.
-     */
-    @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)
-            throws ServletException, IOException {
-        processRequest(request, response);
-    }
-
-    /**
-     * Returns a short description of this servlet.
-     */
-    @Override
-    public String getServletInfo() {
-        return "Servlet that handles displaying detailed series information, including chapters and genres.";
+        try {
+            String seriesIdStr = request.getParameter("seriesId");
+            if (!Validator.isValidInteger(seriesIdStr)) {
+                request.setAttribute("error", "Invalid series ID.");
+                request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
+                return;
+            }
+    
+            int seriesId = Integer.parseInt(seriesIdStr);
+    
+            try (Connection conn = DBConnection.getConnection()) {
+                SeriesDAO seriesDAO = new SeriesDAO(conn);
+                ChapterDAO chapterDAO = new ChapterDAO(conn);
+                CategoryDAO categoryDAO = new CategoryDAO(conn);
+    
+                Series series = seriesDAO.getSeriesById(seriesId);
+                if (series == null) {
+                    request.setAttribute("error", "Series not found.");
+                    request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
+                    return;
+                }
+    
+                ArrayList<Chapter> listChapter = chapterDAO.getAllChaptersBySeriesId(seriesId);
+                series.setTotalChapters(listChapter.size()); 
+    
+                ArrayList<Genre> listGenre = categoryDAO.getGenresBySeriesId(seriesId);
+                series.setGenres(listGenre);
+    
+                request.setAttribute("listChapter", listChapter);
+                request.setAttribute("series", series);
+    
+                request.getRequestDispatcher("/WEB-INF/views/series/viewInfo.jsp").forward(request, response);
+            }
+    
+        } catch (Exception e) {
+            e.printStackTrace();
+            request.setAttribute("error", "Cannot get the Series Information.");
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
+        }
     }
 }

@@ -1,17 +1,194 @@
-<%-- 
-    Document   : index
-    Created on : Jul 5, 2025, 10:43:19 AM
-    Author     : PC
---%>
+<%@ page language="java"
+         contentType="text/html; charset=UTF-8"
+         pageEncoding="UTF-8"
+         session="true"
+         errorPage=""
+         isErrorPage="false" %>
 
-<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@ page import="java.util.ArrayList, model.Series, model.User" %>
+
+<%
+    /*
+    Note:
+    pageType: Name of folder contained main page
+     */
+    String[] pageTypeArray = ((String) request.getRequestURI()).split("/");
+    String pageType = pageTypeArray[pageTypeArray.length - 1].replace(".jsp", "");
+
+    request.setAttribute("pageType", pageType);
+    ArrayList<Series> seriesList = (ArrayList<Series>) request.getAttribute("seriesList");
+    User user = (User) request.getSession().getAttribute("loggedInUser");
+%>
+<% if (user != null) { %>
+<jsp:include page="/WEB-INF/views/components/header_loggedIn.jsp" />
+<% } else { %>
+<jsp:include page="/WEB-INF/views/components/header_unLoggedIn.jsp" />
+<% }%>
 <!DOCTYPE html>
-<html>
+<html lang="en">
     <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-        <title>JSP Page</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet"
+              integrity="sha384-EVSTQN3/azprG1Anm3QDgpJLIm9Nao0Yz1ztcQTwFspd3yD65VohhpuuCOmLASjC" crossorigin="anonymous">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=<%= System.currentTimeMillis()%>">
+        <title><%= pageType.toUpperCase()%></title>
+        <style>
+            .navbar {
+                background-color: #517594;
+            }
+
+            .login {
+                color: #fff;
+            }
+
+            .signup {
+                background-color: #8aab52;
+                color: white;
+            }
+
+        </style>
     </head>
+
     <body>
-        <h1>Hello World!</h1>
+        <main>
+            <div class="container my-5">
+                <div id="carouselExampleIndicators" class="carousel slide" data-bs-ride="carousel">
+
+                    <!-- Nội dung slide -->
+                    <div class="carousel-inner">
+                        <%
+                            int maxSlide = Math.min(3, seriesList.size());
+                            for (int i = 0; i < maxSlide; i++) {
+                                boolean isActive = (i == 0);
+                                Series s = seriesList.get(i);
+                        %>
+                        <div class="carousel-item <%= isActive ? "active" : ""%>">
+                            <div class="d-flex flex-wrap align-items-center p-4 mb-5 bg-primary-subtle rounded shadow"
+                                 style="max-width: 1150px; margin: auto;">                                
+                                <!-- Text -->
+                                <div class="information-series flex-grow-1 mx-5">  
+                                    <span class="badge bg-light text-primary mb-2">New</span>
+                                    <h3 class="fw-bold"><%= s.getSeriesTitle()%></h3>
+                                    <span class="text-muted">Ch. <%= s.getTotalChapters()%></span>
+                                    <span class="text-muted mx-3">Updated: <%= s.getLatestChapterDate()%></span>
+                                    <div class="d-flex gap-2 mt-3">
+                                        <a href="viewSeriesInfo?seriesId=<%= s.getSeriesId()%>" class="btn btn-primary">Read</a>
+                                        <a href="saveHistory?seriesId=<%= s.getSeriesId()%>" class="btn btn-outline-dark">Add library</a>
+                                    </div>
+                                </div>
+                                <!-- Image -->
+                                <div class="image-series mx-5">
+                                    <img class="carousel-image rounded" src="${pageContext.request.contextPath}/<%= s.getCoverImageUrl()%>" class="img-fluid rounded" style="max-height: 250px;" alt="<%= s.getSeriesTitle()%>">
+                                    <!--<img class="carousel-image rounded" src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3" alt="<%= s.getSeriesTitle()%>">-->
+                                </div>
+                            </div>
+                        </div>
+                        <% } %> 
+                    </div>
+
+                    <!-- Nút điều hướng -->
+                    <button class="carousel-control-prev custom-control border border-black" type="button"
+                            data-bs-target="#carouselExampleIndicators" data-bs-slide="prev">
+                        <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Previous</span>
+                    </button>
+
+                    <button class="carousel-control-next custom-control border border-black" type="button"
+                            data-bs-target="#carouselExampleIndicators" data-bs-slide="next">
+                        <span class="carousel-control-next-icon" aria-hidden="true"></span>
+                        <span class="visually-hidden">Next</span>
+                    </button>
+
+                </div>
+            </div>
+
+
+            <div class="container mb-5">
+                <div class="section-title text-center m-4"> LAST RELEASED </div>
+                <div class="row row-cols-2 row-cols-md-4 g-5 mx-5">
+                    <%
+                        int MAXIMUM_SERIES_IN_PAGE = 20;
+                        if (seriesList != null && !seriesList.isEmpty()) {
+                            int seriesListSize = seriesList.size();
+                            int currentPage = request.getParameter("page") == null
+                                    || request.getParameter("page").equals("1") ? 1 : Integer.parseInt(request.getParameter("page"));
+                            int start = (currentPage - 1) * MAXIMUM_SERIES_IN_PAGE + 3;
+                            int end = Math.min(currentPage * MAXIMUM_SERIES_IN_PAGE - 1, seriesListSize);
+
+                            for (int i = start; i < end; i++) {
+                                Series s = seriesList.get(i);
+                    %>
+                    <div class="col">
+                        <a href="viewSeriesInfo?seriesId=<%= s.getSeriesId()%>">
+                            <div class="card">
+                                <img src="${pageContext.request.contextPath}/<%= s.getCoverImageUrl()%>"
+                                     class="card-img-top carousel-image" alt="<%=s.getSeriesTitle()%>">
+                                <div class="card-body">
+                                    <h6 class="card-title mb-0 text-truncate"><%=s.getSeriesTitle()%></h6>
+                                    <div class="d-flex justify-content-between text-muted small px-1">
+                                        <div> Ch. <%=s.getTotalChapters()%></div>
+                                        <div><em><%=s.getLatestChapterDate()%></em></div>
+                                    </div>
+                                </div>
+                            </div>
+                        </a>
+                    </div>
+                    <% }%>
+                </div>
+                <%
+                    int MAXIMUM_PAGE_NUMBER = (int) Math.ceil((double) seriesListSize / MAXIMUM_SERIES_IN_PAGE);
+                    int previousPage = currentPage > 1 ? currentPage - 1 : 1;
+                    int nextPage = currentPage < MAXIMUM_PAGE_NUMBER ? currentPage + 1 : MAXIMUM_PAGE_NUMBER;
+                    if (MAXIMUM_PAGE_NUMBER > 1) {
+                %>
+
+                <nav aria-label="Page navigation example">
+                    <ul class="pagination justify-content-center mt-4">
+
+                        <!-- Previous -->
+                        <li class="page-item <%= currentPage == 1 ? "disabled" : ""%>">
+                            <a class="page-link" href="?page=<%= previousPage%>">&laquo;</a>
+                        </li>
+
+                        <!-- Page numbers (3 numbers max: prev - current - next) -->
+                        <% if (currentPage > 1) {%>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<%= currentPage - 1%>"><%= currentPage - 1%></a>
+                        </li>
+                        <% }%>
+
+                        <!-- Current page -->
+                        <li class="page-item active">
+                            <a class="page-link" href="#"><%= currentPage%></a>
+                        </li>
+
+                        <% if (currentPage < MAXIMUM_PAGE_NUMBER) {%>
+                        <li class="page-item">
+                            <a class="page-link" href="?page=<%= currentPage + 1%>"><%= currentPage + 1%></a>
+                        </li>
+                        <% }%>
+
+                        <!-- Next -->
+                        <li class="page-item <%= currentPage == MAXIMUM_PAGE_NUMBER ? "disabled" : ""%>">
+                            <a class="page-link" href="?page=<%= nextPage%>">&raquo;</a>
+                        </li>
+
+                    </ul>
+                </nav>
+                <%
+                    }
+                } else {
+                %>
+                <p class="text-center">No series found.</p>
+                <% }%>
+        </main>
+        <jsp:include page="/WEB-INF/views/components/footer.jsp" />
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+
+        <script lang="text/javascript" src="${pageContext.request.contextPath}/js/index.js?v=<%= System.currentTimeMillis()%>"></script>
     </body>
+
 </html>

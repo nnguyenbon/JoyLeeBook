@@ -3,27 +3,28 @@ package controller.chapterController;
 import dao.ChapterDAO;
 import dao.SeriesDAO;
 import db.DBConnection;
-import java.io.IOException;
-import java.util.ArrayList;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
+import java.io.IOException;
+import java.util.ArrayList;
 import model.Chapter;
+import static utils.Validator;
 
 /**
- * Servlet for handling requests to read a specific chapter in a series.
- * It retrieves the chapter by ID and a list of all chapters in the same series,
+ * Servlet for handling requests to read a specific chapter in a series. It
+ * retrieves the chapter by ID and a list of all chapters in the same series,
  * then forwards the information to a JSP page for rendering.
  */
 @WebServlet(name = "ReadChapterServlet", urlPatterns = {"/readChapter"})
 public class ReadChapterServlet extends HttpServlet {
 
     /**
-     * Processes both GET and POST requests.
-     * Retrieves the chapter by ID and the chapter list by series ID,
-     * and forwards the data to the readChapter.jsp view.
+     * Processes both GET and POST requests. Retrieves the chapter by ID and the
+     * chapter list by series ID, and forwards the data to the readChapter.jsp
+     * view.
      *
      * @param request The HTTP request object.
      * @param response The HTTP response object.
@@ -38,35 +39,39 @@ public class ReadChapterServlet extends HttpServlet {
             String seriesIdParam = request.getParameter("seriesId");
 
             // Validate parameters
-            if (chapterIdParam == null || chapterIdParam.isEmpty()
-                    || seriesIdParam == null || seriesIdParam.isEmpty()) {
-                response.sendRedirect(request.getContextPath() + "/error.jsp");
+            if (!isValidInteger(seriesIdParam) || !isValidInteger(chapterIndexParam)) {
+                request.setAttribute("error", "Invalid seriesId or chapterIndex.");
+                request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
                 return;
             }
 
-            int chapterId = Integer.parseInt(chapterIdParam);
+            int chapterIndex = Integer.parseInt(chapterIndexParam);
             int seriesId = Integer.parseInt(seriesIdParam);
 
             // Initialize DAOs
-            SeriesDAO seriesDAO = new SeriesDAO(DBConnection.getConnection());
             ChapterDAO chapterDAO = new ChapterDAO(DBConnection.getConnection());
 
             // Retrieve chapter and list of chapters
-            Chapter chapter = chapterDAO.getChapterById(chapterId);
-            ArrayList<Chapter> listChapter = chapterDAO.getAllChaptersBySeriesId(seriesId);
+            Chapter chapter = chapterDAO.getChapterByIndex(seriesId, chapterIndex);
+            ArrayList<Chapter> chapters = chapterDAO.getAllChaptersBySeriesId(seriesId);
+            int firstIndex = chapterDAO.getFirstChapterIndex(seriesId);
+            int lastIndex = chapterDAO.getLastChapterIndex(seriesId);
 
             // Set attributes and forward to JSP
+            request.setAttribute("firstIndex", firstIndex);
+            request.setAttribute("lastIndex", lastIndex);
             request.setAttribute("chapter", chapter);
-            request.setAttribute("chapterList", listChapter);
-            request.getRequestDispatcher("views/chapter/readChapter.jsp").forward(request, response);
+            request.setAttribute("chapters", chapters);
+            request.getRequestDispatcher("/WEB-INF/views/chapter/readChapter.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             // Redirect to error page if parameters are not valid integers
-            response.sendRedirect("views/error.jsp");
+            request.setAttribute("error", "Invalid seriesId or chapterIndex.");
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         } catch (Exception e) {
             // Log exception and forward to error view
             e.printStackTrace();
             request.setAttribute("error", "Cannot get the Chapter Information.");
-            request.getRequestDispatcher("views/error.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         }
     }
 

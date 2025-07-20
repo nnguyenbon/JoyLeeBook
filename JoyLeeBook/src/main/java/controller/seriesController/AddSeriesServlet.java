@@ -1,30 +1,32 @@
 package controller.seriesController;
 
 import dao.CategoryDAO;
+import dao.SeriesDAO;
 import db.DBConnection;
-import jakarta.servlet.*;
+import jakarta.servlet.ServletException;
 import jakarta.servlet.annotation.MultipartConfig;
 import jakarta.servlet.annotation.WebServlet;
-import jakarta.servlet.http.*;
+import jakarta.servlet.http.HttpServlet;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
+import jakarta.servlet.http.Part;
 import model.Series;
-import dao.SeriesDAO;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
 
-import static utils.Validator.isValidString;
+import static utils.Validator;
 
-/**
- * Servlet to handle adding a new series.
- *
- * @author HaiDD-dev
- */
 @WebServlet(name = "AddSeriesServlet", urlPatterns = {"/addSeries"})
-@MultipartConfig(fileSizeThreshold = 1024 * 1024,    // 1MB
-        maxFileSize = 5 * 1024 * 1024,      // 5MB
-        maxRequestSize = 10 * 1024 * 1024   // 10MB
+@MultipartConfig(fileSizeThreshold = 1024 * 1024,
+        maxFileSize = 5 * 1024 * 1024,
+        maxRequestSize = 10 * 1024 * 1024
 )
 public class AddSeriesServlet extends HttpServlet {
 
@@ -41,14 +43,15 @@ public class AddSeriesServlet extends HttpServlet {
         }
     }
 
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+        try {
+            request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
@@ -57,30 +60,29 @@ public class AddSeriesServlet extends HttpServlet {
         String seriesStatus = request.getParameter("seriesStatus");
         String seriesDescription = request.getParameter("seriesDescription");
         String[] genreParamValues = request.getParameterValues("genres");
-        List<Integer> genreIDs = new ArrayList<>();
+        ArrayList<Integer> genreIDs = new ArrayList<>();
 
-        // Validate input parameters
         if (!isValidString(authorName)) {
             request.setAttribute("error", "Author name cannot be empty");
-            request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
             return;
         }
 
         if (!isValidString(seriesTitle)) {
             request.setAttribute("error", "Series title cannot be empty");
-            request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
             return;
         }
 
         if (!isValidString(seriesStatus)) {
             request.setAttribute("error", "Series status cannot be empty");
-            request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
             return;
         }
 
         if (!isValidString(seriesDescription)) {
             request.setAttribute("error", "Series description cannot be empty");
-            request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
             return;
         }
 
@@ -94,22 +96,19 @@ public class AddSeriesServlet extends HttpServlet {
             }
         }
 
-        // Xử lý ảnh upload
         Part filePart = request.getPart("coverImage");
         String submittedFileName = Paths.get(filePart.getSubmittedFileName()).getFileName().toString();
 
         if (submittedFileName.trim().isEmpty()) {
-            request.setAttribute("error", "Vui lòng chọn ảnh bìa.");
-            request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
+            request.setAttribute("error", "Please select a cover image.");
+            request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
             return;
         }
 
-        // Tạo thư mục lưu file nếu chưa tồn tại
         String uploadPath = getServletContext().getRealPath("/assets/images/") + File.separator;
         File uploadDir = new File(uploadPath);
         if (!uploadDir.exists()) uploadDir.mkdirs();
 
-        // Lấy tên file gốc không có phần mở rộng
         String baseName;
         int lastDotIndex = submittedFileName.lastIndexOf('.');
         if (lastDotIndex > 0 && lastDotIndex < submittedFileName.length() - 1) {
@@ -118,17 +117,13 @@ public class AddSeriesServlet extends HttpServlet {
             baseName = submittedFileName;
         }
 
-        // Tạo một mã định danh duy nhất ngắn gọn
         String uniqueID = UUID.randomUUID().toString().substring(0, 8);
-
-        // Ghép tên gốc với mã duy nhất để tạo tên file mới
         String avifFileName = baseName + "-" + uniqueID + ".avif";
         String tempFileName = baseName + "-" + uniqueID + "_temp." + getExtension(submittedFileName);
 
         File tempImageFile = new File(uploadPath + tempFileName);
         filePart.write(tempImageFile.getAbsolutePath());
 
-        // Convert ảnh sang AVIF yêu cầu avifenc đã được cài đặt
         File avifImageFile = new File(uploadPath + avifFileName);
         ProcessBuilder pb = new ProcessBuilder("avifenc", tempImageFile.getAbsolutePath(), avifImageFile.getAbsolutePath());
 
@@ -136,24 +131,21 @@ public class AddSeriesServlet extends HttpServlet {
             Process process = pb.start();
             int exitCode = process.waitFor();
             if (exitCode != 0) {
-                request.setAttribute("error", "Error! cannot convert image to AVIF format.");
-                request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
+                request.setAttribute("error", "Error! Cannot convert image to AVIF format.");
+                request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
                 return;
             }
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("error", "Lỗi xử lý ảnh: " + e.getMessage());
-            request.getRequestDispatcher("views/series/addSeries.jsp").forward(request, response);
+            request.setAttribute("error", "Image processing error: " + e.getMessage());
+            request.getRequestDispatcher("/WEB-INF/views/series/addSeries.jsp").forward(request, response);
             return;
         } finally {
-            // Xóa ảnh tạm
             tempImageFile.delete();
         }
 
-        // Gán đường dẫn ảnh vào DB (tương đối, vd: uploads/abc.avif)
         String imageUrl = "assets/images/" + avifFileName;
 
-        // Lưu vào DB (giả sử đã có SeriesDAO)
         Series newSeries = new Series();
         newSeries.setSeriesTitle(seriesTitle);
         newSeries.setAuthorName(authorName);
@@ -168,7 +160,6 @@ public class AddSeriesServlet extends HttpServlet {
             throw new RuntimeException(e);
         }
 
-        // Lưu genres nếu có
         if (!genreIDs.isEmpty()) {
             try {
                 categoryDAO.addCategories(insertedId, genreIDs);

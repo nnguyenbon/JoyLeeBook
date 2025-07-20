@@ -1,17 +1,11 @@
-<%-- 
-    Document   : addSeries
-    Created on : Jul 17, 2025, 10:40:42 AM
-    Author     : HaiDD-dev
---%>
-
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
-<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@taglib prefix="c" uri="jakarta.tags.core" %>
 
 <%@ page import="model.User" %>
 <%
     User user = (User) session.getAttribute("loggedInUser");
     if (user == null || !"admin".equals(user.getRoleName())) {
-        response.sendRedirect(request.getContextPath() + "/Login");
+        response.sendRedirect(request.getContextPath() + "/login");
         return;
     }
 %>
@@ -136,7 +130,7 @@
     </div>
 </footer>
 
-<script src="../../js/index.js"></script>
+<script src="../../js/index.js"></script> 
 <script src="../../js/jQuery.js"></script>
 <script>
     $(document).ready(function () {

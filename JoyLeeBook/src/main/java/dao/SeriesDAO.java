@@ -1,9 +1,14 @@
 package dao;
 
-import java.sql.*;
+import db.DBConnection;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
-
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import model.Series;
 
 /**
@@ -69,7 +74,8 @@ public class SeriesDAO {
      * @return true if insertion is successful, false otherwise.
      */
     public boolean insertSeries(Series series) throws SQLException {
-        String sql = "INSERT INTO Series (author_name, series_title, status, description, cover_image_url) " + "VALUES (?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO Series (author_name, series_title, status, description, cover_image_url) "
+                + "VALUES (?, ?, ?, ?, ?)";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
 
             stmt.setString(1, series.getAuthorName());
@@ -88,18 +94,17 @@ public class SeriesDAO {
      * @return true if update is successful, false otherwise.
      */
     public boolean updateSeries(Series series) throws SQLException {
-        String sql = "UPDATE Series SET author_name= ?, series_title = ?, status = ?, description = ?, cover_image_url = ? " + "WHERE series_id = ?";
+        String sql = "UPDATE Series SET author_name= ?, series_title = ?, status = ?, description = ?, cover_image_url = ? "
+                + "WHERE series_id = ?";
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
-
             stmt.setString(1, series.getAuthorName());
             stmt.setString(2, series.getSeriesTitle());
             stmt.setString(3, series.getStatus());
             stmt.setString(4, series.getDescription());
             stmt.setString(5, series.getCoverImageUrl());
             stmt.setInt(6, series.getSeriesId());
-
             return stmt.executeUpdate() > 0;
-        }
+        } 
     }
 
     /**
@@ -197,7 +202,7 @@ public class SeriesDAO {
      *
      * @param seriesTitle The title of the series to check.
      * @return true if the title is not used (available), false if it already
-     * exists.
+     *         exists.
      * @throws SQLException If a database access error occurs.
      */
     public boolean checkTitleSeries(String seriesTitle) throws SQLException {
@@ -233,6 +238,53 @@ public class SeriesDAO {
                 } else {
                     throw new SQLException("Inserting series failed, no ID obtained.");
                 }
+            }
+        }
+    }
+
+    /**
+     * Saves a series to the user's library.
+     * This method inserts a record into the UserLibraries table linking a user
+     * 
+     * @param seriesId The ID of the series to save.
+     * @param userId   The ID of the user saving the series.
+     * @return true if the series is successfully saved, false otherwise.
+     * @throws SQLException If a database access error occurs.
+     */
+    public boolean saveSeries(int seriesId, int userId) throws SQLException {
+        String sql = "INSERT INTO UserLibraries (user_id, series_id) VALUES (?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setInt(2, seriesId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    /**
+     * Deletes a saved series from the user's library.
+     * This method removes a record from the UserLibraries table for a specific
+     * 
+     * @param seriesId The ID of the series to delete from the user's library.
+     * @param userId   The ID of the user whose saved series is being deleted.
+     * @return true if the series is successfully deleted, false otherwise.
+     * @throws SQLException If a database access error occurs.
+     */
+    public boolean deleteSavedSeries(int seriesId, int userId) throws SQLException {
+        String sql = "DELETE FROM UserLibraries WHERE user_id = ? AND series_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setInt(2, seriesId);
+            return stmt.executeUpdate() > 0;
+        }
+    }
+
+    public boolean isSeriesSaved(int seriesId, int userId) throws SQLException {
+        String sql = "SELECT * FROM UserLibraries WHERE user_id = ? AND series_id = ?";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            stmt.setInt(2, seriesId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                return rs.next();
             }
         }
     }
