@@ -34,7 +34,7 @@ public class CategoryDAO {
      * @param genreIds A list of genre IDs to be associated with the series.
      * @throws SQLException If a database access error occurs.
      */
-    public void addCategories(int seriesId, List<Integer> genreIds) throws SQLException {
+    public void addCategories(int seriesId, ArrayList<Integer> genreIds) throws SQLException {
         String sql = "INSERT INTO Categories (series_id, genre_id) VALUES (?, ?)";
         try (PreparedStatement ps = connection.prepareStatement(sql)) {
             for (int genreId : genreIds) {
@@ -92,9 +92,9 @@ public class CategoryDAO {
         return false;
     }
 
-    public boolean updateGenreOfSeries(int seriedId, List<Integer> newGenresId) throws SQLException {
+    public boolean updateGenreOfSeries(int seriesId, ArrayList<Integer> newGenresId) throws SQLException {
         try {
-            deleteBySeriesId(seriedId);
+            deleteBySeriesId(seriesId);
             addCategories(seriedId, newGenresId);
             return true;
         } catch (SQLException e) {
