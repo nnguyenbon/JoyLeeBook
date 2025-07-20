@@ -6,8 +6,7 @@
          errorPage=""
          isErrorPage="false" %>
 
-<%@ page import="java.util.List, model.Series, model.Chapter" %>
-
+<%@ page import="java.util.ArrayList, model.Series, model.Chapter" %>
 <!DOCTYPE html>
 <html lang="en">
 
@@ -99,7 +98,7 @@
                     <!-- Manga Cover -->
                     <%  java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
                         Series series = (Series) request.getAttribute("series");
-                        List<Chapter> listChapter = (List<Chapter>) request.getAttribute("listChapter");
+                        ArrayList<Chapter> listChapter = (ArrayList<Chapter>) request.getAttribute("listChapter");
                         String[] colorGenre = {
                             "bg-primary-subtle text-primary",
                             "bg-secondary-subtle text-secondary",
@@ -108,7 +107,7 @@
                             "bg-light-subtle text-dark"};
                     %>
                     <div class="col-md-4 m-0 p-0">
-                        <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
+                        <img src="${pageContext.request.contextPath}/${series.coverImageUrl}"
                              class="img-fluid rounded shadow" alt="<%=series.getSeriesTitle()%>" style="width: 370px;" />
 <!--                        <img src="<%=series.getCoverImageUrl()%>"
                              class="img-fluid rounded shadow" alt="Azure Realm" style="width: 370px" />-->
@@ -128,7 +127,7 @@
                         <!-- Genres -->
                         <div class="mb-3">
                             <h6>GENRE</h6>
-                            <% List<Genre> genres = series.getGenres();
+                            <% ArrayList<Genre> genres = series.getGenres();
                                 for (int i = 0; i < genres.size(); i++) {
                             %>
                             <span class="badge genre-badge <%=colorGenre[i % 5]%>"><%=genres.get(i).getGenreName()%></span>
@@ -155,9 +154,22 @@
                         <div class="d-flex gap-2 my-5 ">
                             <div class="d-flex gap-2">
                                 <a class="btn btn-primary text-white" href="readChapter?chapterId=1&seriesId=<%=series.getSeriesId()%>">Start Reading</a>
-                                <a class="btn btn-outline-primary" href="saveSeries?seriesId=<%=series.getSeriesId()%>">Add Library</a>
+                                <form action="saveSeries" method="post" style="display:inline;">
+                                    <input type="hidden" name="seriesId" value="${series.seriesId}">
+                                    <button type="submit" class="btn btn-outline-primary">Add Library</button>
+                                </form>
+                                <!--<a class="btn btn-outline-primary" href="saveSeries?seriesId=<%=series.getSeriesId()%>">Add Library</a>-->
                             </div>
                         </div>
+                        <%
+                            String errorMessage = (String) session.getAttribute("errorMessage");
+                            if (errorMessage != null) {
+                                session.removeAttribute("errorMessage"); // Xóa sau khi lấy
+                        %>
+                        <div class="alert alert-danger"><%= errorMessage%></div>
+                        <%
+                            }
+                        %>
                         <% }%>
                         <!-- Buttons -->
 
@@ -242,5 +254,4 @@
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
-
 </html>

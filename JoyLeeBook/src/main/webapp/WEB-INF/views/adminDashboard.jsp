@@ -1,3 +1,5 @@
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+<%@taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ page language="java"
          contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"
@@ -6,7 +8,6 @@
          isErrorPage="false" %>
 
 <%@ page import="java.util.List, model.Series" %>
-
 <%
     /*
     Note:
@@ -19,66 +20,62 @@
     request.setAttribute("pageType", pageType);
 
 %>
+<!-- Trang Home (home.html) -->
 <!DOCTYPE html>
 <html lang="en">
+
     <head>
         <meta charset="UTF-8">
-        <meta name="viewport" content="width=device-width, initial-scale=1.0">
-        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
+        <title>MangaVerse - Home</title>
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=<%= System.currentTimeMillis()%>">
-        <title><%= pageType.toUpperCase()%></title>
+
+        <link rel="stylesheet" href="css/style.css">
         <style>
-            .dashboard-image {
-                width: 70px;
-                height: 90px;
+            .section-title {
+                font-weight: bold;
+                font-size: 1.3rem;
+                margin-top: 0.5rem;
+            }
+
+            .manga-card {
+                border-radius: 0.5rem;
+                overflow: hidden;
+                box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+                width: 250px;
+            }
+
+            .manga-cover {
                 object-fit: cover;
+                height: 300px;
             }
-            .navbar {
-                background-color: #517594;
-            }
-
-            .login {
-                color: #fff;
-            }
-
-            .signup {
-                background-color: #8aab52;
-                color: white;
-            }
-            tr:hover {
-                background-color: #f8f9fa;
-            }
-
         </style>
     </head>
-    <body>
-        <header>
-            <nav class="navbar navbar-expand-lg navbar-dark border-bottom sticky-top">
-                <div class="container">
-                    <!-- Logo -->
-                    <a class="navbar-brand fw-bold" href="#">
-                        <i class="bi bi-book"></i> <strong>JoyLeeBook</strong>
-                    </a>
 
-                    <!-- Toggler (Mobile) -->
+    <body class="bg-white">
+        <header>
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg border-bottom sticky-top">
+                <div class="container">
+                    <a class="navbar-brand fw-bold text-white" href="#"><i class="bi bi-book"></i>
+                        <strong>JoyLeeBook</strong></a>
                     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                         <span class="navbar-toggler-icon"></span>
                     </button>
-
-                    <!-- Main content -->
                     <div class="collapse navbar-collapse" id="navbarNav">
-                        <!-- Search form: Center -->
-                        <form class="d-flex mx-auto my-2 my-lg-0" role="search">
-                            <input class="form-control me-2" type="search" placeholder="Search manga..." aria-label="Search">
-                            <button class="btn btn-outline-light" type="submit">Search</button>
+                        <ul class="navbar-nav me-auto">
+                            <li class="nav-item"><a class="nav-link  text-white" href="homeAdmin.html">Home</a></li>
+                            <li class="nav-item"><a class="nav-link text-white" href="genre.html">Genres</a></li>
+                            <li class="nav-item"><a class="nav-link text-white" href="#">History</a></li>
+                            <li class="nav-item"><a class="nav-link text-white" href="#">Library</a></li>
+                        </ul>
+                        <form class="d-flex me-3">
+                            <input class="form-control me-2" type="search" placeholder="Search manga..."
+                                   aria-label="Search">
                         </form>
-
-                        <!-- Buttons: Right -->
-                        <div class="d-flex">
-                            <a class="btn btn-outline-light me-2" href="#">LOGIN</a>
-                            <a class="btn btn-primary" href="#">SIGN UP</a>
-                        </div>
+                        <a class="btn me-2 login" href="authorization/login.html">LOGIN</a>
+                        <a class="btn signup " href="authorization/register.html">SIGN UP</a>
                     </div>
                 </div>
             </nav>
@@ -92,108 +89,119 @@
 
                 <!-- Bảng truyện -->
                 <div class="table-responsive">
-                    <table class="table align-middle bg-white table-hover">
+                    <table class="table align-middle bg-white">
                         <thead class="">
                             <tr>
-                                <th style="width: 100px;">Cover</th>
-                                <th style="width: 300px;">Series Title</th>
+                                <th style="width: 100px;">Cover photo</th>
+                                <th style="width: 300px;">Story name</th>
                                 <th style="width: 120px;" class="text-center">Chapters</th>
                                 <th style="width: 120px;" class="text-center">Status</th>
                                 <th style="width: 150px;" class="text-center">Created Date</th>
-
+                                <th style="width: 150px;" class="text-center">Action</th>
                             </tr>
                         </thead>
                         <tbody>
-                            <%  java.text.SimpleDateFormat sdf = new java.text.SimpleDateFormat("dd/MM/yyyy");
+                            <c:forEach var="series" items="${allSeries}">
+                                <tr>
+                                    <td>
+                                        <img src="${pageContext.request.contextPath}/${series.coverImageUrl}"
+                                             alt="cover" class="rounded" style="width: 70px; height: 90px; object-fit: cover;">
+                                    </td>
 
-                                List< Series> seriesList = (List<Series>) request.getAttribute("seriesList");
-                                int MAXIMUM_SERIES_IN_PAGE = 20;
-
-                                int seriesListSize = seriesList.size();
-
-                                int currentPage = request.getParameter("page") == null
-                                        || request.getParameter("page").equals("1") ? 1 : Integer.parseInt(request.getParameter("page"));
-
-                                for (int i = (currentPage - 1) * MAXIMUM_SERIES_IN_PAGE; i < currentPage * MAXIMUM_SERIES_IN_PAGE - 1; i++) {
-                                    Series s = seriesList.get(i);
-                            %>
-
-                            <tr  onclick="window.location = 'viewSeriesInfo?seriesId=<%=s.getSeriesId()%>'" style="cursor: pointer;">
-                                <td>
-                                    <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
-                                         alt="cover" class="rounded dashboard-image" >
-<!--                                    <img src="<%=s.getCoverImageUrl()%>"
-                                         alt="cover" class="dashboard-image rounded" >-->
-                                </td>
-
-                                <td><strong><%=s.getSeriesTitle()%></strong></td>
-                                <td class="text-center">
-                                    <span class="badge text-dark"><%=s.getTotalChapters()%></span>
-                                </td>
-                                <td class="text-center">
-                                    <%if (s.getStatus().equals("1")) {%>
-                                    <span class="badge bg-success-subtle text-success">Completed</span>
-                                    <% } else { %>
-                                    <span class="badge bg-warning-subtle text-warning">Ongoing</span>
-                                    <% }%>
-                                </td>
-                                <td class="text-center">
-                                    <span class="badge text-dark"><%=sdf.format(s.getCreatedAt())%></span>
-                                </td>
-                            </tr>
-
-                            <%}%>
+                                    <td><strong>${series.seriesTitle}</strong></td>
+                                    <td class="text-center">
+                                        <span class="badge text-dark">${series.totalChapters}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge bg-warning text-dark">
+                                            <c:choose>
+                                                <c:when test="${series.status == 0}">
+                                                    Ongoing
+                                                </c:when>
+                                                <c:otherwise>
+                                                    Completed
+                                                </c:otherwise>
+                                            </c:choose>
+                                        </span>
+                                    </td>
+                                    <td class="text-center">
+                                        <span class="badge text-dark">${series.createdAt}</span>
+                                    </td>
+                                    <td class="text-center">
+                                        <a href="viewSeriesInfo?seriesId=${series.seriesId}" class="btn btn-sm btn-primary">Detail</a>
+                                        <a href="updateSeries?seriesId=${series.seriesId}" class="btn btn-sm btn-warning">Edit</a>
+                                        <a href="deleteSeries?seriesId=${series.seriesId}"  class="btn btn-sm btn-danger">Delete</a>
+                                    </td>
+                                </tr>
+                            </c:forEach>
                         </tbody>
                     </table>
                 </div>
             </div>
-            <%
-                int MAXIMUM_PAGE_NUMBER = (int) Math.ceil((double) seriesListSize / MAXIMUM_SERIES_IN_PAGE);
-                int previousPage = currentPage > 1 ? currentPage - 1 : 1;
-                int nextPage = currentPage < MAXIMUM_PAGE_NUMBER ? currentPage + 1 : MAXIMUM_PAGE_NUMBER;
-                if (MAXIMUM_PAGE_NUMBER > 1) {
-            %>
+            <div>
+                <nav aria-label="Page navigation example" class="mt-4 d-flex justify-content-center">
+                    <ul class="pagination">
+                        <c:if test="${currentPage > 1}">
+                            <li class="page-item">
+                                <a class="page-link" href="?page=${currentPage - 1}">&lt;&lt;</a>
+                            </li>
+                        </c:if>
 
-            <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-center mt-4">
+                        <c:forEach var="i" begin="1" end="${totalPages}">
+                            <li class="page-item ${i == currentPage ? 'active' : ''}">
+                                <a class="page-link" href="?page=${i}">${i}</a>
+                            </li>
+                        </c:forEach>
 
-                    <!-- Previous -->
-                    <li class="page-item <%= currentPage == 1 ? "disabled" : ""%>">
-                        <a class="page-link" href="?page=<%= previousPage%>">&laquo;</a>
-                    </li>
-
-                    <!-- Page numbers (3 numbers max: prev - current - next) -->
-                    <% if (currentPage > 1) {%>
-                    <li class="page-item">
-                        <a class="page-link" href="?page=<%= currentPage - 1%>"><%= currentPage - 1%></a>
-                    </li>
-                    <% }%>
-
-                    <!-- Current page -->
-                    <li class="page-item active">
-                        <a class="page-link" href="#"><%= currentPage%></a>
-                    </li>
-
-                    <% if (currentPage < MAXIMUM_PAGE_NUMBER) {%>
-                    <li class="page-item">
-                        <a class="page-link" href="?page=<%= currentPage + 1%>"><%= currentPage + 1%></a>
-                    </li>
-                    <% }%>
-
-                    <!-- Next -->
-                    <li class="page-item <%= currentPage == MAXIMUM_PAGE_NUMBER ? "disabled" : ""%>">
-                        <a class="page-link" href="?page=<%= nextPage%>">&raquo;</a>
-                    </li>
-
-                </ul>
-            </nav>
-            <% }%>
+                        <c:if test="${currentPage < totalPages}">
+                            <li class="page-item">
+                                <a class="page-link" href="?page=${currentPage + 1}">&gt;&gt;</a>
+                            </li>
+                        </c:if>
+                    </ul>
+                </nav>
+            </div>
         </main>
 
+        <footer class="mt-5">
+            <!-- Section About -->
+            <div class="text-white py-4" style="background-color: #8DA7C0;">
+                <div class="container text-center">
+                    <h5 class="fw-bold mb-3">ABOUT US</h5>
+                    <p class="mx-auto mb-0" style="max-width: 1000px;">
+                        JoyLeeBook is a Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
+                        incididunt ut
+                        labore et dolore magna aliqua.
+                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
+                        consequat.
+                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
+                        pariatur.
+                    </p>
+                </div>
+            </div>
 
-        <jsp:include page="footer/_footer.jsp" />
+            <!-- Section Social + Back to top -->
+            <div class="py-3 w-100" style="background-color: #517594;  justify-self: center;">
+                <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
+
+                    <!-- Social icons -->
+                    <div class="offset-md-2 col-md-7 d-flex justify-content-center gap-4 mb-3 mb-md-0">
+                        <a href="#" class="text-dark fs-4"><i class="fab fa-instagram"></i></a>
+                        <a href="#" class="text-dark fs-4"><i class="fab fa-facebook"></i></a>
+                        <a href="#" class="text-dark fs-4"><i class="fab fa-tiktok"></i></a>
+                    </div>
+
+                    <!-- Back to top -->
+                    <a href="#header" class="btn btn-light rounded-circle d-flex align-items-center justify-content-center"
+                       style="width: 40px; height: 40px;">
+                        <i class="fas fa-arrow-up text-dark"></i>
+                    </a>
+                </div>
+            </div>
+        </footer>
+
+
+
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-
-        <script lang="text/javascript" src="${pageContext.request.contextPath}/js/index.js?v=<%= System.currentTimeMillis()%>"></script>
     </body>
 </html>
