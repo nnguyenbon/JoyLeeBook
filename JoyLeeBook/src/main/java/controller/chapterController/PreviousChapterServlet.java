@@ -32,7 +32,7 @@ public class PreviousChapterServlet extends HttpServlet {
         try {
             String chapterIdStr = request.getParameter("chapterId");
             if (!isValidInteger(chapterIdStr)) {
-                request.setAttribute("errorMessage", "Invalid or missing chapterId.");
+                request.setAttribute("error", "Invalid or missing chapterId.");
                 request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
                 return;
             }
@@ -42,7 +42,7 @@ public class PreviousChapterServlet extends HttpServlet {
             Chapter currentChapter = chapterDAO.getChapterById(chapterId);
 
             if (currentChapter == null) {
-                request.setAttribute("errorMessage", "Chapter with ID " + chapterId + " not found.");
+                request.setAttribute("error", "Chapter with ID " + chapterId + " not found.");
                 request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
                 return;
             }
@@ -56,7 +56,7 @@ public class PreviousChapterServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/views/chapter/readChapter.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
-            request.setAttribute("errorMessage", "An error occurred while processing your request.");
+            request.setAttribute("error", "An error occurred while processing your request.");
             request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         }
     }
