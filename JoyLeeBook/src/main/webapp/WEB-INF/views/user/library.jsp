@@ -45,7 +45,7 @@
         </style>
     </head>
 
-    <body class="bg-white">
+    <body class="bg-white d-flex flex-column min-vh-100">
         <header>
             <!-- Navbar -->
             <nav class="navbar navbar-expand-lg border-bottom sticky-top">
@@ -156,45 +156,7 @@
                 </nav>
             </div>
         </main>
-
-        <footer class="mt-5">
-            <!-- Section About -->
-            <div class="text-white py-4" style="background-color: #8DA7C0;">
-                <div class="container text-center">
-                    <h5 class="fw-bold mb-3">ABOUT US</h5>
-                    <p class="mx-auto mb-0" style="max-width: 1000px;">
-                        JoyLeeBook is a Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                        incididunt ut
-                        labore et dolore magna aliqua.
-                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                        consequat.
-                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                        pariatur.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Section Social + Back to top -->
-            <div class="py-3 w-100" style="background-color: #517594;  justify-self: center;">
-                <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
-
-                    <!-- Social icons -->
-                    <div class="offset-md-2 col-md-7 d-flex justify-content-center gap-4 mb-3 mb-md-0">
-                        <a href="#" class="text-dark fs-4"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="text-dark fs-4"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="text-dark fs-4"><i class="fab fa-tiktok"></i></a>
-                    </div>
-
-                    <!-- Back to top -->
-                    <a href="#header" class="btn btn-light rounded-circle d-flex align-items-center justify-content-center"
-                       style="width: 40px; height: 40px;">
-                        <i class="fas fa-arrow-up text-dark"></i>
-                    </a>
-                </div>
-            </div>
-        </footer>
-
-
+        <jsp:include page="/WEB-INF/views/components/footer.jsp" />
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
