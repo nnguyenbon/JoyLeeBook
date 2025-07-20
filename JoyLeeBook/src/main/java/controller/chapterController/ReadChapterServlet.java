@@ -11,6 +11,7 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Chapter;
+import static utils.Validator;
 
 /**
  * Servlet for handling requests to read a specific chapter in a series. It
@@ -34,15 +35,13 @@ public class ReadChapterServlet extends HttpServlet {
             throws ServletException, IOException {
         try {
             // Get parameters from the request
-//            String chapterIdParam = request.getParameter("chapterId");
-//            String seriesIdParam = request.getParameter("seriesId");
-            String seriesIdParam = "3";
-            String chapterIndexParam = "1";
+            String chapterIdParam = request.getParameter("chapterId");
+            String seriesIdParam = request.getParameter("seriesId");
 
             // Validate parameters
-            if (chapterIndexParam == null || chapterIndexParam.isEmpty()
-                    || seriesIdParam == null || seriesIdParam.isEmpty()) {
-                response.sendRedirect(request.getContextPath() + "/error.jsp");
+            if (!isValidInteger(seriesIdParam) || !isValidInteger(chapterIndexParam)) {
+                request.setAttribute("error", "Invalid seriesId or chapterIndex.");
+                request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
                 return;
             }
 
@@ -66,7 +65,8 @@ public class ReadChapterServlet extends HttpServlet {
             request.getRequestDispatcher("/WEB-INF/views/chapter/readChapter.jsp").forward(request, response);
         } catch (NumberFormatException e) {
             // Redirect to error page if parameters are not valid integers
-            response.sendRedirect("/WEB-INF/views/error.jsp");
+            request.setAttribute("error", "Invalid seriesId or chapterIndex.");
+            request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         } catch (Exception e) {
             // Log exception and forward to error view
             e.printStackTrace();
