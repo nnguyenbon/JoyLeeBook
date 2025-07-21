@@ -202,11 +202,6 @@
                                                value="${user.username}" required />
                                     </div>
                                     <div class="mb-3">
-                                        <label for="email" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="email" name="email"
-                                               value="${user.email}" required />
-                                    </div>
-                                    <div class="mb-3">
                                         <label for="currentPasswordProfile" class="form-label">Current Password</label>
                                         <input type="password" class="form-control" id="currentPasswordProfile"
                                                name="currentPassword" placeholder="Enter current password" required />

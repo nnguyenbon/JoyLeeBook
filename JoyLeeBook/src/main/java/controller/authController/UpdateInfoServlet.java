@@ -14,12 +14,14 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import model.User;
 import utils.PasswordUtil;
+import static utils.Validator.isValidEmail;
+import static utils.Validator.isValidString;
 
 /**
  *
  * @author NguyenNTCE191135
  */
-@WebServlet(name = "UpdateInfoServlet", urlPatterns = { "/updateInfo" })
+@WebServlet(name = "UpdateInfoServlet", urlPatterns = {"/updateInfo"})
 public class UpdateInfoServlet extends HttpServlet {
 
     // <editor-fold defaultstate="collapsed" desc="HttpServlet methods. Click on the
@@ -27,10 +29,10 @@ public class UpdateInfoServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -40,10 +42,10 @@ public class UpdateInfoServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -51,7 +53,6 @@ public class UpdateInfoServlet extends HttpServlet {
         try {
             int userId = Integer.parseInt(request.getParameter("userId"));
             String username = request.getParameter("username");
-            String email = request.getParameter("email");
             String currentPassword = request.getParameter("currentPassword");
 
             UserDAO userDAO = new UserDAO(DBConnection.getConnection());
@@ -64,14 +65,25 @@ public class UpdateInfoServlet extends HttpServlet {
                 return;
             }
 
-            if (!!PasswordUtil.checkPassword(currentPassword, user.getPassword())) {
-                request.getSession().setAttribute("message", "Current password is incorrect.");
+            if (!isValidString(username)) {
+                request.getSession().setAttribute("messageError", "Username cannot be empty.");
+                response.sendRedirect(request.getContextPath() + "/viewProfile?userId=" + userId);
+                return;
+            }
+
+            if (userDAO.isDuplicateUsername(username)) {
+                request.getSession().setAttribute("messageError", "Username is already in use.");
+                response.sendRedirect(request.getContextPath() + "/viewProfile?userId=" + userId);
+                return;
+            }
+
+            if (!PasswordUtil.checkPassword(currentPassword, user.getPassword())) {
+                request.getSession().setAttribute("messageError", "Current password is incorrect.");
                 response.sendRedirect(request.getContextPath() + "/viewProfile?userId=" + userId);
                 return;
             }
 
             user.setUsername(username);
-            user.setEmail(email);
             userDAO.updateUser(user);
 
             request.getSession().setAttribute("message", "Profile updated successfully.");
