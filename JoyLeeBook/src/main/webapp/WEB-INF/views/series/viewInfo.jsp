@@ -113,7 +113,7 @@
                             <h5 class="text-muted small mt-1">Total: ${fn:length(listChapter)}</h5>
                         </div>
                         <c:if test="${sessionScope.loggedInUser != null and sessionScope.loggedInUser.roleName eq 'admin'}">
-                            <a href="${pageContext.request.contextPath}/addChapter" class="btn btn-success">+ Add new chapter</a>
+                            <a href="${pageContext.request.contextPath}/addChapter?seriesId=${series.seriesId}" class="btn btn-success">+ Add new chapter</a>
                         </c:if>
                     </div>
                     <c:if test="${not empty sessionScope.message}">
