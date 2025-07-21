@@ -55,7 +55,7 @@ public class HistoryReadingDAO {
                     history.setSeriesTitle(rs.getString("series_title"));
                     history.setChapterTitle(rs.getString("chapter_title"));
                     history.setLastReadAt(rs.getTimestamp("last_read_at"));
-                    history.setChapterId(rs.getInt("chapter_index"));
+                    history.setChapterIndex(rs.getInt("chapter_index"));
                     histories.add(history);
                 }
             }

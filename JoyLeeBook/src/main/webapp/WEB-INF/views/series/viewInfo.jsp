@@ -157,7 +157,7 @@
                 </div>
             </div>
         </main>
-
+        <br>
         <script src="${pageContext.request.contextPath}/js/index.js"></script> 
         <script src="${pageContext.request.contextPath}/js/jQuery.js"></script>
         <jsp:include page="/WEB-INF/views/components/_footer.jsp"/>
@@ -190,24 +190,24 @@
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-                        const deleteModal = document.getElementById('deleteModal');
-                        deleteModal.addEventListener('show.bs.modal', function (event) {
-                            const button = event.relatedTarget;
-                            const itemId = button.getAttribute('data-id');
-                            const itemType = button.getAttribute('data-type');
-                            const url = button.getAttribute('data-url');
-                            const seriesId = button.getAttribute('data-series-id');
+                                                        const deleteModal = document.getElementById('deleteModal');
+                                                        deleteModal.addEventListener('show.bs.modal', function (event) {
+                                                            const button = event.relatedTarget;
+                                                            const itemId = button.getAttribute('data-id');
+                                                            const itemType = button.getAttribute('data-type');
+                                                            const url = button.getAttribute('data-url');
+                                                            const seriesId = button.getAttribute('data-series-id');
 
-                            const input = deleteModal.querySelector('#deleteId');
-                            input.name = itemType + "Id";
-                            input.value = itemId;
+                                                            const input = deleteModal.querySelector('#deleteId');
+                                                            input.name = itemType + "Id";
+                                                            input.value = itemId;
 
-                            const seriesInput = deleteModal.querySelector('#seriesIdHidden');
-                            seriesInput.value = (itemType === 'chapter' && seriesId) ? seriesId : '';
+                                                            const seriesInput = deleteModal.querySelector('#seriesIdHidden');
+                                                            seriesInput.value = (itemType === 'chapter' && seriesId) ? seriesId : '';
 
-                            const form = deleteModal.querySelector('#deleteForm');
-                            form.action = url;
-                        });
+                                                            const form = deleteModal.querySelector('#deleteForm');
+                                                            form.action = url;
+                                                        });
         </script>
 
 
