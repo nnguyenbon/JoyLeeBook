@@ -28,6 +28,7 @@ import java.util.stream.Collectors;
 import static utils.Validator.*;
 
 /**
+ *
  * @author HaiDD-dev
  */
 @WebServlet(name = "AddSeriesServlet", urlPatterns = {"/addSeries"})
@@ -103,7 +104,7 @@ public class AddSeriesServlet extends HttpServlet {
 
             // 2. Đường dẫn trong thư mục mã nguồn (để tiện phát triển)
             // LƯU Ý: Thay đổi đường dẫn này cho phù hợp với máy của bạn.
-            String projectSourcePath = "H:\\JavaCode\\PRJ301\\JoyLeeBook\\JoyLeeBook\\src\\main\\webapp\\assets\\images" + File.separator;
+            String projectSourcePath = "/home/haishelby/DATA/FPT University/2025_b_Summer/PRJ301/JoyLeeBook/JoyLeeBook/src/main/webapp/assets/images" + File.separator;
             // String uploadPath = "D:\\Projects\\JoyLeeBook\\src\\main\\webapp\\assets\\images\\" + File.separator; // windows
 
             // Tạo cả hai thư mục nếu chúng chưa tồn tại

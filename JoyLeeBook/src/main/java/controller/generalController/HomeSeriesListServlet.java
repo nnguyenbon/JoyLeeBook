@@ -10,45 +10,49 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import java.sql.Connection;
-import java.util.Collections;
+// Thêm import này
 import java.util.ArrayList;
 import model.Series;
 
-/**
- *
- * @author PC
- */
 @WebServlet(name = "HomeSeriesListServlet", urlPatterns = {"/home"})
 public class HomeSeriesListServlet extends HttpServlet {
-    /**
-     * Handles the HTTP <code>GET</code> method.
-     *
-     * @param request servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
-     */
+
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        java.sql.Connection conn = null;
-        try {
-            conn = DBConnection.getConnection();
+        try (Connection conn = DBConnection.getConnection()) {
             SeriesDAO seriesDAO = new SeriesDAO(conn);
             ChapterDAO chapterDAO = new ChapterDAO(conn);
-            
-            ArrayList<Series> seriesList = (ArrayList<Series>) seriesDAO.getAllSeries();
+
+            ArrayList<Series> seriesList = seriesDAO.getAllSeries();
             for (Series series : seriesList) {
                 series.setTotalChapters(chapterDAO.getTotalChaptersBySeriesId(series.getSeriesId()));
                 series.setLatestChapterDate(chapterDAO.getLatestDate(series.getSeriesId()));
             }
-            // Sort in day
-            Collections.sort(seriesList, (Series s1, Series s2) -> s2.getCreatedAt().compareTo(s1.getCreatedAt()));
+
+            // === SỬA LỖI Ở ĐÂY: Sắp xếp một cách an toàn với Comparator ===
+            // Logic này sẽ xử lý trường hợp ngày tháng là null.
+            // Series có ngày mới nhất sẽ ở trên cùng, series không có chapter (ngày null) sẽ ở cuối cùng.
+            seriesList.sort((s1, s2) -> {
+                java.util.Date d1 = s1.getLatestChapterDate();
+                java.util.Date d2 = s2.getLatestChapterDate();
+
+                if (d1 == null && d2 == null) {
+                    return 0; // Cả hai đều null, coi như bằng nhau
+                }
+                if (d1 == null) {
+                    return 1; // s1 không có ngày, đẩy xuống cuối
+                }
+                if (d2 == null) {
+                    return -1; // s2 không có ngày, đẩy xuống cuối
+                }
+                // Sắp xếp giảm dần (ngày mới nhất lên đầu)
+                return d2.compareTo(d1);
+            });
 
             request.setAttribute("seriesList", seriesList);
-            System.out.println("home");
             request.getRequestDispatcher("index.jsp").forward(request, response);
-            return;
+
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Cannot get the Series List.");
