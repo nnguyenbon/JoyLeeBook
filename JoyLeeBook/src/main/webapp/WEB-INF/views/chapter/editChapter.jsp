@@ -4,10 +4,10 @@
     Author     : NguyenNTCE191135
 --%>
 
+<%@page import="model.User"%>
 <%@page import="model.Chapter"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
-
 <%
     /*
     Note:
@@ -20,6 +20,14 @@
     request.setAttribute("pageType", pageType);
 
 %>
+<%
+    User user = (User) session.getAttribute("loggedInUser");
+    if (user == null || !"admin".equals(user.getRoleName())) {
+        response.sendRedirect(request.getContextPath() + "/login");
+        return;
+    }
+%>
+
 <!DOCTYPE html>
 <html>
     <head>
@@ -54,28 +62,7 @@
     </head>
     <body>
 
-        <header>
-            <!-- Navbar -->
-            <nav class="navbar navbar-expand-lg border-bottom sticky-top">
-                <div class="container">
-                    <a class="navbar-brand fw-bold text-white" href="#"><strong
-                            class="fs-3">JoyLeeBook</strong></a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse " id="navbarNav">
-                        <div class="d-flex ms-auto justify-content-center" style="max-width: 600px; width: 100%;">
-                            <form class="d-flex flex-grow-1 me-2">
-                                <input class="form-control w-100 me-3 " type="search" placeholder="Search manga..."
-                                       aria-label="Search" />
-                            </form>
-                            <a class="btn me-2 login" href="authorization/login.html">LOGIN</a>
-                            <a class="btn signup" href="authorization/register.html">SIGN UP</a>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        </header>
+      <jsp:include page="/WEB-INF/views/components/_header.jsp" />
         <main class="flex-grow-1 ">
             <div class="edit-form-container border border-2 rounded-4 p-4 bg-white my-5">
                 <h3 class="fw-bold mb-4">Edit <span class="text-primary">Chapter ${chapter.chapterIndex} - ${chapter.seriesTitle}</span></h3>
@@ -105,15 +92,16 @@
 
                     <div class="d-flex justify-content-center">
                         <button type="submit" class="btn btn-primary mx-3"> Save </button>
-                        <a href="readChapter?chapterId=${chapter.chapterId}&seriesId=${chapter.seriesId}" class="btn btn-secondary">Cancel</a>
+                        <a href="viewSeriesInfo?seriesId=${chapter.seriesId}" class="btn btn-secondary">Cancel</a>
                     </div>
                 </form>
             </div>
         </main>
 
-
-
-        <jsp:include page="/WEB-INF/views/footer/_footer.jsp" />
+        <br>
+        <script src="${pageContext.request.contextPath}/js/index.js"></script> 
+        <script src="${pageContext.request.contextPath}/js/jQuery.js"></script>
+        <jsp:include page="/WEB-INF/views/components/_footer.jsp" />
 
         <script lang="text/javascript" src="${pageContext.request.contextPath}/js/index.js?v=<%= System.currentTimeMillis()%>"></script>
         <!-- Bootstrap JS (optional for interactivity) -->

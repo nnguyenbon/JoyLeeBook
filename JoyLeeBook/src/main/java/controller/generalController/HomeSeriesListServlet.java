@@ -43,7 +43,7 @@ public class HomeSeriesListServlet extends HttpServlet {
                 series.setLatestChapterDate(chapterDAO.getLatestDate(series.getSeriesId()));
             }
             // Sort in day
-            Collections.sort(seriesList, (Series s1, Series s2) -> s2.getLatestChapterDate().compareTo(s1.getLatestChapterDate()));
+            Collections.sort(seriesList, (Series s1, Series s2) -> s2.getCreatedAt().compareTo(s1.getCreatedAt()));
 
             request.setAttribute("seriesList", seriesList);
             System.out.println("home");

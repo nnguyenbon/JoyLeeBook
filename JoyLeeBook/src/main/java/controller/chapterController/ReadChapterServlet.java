@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import dao.ChapterDAO;
+import dao.HistoryReadingDAO;
 import dao.SeriesDAO;
 import db.DBConnection;
 import jakarta.servlet.ServletException;
@@ -12,6 +13,8 @@ import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import model.Chapter;
+import model.HistoryReading;
+import model.User;
 import static utils.Validator.isValidInteger;
 
 /**
@@ -34,7 +37,9 @@ public class ReadChapterServlet extends HttpServlet {
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
+        java.sql.Connection conn = null;
         try {
+            conn = DBConnection.getConnection();
             String chapterIndexParam = request.getParameter("chapterIndex");
             String seriesIdParam = request.getParameter("seriesId");
 
@@ -47,9 +52,9 @@ public class ReadChapterServlet extends HttpServlet {
             int chapterIndex = Integer.parseInt(chapterIndexParam);
             int seriesId = Integer.parseInt(seriesIdParam);
 
-            ChapterDAO chapterDAO = new ChapterDAO(DBConnection.getConnection());
-            SeriesDAO seriesDAO = new SeriesDAO(DBConnection.getConnection());
-
+            ChapterDAO chapterDAO = new ChapterDAO(conn);
+            SeriesDAO seriesDAO = new SeriesDAO(conn);
+            HistoryReadingDAO historyReadingDao = new HistoryReadingDAO(conn);
             Chapter chapter = chapterDAO.getChapterByIndex(seriesId, chapterIndex);
             if (chapter == null) {
                 request.setAttribute("error", "Chapter not found.");
@@ -66,6 +71,11 @@ public class ReadChapterServlet extends HttpServlet {
                 return;
             }
 
+            User user = (User) request.getSession().getAttribute("loggedInUser");
+            if (user != null){
+            HistoryReading historyReading = new HistoryReading(user.getUserId(), seriesId, chapter.getChapterId(), chapter.getSeriesTitle(), chapter.getChapterTitle());
+            historyReadingDao.saveOrUpdateHistory(historyReading);
+            }
             int firstIndex = chapters.get(0).getChapterIndex();
             int lastIndex = chapters.get(chapters.size() - 1).getChapterIndex();
 

@@ -32,9 +32,20 @@
 
 
     <body>
-        <jsp:include page="/WEB-INF/views/components/_header.jsp" />
 
-        
+        <header>
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg w-100 sticky-top">
+                <div class="navbar-layout w-100 pt-2 pb-2 ps-4 pe-4 d-flex align-items-center justify-content-center">
+                    <div class="mobile-header d-flex align-items-center justify-content-center">
+                        <a class="navbar-brand fw-bold text-white" href="home"><i class="bi bi-book"></i>
+                            <strong>JoyLeeBook</strong>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
         <main class="main-main d-flex align-items-center justify-content-center">
             <div class="content mt-4 mb-4 d-flex align-items-center justify-content-center">
 

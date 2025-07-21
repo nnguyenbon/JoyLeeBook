@@ -114,7 +114,7 @@ public class RegisterServlet extends HttpServlet {
             user.setRoleName("reader"); // Default role
             // Insert the user into the database
             if (userDAO.insertUser(user)) {
-                request.setAttribute("message", "Registration successful. Please log in.");
+                request.setAttribute("success", "Registration successful. Please log in.");
                 request.getRequestDispatcher("/WEB-INF/views/authorization/login.jsp").forward(request, response);
             } else {
                 request.setAttribute("error", "Registration failed. Please try again.");

@@ -1,12 +1,9 @@
-<%@page import="model.User"%>
 <%@page import="model.Genre"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" session="true" %>
-<%@ page import="java.util.ArrayList, model.Series, model.Chapter" %>
+<%@ page import="java.util.List, model.Series, model.Chapter" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
-
-<jsp:include page="/WEB-INF/views/components/_header.jsp" />
 
 <!DOCTYPE html>
 <html lang="en">
@@ -49,17 +46,11 @@
         </style>
     </head>
     <body>
-
+        <jsp:include page="/WEB-INF/views/components/_header.jsp"/>
 
         <main>
             <div class="container mt-5">
-                <c:if test="${not empty sessionScope.message}">
-                    <div class="alert alert-success alert-dismissible fade show" role="alert">
-                        ${fn:escapeXml(sessionScope.message)}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                    </div>
-                    <c:remove var="message" scope="session"/>
-                </c:if>
+
                 <div class="row g-1 border border-2 rounded-4 p-4 bg-white" style="background-color: #f7f8f9">
                     <div class="col-md-4 m-0 p-0">
                         <img src="${pageContext.request.contextPath}/${series.coverImageUrl}"
@@ -94,7 +85,7 @@
                             <p class="mb-0">${fn:escapeXml(series.description)}</p>
                         </div>
                         <c:choose>
-                            <c:when test="${sessionScope.role != null and sessionScope.role eq 'admin'}">
+                            <c:when test="${sessionScope.loggedInUser != null and sessionScope.loggedInUser.roleName eq 'admin'}">
                                 <div class="d-flex gap-2 my-5">
                                     <a class="btn btn-warning" href="${pageContext.request.contextPath}/updateSeries?seriesId=${series.seriesId}"><i class="bi bi-pen"></i> Edit</a>
                                     <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
@@ -106,15 +97,9 @@
                                     <c:if test="${not empty listChapter}">
                                         <a class="btn btn-primary text-white" href="${pageContext.request.contextPath}/readChapter?chapterIndex=${listChapter[0].chapterIndex}&seriesId=${series.seriesId}"><i class="bi bi-book"></i> Start Reading</a>
                                     </c:if>
-                                    <%
-                                        User currentUser = (User) session.getAttribute("loggedInUser");
-                                    %>
-                                    <% if (currentUser != null && "reader".equals(currentUser.getRoleName())) {%>
-                                    <form action="saveSeries" method="post" style="display: inline;">
-                                        <input type="hidden" name="seriesId" value="${series.seriesId}">
-                                        <button type="submit" class="btn btn-outline-dark">Add library</button>
-                                    </form>
-                                    <% }%>
+                                    <c:if test="${sessionScope.role != null and sessionScope.role eq 'user'}">
+                                        <a class="btn btn-outline-primary" href="${pageContext.request.contextPath}/saveSeries?seriesId=${series.seriesId}"><i class="bi bi-bookmark"></i> Add Library</a>
+                                    </c:if>
                                 </div>
                             </c:otherwise>
                         </c:choose>
@@ -127,11 +112,17 @@
                             <h4 class="fw-bold">Chapters</h4>
                             <h5 class="text-muted small mt-1">Total: ${fn:length(listChapter)}</h5>
                         </div>
-                        <c:if test="${sessionScope.role != null and sessionScope.role eq 'admin'}">
-                            <a href="${pageContext.request.contextPath}/add-story.html" class="btn btn-success">+ Add new chapter</a>
+                        <c:if test="${sessionScope.loggedInUser != null and sessionScope.loggedInUser.roleName eq 'admin'}">
+                            <a href="${pageContext.request.contextPath}/addChapter" class="btn btn-success">+ Add new chapter</a>
                         </c:if>
                     </div>
-
+                    <c:if test="${not empty sessionScope.message}">
+                        <div class="alert alert-success alert-dismissible fade show" role="alert">
+                            ${fn:escapeXml(sessionScope.message)}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                        </div>
+                        <c:remove var="message" scope="session"/>
+                    </c:if>
                     <div class="container my-4 py-4" style="max-height: 500px; overflow-y: auto">
                         <c:if test="${empty listChapter}">
                             <p class="text-muted text-center">No chapters available for this series.</p>
@@ -148,15 +139,16 @@
                                         <div class="text-muted small mt-1"><fmt:formatDate value="${chapter.createdAt}" pattern="dd/MM/yyyy" /></div>
                                     </div>
                                 </div>
-                                <c:if test="${sessionScope.role != null and sessionScope.role eq 'admin'}">
-                                    <div class="action-buttons gap-2">
-                                        <a href="${pageContext.request.contextPath}/updateChapter?chapterId=${chapter.chapterId}" class="btn btn-sm btn-outline-warning" onclick="event.stopPropagation()"><i class="bi bi-pen"></i></a>
-                                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                data-id="${chapter.chapterId}" data-series-id="${chapter.seriesId}" data-type="chapter" data-url="deleteChapter" onclick="event.stopPropagation()">
-                                            <i class="bi bi-trash3-fill"></i>
-                                        </button>
-                                    </div>
-                                </c:if>
+                                <%--<c:if test="${sessionScope.role != null and sessionScope.role eq 'admin'}">--%>
+                                <div class="action-buttons gap-2">
+                                    <a href="${pageContext.request.contextPath}/updateChapter?chapterId=${chapter.chapterId}" class="btn btn-sm btn-outline-warning" onclick="event.stopPropagation()"><i class="bi bi-pen"></i></a>
+                                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                            data-id="${chapter.chapterId}" data-series-id="${chapter.seriesId}" data-type="chapter" data-url="deleteChapter" onclick="event.stopPropagation()">
+                                        <i class="bi bi-trash3-fill"></i>
+                                    </button>
+
+                                </div>
+                                <%--</c:if>--%>
                             </div>
                         </c:forEach>
                     </div>
@@ -164,6 +156,12 @@
             </div>
         </main>
 
+        <script src="${pageContext.request.contextPath}/js/index.js"></script> 
+        <script src="${pageContext.request.contextPath}/js/jQuery.js"></script>
+        <jsp:include page="/WEB-INF/views/components/_footer.jsp"/>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
         <!-- Delete Confirmation Modal -->
         <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -186,31 +184,32 @@
                 </div>
             </div>
         </div>
-        <br>
-        <script src="${pageContext.request.contextPath}/js/index.js"></script> 
-        <script src="${pageContext.request.contextPath}/js/jQuery.js"></script>
-        <jsp:include page="/WEB-INF/views/components/_footer.jsp" />
+
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-                                                    const deleteModal = document.getElementById('deleteModal');
-                                                    deleteModal.addEventListener('show.bs.modal', function (event) {
-                                                        const button = event.relatedTarget;
-                                                        const itemId = button.getAttribute('data-id');
-                                                        const itemType = button.getAttribute('data-type');
-                                                        const url = button.getAttribute('data-url');
-                                                        const seriesId = button.getAttribute('data-series-id');
+                                                const deleteModal = document.getElementById('deleteModal');
+                                                deleteModal.addEventListener('show.bs.modal', function (event) {
+                                                    const button = event.relatedTarget;
+                                                    const itemId = button.getAttribute('data-id');
+                                                    const itemType = button.getAttribute('data-type');
+                                                    const url = button.getAttribute('data-url');
+                                                    const seriesId = button.getAttribute('data-series-id');
 
-                                                        const input = deleteModal.querySelector('#deleteId');
-                                                        input.name = itemType + "Id";
-                                                        input.value = itemId;
+                                                    const input = deleteModal.querySelector('#deleteId');
+                                                    input.name = itemType + "Id";
+                                                    input.value = itemId;
 
-                                                        const seriesInput = deleteModal.querySelector('#seriesIdHidden');
-                                                        seriesInput.value = (itemType === 'chapter' && seriesId) ? seriesId : '';
+                                                    const seriesInput = deleteModal.querySelector('#seriesIdHidden');
+                                                    seriesInput.value = (itemType === 'chapter' && seriesId) ? seriesId : '';
 
-                                                        const form = deleteModal.querySelector('#deleteForm');
-                                                        form.action = url;
-                                                    });
+                                                    const form = deleteModal.querySelector('#deleteForm');
+                                                    form.action = url;
+                                                });
         </script>
+
+
     </body>
+</html>
+</body>
 </html>

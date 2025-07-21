@@ -36,11 +36,11 @@ public class HistoryReadingDAO {
     public ArrayList<HistoryReading> getAllHistoryByUserId(int userId) {
         ArrayList<HistoryReading> histories = new ArrayList<>();
 
-        String query = "SELECT h.user_id, h.series_id, h.chapter_id, s.title AS series_title, "
-                + "c.title AS chapter_title, h.last_read_at "
+        String query = "SELECT h.user_id, s.series_id, c.chapter_id, c.chapter_index, s.series_title, "
+                + "c.chapter_title, h.last_read_at "
                 + "FROM HistoryReading h "
                 + "JOIN Series s ON h.series_id = s.series_id "
-                + "JOIN Chapter c ON h.chapter_id = c.chapter_id "
+                + "JOIN Chapters c ON h.chapter_id = c.chapter_id "
                 + "WHERE h.user_id = ? "
                 + "ORDER BY h.last_read_at DESC";
 
@@ -55,6 +55,7 @@ public class HistoryReadingDAO {
                     history.setSeriesTitle(rs.getString("series_title"));
                     history.setChapterTitle(rs.getString("chapter_title"));
                     history.setLastReadAt(rs.getTimestamp("last_read_at"));
+                    history.setChapterId(rs.getInt("chapter_index"));
                     histories.add(history);
                 }
             }
@@ -73,7 +74,7 @@ public class HistoryReadingDAO {
      * creates a new history record.
      *
      * @param history The HistoryReading object containing user ID, series ID,
-     * chapter ID.
+     *                chapter ID.
      */
     public void saveOrUpdateHistory(HistoryReading history) {
         String checkExistQuery = "SELECT history_id FROM HistoryReading WHERE user_id = ? AND series_id = ?";
@@ -113,10 +114,10 @@ public class HistoryReadingDAO {
      *
      * This is used to resume reading from the last saved point.
      *
-     * @param userId The ID of the user.
+     * @param userId   The ID of the user.
      * @param seriesId The ID of the series.
      * @return An Optional containing the HistoryReading object if found;
-     * otherwise, Optional.empty().
+     *         otherwise, Optional.empty().
      */
     public Optional<HistoryReading> getLastReadChapter(int userId, int seriesId) {
         String query = "SELECT h.user_id, h.series_id, h.chapter_id, s.title AS series_title, c.title AS chapter_title, h.last_read_at "
@@ -160,5 +161,59 @@ public class HistoryReadingDAO {
             e.printStackTrace();
             return false;
         }
+    }
+
+    /**
+     * Inserts a new reading history record for a user.No update logic included
+     * — use saveOrUpdateHistory if needed.
+     *
+     * @param history
+     */
+    public void insertHistory(HistoryReading history) {
+        String sql = "INSERT INTO HistoryReading (user_id, series_id, chapter_id) VALUES (?, ?, ?)";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, history.getUserId());
+            stmt.setInt(2, history.getSeriesId());
+            stmt.setInt(3, history.getChapterId());
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Retrieves all reading history records for a user, ordered by series and
+     * chapter.
+     *
+     * @param userId
+     * @return
+     */
+    public ArrayList<HistoryReading> getHistoryByUser(int userId) {
+        ArrayList<HistoryReading> historyList = new ArrayList<>();
+        String sql = "SELECT h.user_id, h.series_id, h.chapter_id, s.title AS series_title, "
+                + "c.title AS chapter_title, h.last_read_at "
+                + "FROM HistoryReading h "
+                + "JOIN Series s ON h.series_id = s.series_id "
+                + "JOIN Chapter c ON h.chapter_id = c.chapter_id "
+                + "WHERE h.user_id = ? "
+                + "ORDER BY h.series_id ASC, h.chapter_id DESC";
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setInt(1, userId);
+            try (ResultSet rs = stmt.executeQuery()) {
+                while (rs.next()) {
+                    HistoryReading history = new HistoryReading();
+                    history.setUserId(rs.getInt("user_id"));
+                    history.setSeriesId(rs.getInt("series_id"));
+                    history.setChapterId(rs.getInt("chapter_id"));
+                    history.setSeriesTitle(rs.getString("series_title"));
+                    history.setChapterTitle(rs.getString("chapter_title"));
+                    history.setLastReadAt(rs.getTimestamp("last_read_at"));
+                    historyList.add(history);
+                }
+            }
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+        return historyList;
     }
 }

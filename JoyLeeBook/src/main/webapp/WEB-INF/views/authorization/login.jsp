@@ -4,6 +4,7 @@
          session="true"
          errorPage=""
          isErrorPage="false" %>
+<%@taglib prefix="c" uri="jakarta.tags.core" %>
 <%
     /*
     Note:
@@ -29,9 +30,20 @@
 
     <body>
 
-        <jsp:include page="/WEB-INF/views/components/_header.jsp" />
+        <header>
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg w-100 sticky-top">
+                <div class="navbar-layout w-100 pt-2 pb-2 ps-4 pe-4 d-flex align-items-center justify-content-center">
+                    <div class="mobile-header d-flex align-items-center justify-content-center">
+                        <a class="navbar-brand fw-bold text-white" href="home"><i class="bi bi-book"></i>
+                            <strong>JoyLeeBook</strong>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </header>
 
-        
+
         <main class="main-main d-flex align-items-center justify-content-center">
             <div class="content mt-4 mb-4 d-flex align-items-center justify-content-center">
 
@@ -47,11 +59,17 @@
                 </div>
 
                 <div id="authentication-layout" class="login-layout w-50 authentication-layout d-flex flex-column align-items-center justify-content-center">
+                    <c:if test="${not empty success}">
+                            <div class="alert alert-success">${success}</div>
+                        </c:if>
                     <div class="login-header w-100 mb-4">
                         <h1 class="text-center">LOGIN</h1>
                     </div>
 
                     <div class="login-body w-100">
+                        <c:if test="${not empty message}">
+                            <div class="alert alert-danger">${message}</div>
+                        </c:if>
                         <form action="${pageContext.request.contextPath}/login" method="POST" class="w-100 d-flex flex-column gap-4 align-items-center justify-content-center">
                             <input type="text" class="w-75 ps-4" name="username" placeholder="Username" value="${rememberedUser != null ? rememberedUser : ''}" required>
                             <input type="password" class="w-75 ps-4" name="password" placeholder="Password" required>

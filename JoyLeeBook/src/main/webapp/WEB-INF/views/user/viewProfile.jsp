@@ -7,6 +7,7 @@
 <%@ page import="model.User, model.HistoryReading" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+<jsp:include page="/WEB-INF/views/components/_header.jsp" />
 <!DOCTYPE html>
 <html lang="en">
 
@@ -15,7 +16,6 @@
         <title>Profile</title>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" />
-
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css" />
         <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.5/font/bootstrap-icons.css" rel="stylesheet" />
         <link rel="stylesheet" href="css/styles.css">
@@ -277,11 +277,11 @@
                     <div class="history-container">
                         <c:forEach var="history" items="${listHistory}">
                             <div class="history-row d-flex justify-content-between align-items-center"
-                                 onclick="window.location = '/readChapter?chapterIndex=${history.chapterId}&seriesId=${history.seriesId}'" style="cursor: pointer">
+                                 onclick="window.location = '${pageContext.request.contextPath}/readChapter?chapterIndex=${history.chapterIndex}&seriesId=${history.seriesId}'" style="cursor: pointer">
                                 <div class="d-flex align-items-center gap-3">
                                     <h6 class="fw-bold text-primary mb-0"> ${history.chapterTitle}</h6>
                                     <div>
-                                        <a class="chapter-title fw-semibold text-dark text-decoration-none">The Beginning</a>
+                                        <a class="chapter-title fw-semibold text-dark text-decoration-none">${history.chapterTitle}</a>
                                         <p class="text-muted small mb-0">Series: ${history.seriesTitle}</p>
                                         <p class="text-muted small mb-0">Last read: <fmt:formatDate value="${history.lastReadAt}" pattern="dd/MM/yyyy HH:mm"/></p>                                    </div>
                                 </div>
@@ -291,6 +291,10 @@
                 </div>
             </div>
         </main>
+        <br>
+        <script src="${pageContext.request.contextPath}/js/index.js"></script> 
+        <script src="${pageContext.request.contextPath}/js/jQuery.js"></script>
+        <jsp:include page="/WEB-INF/views/components/_footer.jsp" />
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 
