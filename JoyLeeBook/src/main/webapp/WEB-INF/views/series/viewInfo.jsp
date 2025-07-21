@@ -139,16 +139,18 @@
                                         <div class="text-muted small mt-1"><fmt:formatDate value="${chapter.createdAt}" pattern="dd/MM/yyyy" /></div>
                                     </div>
                                 </div>
-                                <%--<c:if test="${sessionScope.role != null and sessionScope.role eq 'admin'}">--%>
-                                <div class="action-buttons gap-2">
-                                    <a href="${pageContext.request.contextPath}/updateChapter?chapterId=${chapter.chapterId}" class="btn btn-sm btn-outline-warning" onclick="event.stopPropagation()"><i class="bi bi-pen"></i></a>
-                                    <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                            data-id="${chapter.chapterId}" data-series-id="${chapter.seriesId}" data-type="chapter" data-url="deleteChapter" onclick="event.stopPropagation()">
-                                        <i class="bi bi-trash3-fill"></i>
-                                    </button>
+                                <c:choose>
+                                    <c:when test="${sessionScope.loggedInUser != null and sessionScope.loggedInUser.roleName eq 'admin'}">
+                                        <div class="action-buttons gap-2">
+                                            <a href="${pageContext.request.contextPath}/updateChapter?chapterId=${chapter.chapterId}" class="btn btn-sm btn-outline-warning" onclick="event.stopPropagation()"><i class="bi bi-pen"></i></a>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                                    data-id="${chapter.chapterId}" data-series-id="${chapter.seriesId}" data-type="chapter" data-url="deleteChapter" onclick="event.stopPropagation()">
+                                                <i class="bi bi-trash3-fill"></i>
+                                            </button>
+                                        </div>
+                                    </c:when>
+                                </c:choose>
 
-                                </div>
-                                <%--</c:if>--%>
                             </div>
                         </c:forEach>
                     </div>
@@ -188,24 +190,24 @@
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-                                                const deleteModal = document.getElementById('deleteModal');
-                                                deleteModal.addEventListener('show.bs.modal', function (event) {
-                                                    const button = event.relatedTarget;
-                                                    const itemId = button.getAttribute('data-id');
-                                                    const itemType = button.getAttribute('data-type');
-                                                    const url = button.getAttribute('data-url');
-                                                    const seriesId = button.getAttribute('data-series-id');
+                        const deleteModal = document.getElementById('deleteModal');
+                        deleteModal.addEventListener('show.bs.modal', function (event) {
+                            const button = event.relatedTarget;
+                            const itemId = button.getAttribute('data-id');
+                            const itemType = button.getAttribute('data-type');
+                            const url = button.getAttribute('data-url');
+                            const seriesId = button.getAttribute('data-series-id');
 
-                                                    const input = deleteModal.querySelector('#deleteId');
-                                                    input.name = itemType + "Id";
-                                                    input.value = itemId;
+                            const input = deleteModal.querySelector('#deleteId');
+                            input.name = itemType + "Id";
+                            input.value = itemId;
 
-                                                    const seriesInput = deleteModal.querySelector('#seriesIdHidden');
-                                                    seriesInput.value = (itemType === 'chapter' && seriesId) ? seriesId : '';
+                            const seriesInput = deleteModal.querySelector('#seriesIdHidden');
+                            seriesInput.value = (itemType === 'chapter' && seriesId) ? seriesId : '';
 
-                                                    const form = deleteModal.querySelector('#deleteForm');
-                                                    form.action = url;
-                                                });
+                            const form = deleteModal.querySelector('#deleteForm');
+                            form.action = url;
+                        });
         </script>
 
 

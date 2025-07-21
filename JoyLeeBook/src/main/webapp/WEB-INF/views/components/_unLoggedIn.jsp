@@ -6,12 +6,12 @@
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <div class="menu pt-2" id="navbarNav">
-    <form class="d-flex me-3 pt-2 pb-2 bg-white" action="search" method="GET">
-        <input type="text" name="searchQuery"  
-               class="ps-3 pe-2 bg-white border-none outline-none"
-               placeholder="Search ..." aria-label="Search">
+      <form class="d-flex me-3 pt-2 pb-2 bg-white" action="${pageContext.request.contextPath}/search" method="GET">
+        <input class="ps-3 pe-2 bg-white border-none outline-none"
+               name="searchQuery" placeholder="Search manga..."
+               aria-label="Search">
 
-        <button type="submit" class="search-submit pe-3 bg-white">
+        <button class="search-submit pe-3 bg-white" type="submit">
             <i class="fas fa-search fa-2x"></i>
         </button>
     </form>

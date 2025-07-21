@@ -9,9 +9,9 @@
 <!DOCTYPE html>
 <html lang="en">
     <head>
-        <meta charset="UTF-8"/>
-        <title>MangaVerse - Search Results</title>
-        <%-- Các thẻ link CSS và meta khác giữ nguyên --%>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- jQuery -->
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <!-- Bootstrap CDN -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
@@ -35,7 +35,7 @@
                     <div class="col-md-4">
                         <form action="${pageContext.request.contextPath}/search" method="get" class="mb-4">
                             <div class="input-group mb-4">
-                                <input type="text" name="searchQuery" class="form-control" placeholder="Search ..." value="${searchQuery}"/>
+                                <input type="text" name="searchQuery" class="form-control" placeholder="Search series..." value="${searchQuery}"/>
                             </div>
 
                             <div class="p-3 shadow-sm rounded bg-white">
@@ -69,8 +69,8 @@
                                         </div>
                                     </a>
                                 </div>
-                            </div>
-                        </c:forEach>
+                            </c:forEach>
+                        </div>
 
                         <%-- Phân trang --%>
                         <c:if test="${totalPages > 1}">
@@ -100,11 +100,13 @@
                 </div>
             </div>
         </main>
+        <br>
         <script src="${pageContext.request.contextPath}/js/index.js"></script> 
         <script src="${pageContext.request.contextPath}/js/jQuery.js"></script>
         <jsp:include page="/WEB-INF/views/components/_footer.jsp"/>
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+
     </body>
 </html>
