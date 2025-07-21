@@ -1,3 +1,4 @@
+<%@page import="model.User"%>
 <%@taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ page language="java"
          contentType="text/html; charset=UTF-8"
@@ -19,7 +20,15 @@
     request.setAttribute("pageType", pageType);
 
 %>
+<%    User user = (User) session.getAttribute("loggedInUser");
+    if (user == null || !"admin".equals(user.getRoleName())) {
+        response.sendRedirect(request.getContextPath() + "/login");
+        return;
+    }
+%>
+
 <!-- Trang Home (home.html) -->
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -30,7 +39,7 @@
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
 
-        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
         <style>
             .section-title {
                 font-weight: bold;
@@ -53,32 +62,7 @@
     </head>
 
     <body class="bg-white">
-        <header>
-            <!-- Navbar -->
-            <nav class="navbar navbar-expand-lg border-bottom sticky-top">
-                <div class="container">
-                    <a class="navbar-brand fw-bold text-white" href="#"><i class="bi bi-book"></i>
-                        <strong>JoyLeeBook</strong></a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav me-auto">
-                            <li class="nav-item"><a class="nav-link  text-white" href="homeAdmin.html">Home</a></li>
-                            <li class="nav-item"><a class="nav-link text-white" href="genre.html">Genres</a></li>
-                            <li class="nav-item"><a class="nav-link text-white" href="#">History</a></li>
-                            <li class="nav-item"><a class="nav-link text-white" href="#">Library</a></li>
-                        </ul>
-                        <form class="d-flex me-3">
-                            <input class="form-control me-2" type="search" placeholder="Search manga..."
-                                   aria-label="Search">
-                        </form>
-                        <a class="btn me-2 login" href="authorization/login.html">LOGIN</a>
-                        <a class="btn signup " href="authorization/register.html">SIGN UP</a>
-                    </div>
-                </div>
-            </nav>
-        </header>
+        <jsp:include page="/WEB-INF/views/components/_header.jsp" />
         <main>
             <div class="container my-5">
                 <div class="d-flex justify-content-between align-items-center mb-4">
@@ -129,7 +113,10 @@
                                     <td class="text-center">
                                         <a href="viewSeriesInfo?seriesId=${series.seriesId}" class="btn btn-sm btn-primary">Detail</a>
                                         <a href="updateSeries?seriesId=${series.seriesId}" class="btn btn-sm btn-warning">Edit</a>
-                                        <a href="deleteSeries?seriesId=${series.seriesId}"  class="btn btn-sm btn-danger">Delete</a>
+                                        <form action="${pageContext.request.contextPath}/deleteSeries" method="POST" style="display:inline;" onsubmit="return confirm('Are you sure you want to delete this series? This action cannot be undone.');">
+                                            <input type="hidden" name="seriesId" value="${series.seriesId}">
+                                            <button type="submit" class="btn btn-sm btn-danger">Delete</button>
+                                        </form>
                                     </td>
                                 </tr>
                             </c:forEach>
@@ -161,9 +148,10 @@
                 </nav>
             </div>
         </main>
-        
-        <jsp:include page="/WEB-INF/views/components/footer.jsp" />
-
+        <br>
+        <script src="${pageContext.request.contextPath}/js/index.js"></script> 
+        <script src="${pageContext.request.contextPath}/js/jQuery.js"></script>
+        <jsp:include page="/WEB-INF/views/components/_footer.jsp" />
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 </html>

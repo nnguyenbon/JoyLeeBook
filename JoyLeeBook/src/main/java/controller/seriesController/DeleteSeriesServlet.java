@@ -4,10 +4,6 @@ import java.io.IOException;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import dao.CategoryDAO;
-import dao.ChapterDAO;
-import dao.HistoryReadingDAO;
-import dao.LibraryDAO;
 import dao.SeriesDAO;
 import db.DBConnection;
 import jakarta.servlet.ServletException;
@@ -19,31 +15,19 @@ import static utils.Validator.isValidInteger;
 
 /**
  *
- * @author PC
+ * @author HaiDD-dev
  */
+
 @WebServlet(name = "DeleteSeriesServlet", urlPatterns = { "/deleteSeries" })
 public class DeleteSeriesServlet extends HttpServlet {
-    /**
-     * Handles the HTTP <code>POST</code> method.
-     *
-     * @param request  servlet request
-     * @param response servlet response
-     * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
-     */
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
         Connection conn = null;
         try {
             conn = DBConnection.getConnection();
-
-            conn.setAutoCommit(false);
             SeriesDAO seriesDao = new SeriesDAO(conn);
-            CategoryDAO categoryDao = new CategoryDAO(conn);
-            HistoryReadingDAO historyDao = new HistoryReadingDAO(conn);
-            ChapterDAO chapterDao = new ChapterDAO(conn);
-            LibraryDAO libraryDao = new LibraryDAO(conn);
 
             String seriesIdRaw = request.getParameter("seriesId");
             if (!isValidInteger(seriesIdRaw)) {
@@ -52,40 +36,36 @@ public class DeleteSeriesServlet extends HttpServlet {
                 return;
             }
             int seriesId = Integer.parseInt(seriesIdRaw);
-            boolean isDeletedCategory = categoryDao.deleteBySeriesId(seriesId);
-            boolean isDeletedHistory = historyDao.deleteBySeriesId(seriesId);
-            boolean isDeletedLibrary = libraryDao.deleteBySeriesId(seriesId);
-            boolean isDeletedChapter = chapterDao.deleteBySeriesId(seriesId);
-            boolean isDeletedSeries = seriesDao.deleteSeries(seriesId);
 
-            if (isDeletedCategory && isDeletedHistory && isDeletedLibrary && isDeletedChapter && isDeletedSeries) {
-                conn.commit();
-            } else {
-                conn.rollback();
-                request.setAttribute("error", "Delete failed. Please check log for details.");
+            // Bây giờ bạn chỉ cần xóa Series, CSDL sẽ tự động xóa các dữ liệu liên quan
+            boolean isDeleted = seriesDao.deleteSeries(seriesId);
+
+            if (!isDeleted) {
+                request.setAttribute("error", "Delete failed. The series might not exist.");
                 request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
+                return;
             }
+
             response.sendRedirect(request.getContextPath() + "/adminDashboard");
+
         } catch (Exception e) {
             e.printStackTrace();
-            if (conn != null) {
-                try {
-                    conn.rollback();
-                } catch (SQLException ex) {
-                    ex.printStackTrace();
-                }
-            }
-            request.setAttribute("error", "An error occurred during deletion.");
+            request.setAttribute("error", "An error occurred during deletion: " + e.getMessage());
             request.getRequestDispatcher("/WEB-INF/views/error.jsp").forward(request, response);
         } finally {
             if (conn != null) {
                 try {
-                    conn.setAutoCommit(true);
                     conn.close();
                 } catch (SQLException e) {
                     e.printStackTrace();
                 }
             }
         }
+    }
+
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        doPost(request, response);
     }
 }

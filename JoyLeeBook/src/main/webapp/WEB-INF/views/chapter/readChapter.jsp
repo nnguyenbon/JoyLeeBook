@@ -3,7 +3,7 @@
 <%@taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
-<jsp:include page="/WEB-INF/views/components/_header.jsp" />
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -37,9 +37,12 @@
 
     <body class="bg-white d-flex flex-column min-vh-100">
 
-
+        <jsp:include page="/WEB-INF/views/components/_header.jsp" />
         <main class="flex-grow-1">
             <div class="reader-container">
+                <div class="d-flex align-items-center">
+                    <h4 class=" mb-4 mx-4">Read</h4> <a href="viewSeriesInfo?seriesId=${chapter.seriesId}" class="text-primary fw-bold fs-4 mx-4 mb-4 link-offset-2 link-underline link-underline-opacity-0">Chapter ${chapter.chapterIndex} - ${chapter.seriesTitle}</a>
+                </div>
                 <div class="nav-reader d-flex justify-content-between align-items-center">
                     <c:choose>
                         <c:when test="${chapter.chapterIndex eq firstIndex}">
@@ -133,7 +136,7 @@
 
             <!-- Header -->
             <div class="modal-header">
-                <h5 class="modal-title" id="chapterModalLabel">List of Chapters</h5>
+                <h5 class="modal-title" id="chapterModalLabel">List Chapters</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
 
@@ -141,14 +144,17 @@
             <div class="modal-body">
                 <ul class="list-group">
                     <c:forEach var="chapterOfList" items="${chapters}">
-                        <li class="list-group-item <c:if test="${chapterOfList.chapterIndex eq chapter.chapterIndex}">active</c:if>">Chapter ${chapterOfList.chapterIndex}</li>
-                        </c:forEach>
+                        <a href="readChapter?chapterIndex=${chapterOfList.chapterIndex}&seriesId=${chapterOfList.seriesId}" class="list-group-item list-group-item-action
+                           <c:if test='${chapterOfList.chapterIndex eq chapter.chapterIndex}'>active</c:if>">
+                            Chapter ${chapterOfList.chapterIndex}
+                        </a>
+                    </c:forEach>
                 </ul>
             </div>
 
             <!-- Footer -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>
