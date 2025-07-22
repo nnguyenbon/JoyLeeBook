@@ -24,8 +24,7 @@
 
         <div id="user-profile" class="user-profile mt-2 mb-2 align-items-center justify-content-center">
             <a href="saveSeries"
-               class="user-library page-hover w-100 p-2 d-flex align-items-center justify-content-center">User
-                Library</a>
+               class="user-library page-hover w-100 p-2 d-flex align-items-center justify-content-center">Library</a>
             <a href="viewProfile?userId=${sessionScope.loggedInUser.userId}"
                class="history-reading page-hover w-100 p-2 d-flex align-items-center justify-content-center">
                 View Profile
