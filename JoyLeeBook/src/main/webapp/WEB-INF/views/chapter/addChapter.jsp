@@ -4,7 +4,13 @@
     Author     : NguyenNTCE191135
 --%>
 
-
+<%
+    User user = (User) session.getAttribute("loggedInUser");
+    if (user == null || !"admin".equals(user.getRoleName())) {
+        response.sendRedirect(request.getContextPath() + "/home");
+        return;
+    }
+%>
 <%@page import="model.User"%>
 <%@page import="model.Chapter"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
@@ -22,13 +28,7 @@
     request.setAttribute("pageType", pageType);
 
 %>
-<%
-    User user = (User) session.getAttribute("loggedInUser");
-    if (user == null || !"admin".equals(user.getRoleName())) {
-        response.sendRedirect(request.getContextPath() + "/login");
-        return;
-    }
-%>
+
 
 <!DOCTYPE html>
 <html>

@@ -36,7 +36,6 @@ public class AddChapterServlet extends HttpServlet {
             throws ServletException, IOException {
         Connection conn = null;
         try {
-            //Chua check admin
             // Check id if user operate with url
             String seriesIdParam = request.getParameter("seriesId");
             if (!isValidInteger(seriesIdParam)) {
@@ -48,8 +47,6 @@ public class AddChapterServlet extends HttpServlet {
             int seriesId = Integer.parseInt(seriesIdParam);
             conn = DBConnection.getConnection();
             SeriesDAO seriesDao = new SeriesDAO(conn);
-            ChapterDAO chapterDao = new ChapterDAO(conn);
-            CategoryDAO categoryDAO = new CategoryDAO(conn);
             
             Series series = seriesDao.getSeriesById(seriesId);
             request.setAttribute("series", series);

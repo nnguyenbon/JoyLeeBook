@@ -6,7 +6,7 @@
 <%@page import="model.User"%>
 <%    User user = (User) session.getAttribute("loggedInUser");
     if (user == null || !"admin".equals(user.getRoleName())) {
-        response.sendRedirect(request.getContextPath() + "/login");
+        response.sendRedirect(request.getContextPath() + "/home");
         return;
     }
 %>

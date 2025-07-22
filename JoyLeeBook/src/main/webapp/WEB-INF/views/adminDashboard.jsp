@@ -1,3 +1,9 @@
+<%    User user = (User) session.getAttribute("loggedInUser");
+    if (user == null || !"admin".equals(user.getRoleName())) {
+        response.sendRedirect(request.getContextPath() + "/home");
+        return;
+    }
+%>
 <%@page import="model.User"%>
 <%@taglib prefix="c" uri="jakarta.tags.core" %>
 <%@ page language="java"
@@ -20,12 +26,7 @@
     request.setAttribute("pageType", pageType);
 
 %>
-<%    User user = (User) session.getAttribute("loggedInUser");
-    if (user == null || !"admin".equals(user.getRoleName())) {
-        response.sendRedirect(request.getContextPath() + "/login");
-        return;
-    }
-%>
+
 
 <!-- Trang Home (home.html) -->
 

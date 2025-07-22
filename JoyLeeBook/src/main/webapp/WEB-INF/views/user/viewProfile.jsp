@@ -3,6 +3,12 @@
     Created on : Jul 20, 2025, 5:13:22 PM
     Author     : NguyenNTCE191135
 --%>
+<%    User user = (User) session.getAttribute("loggedInUser");
+    if (user == null ) {
+        response.sendRedirect(request.getContextPath() + "/login");
+        return;
+    }
+%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" session="true" %>
 <%@ page import="model.User, model.HistoryReading" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
