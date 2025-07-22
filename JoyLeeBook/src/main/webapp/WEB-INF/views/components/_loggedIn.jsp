@@ -4,9 +4,10 @@
     Author     : KHAI TOAN
 --%>
 
-<%@page contentType="text/html" pageEncoding="UTF-8" %>
+<%@page contentType="text/html" pageEncoding="UTF-8"%>
+
 <div class="menu justify-content-end" id="navbarNav">
-    <form class="d-flex me-3 pt-2 pb-2 bg-white" action="${pageContext.request.contextPath}/search" method="GET">
+      <form class="d-flex me-3 pt-2 pb-2 bg-white" action="${pageContext.request.contextPath}/search" method="GET">
         <input class="ps-3 pe-2 bg-white border-none outline-none"
                name="searchQuery" placeholder="Search manga..."
                aria-label="Search">
@@ -25,9 +26,10 @@
             <a href="saveSeries"
                class="user-library page-hover w-100 p-2 d-flex align-items-center justify-content-center">User
                 Library</a>
-            <a href="history"
-               class="history-reading page-hover w-100 p-2 d-flex align-items-center justify-content-center">History
-                Reading</a>
+            <a href="viewProfile?userId=${sessionScope.loggedInUser.userId}"
+               class="history-reading page-hover w-100 p-2 d-flex align-items-center justify-content-center">
+                View Profile
+            </a>
             <a href="logout" class="log-out page-hover w-100 p-2 d-flex align-items-center justify-content-center">Log
                 Out</a>
         </div>

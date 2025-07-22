@@ -202,11 +202,6 @@
                                                value="${user.username}" required />
                                     </div>
                                     <div class="mb-3">
-                                        <label for="email" class="form-label">Email</label>
-                                        <input type="email" class="form-control" id="email" name="email"
-                                               value="${user.email}" required />
-                                    </div>
-                                    <div class="mb-3">
                                         <label for="currentPasswordProfile" class="form-label">Current Password</label>
                                         <input type="password" class="form-control" id="currentPasswordProfile"
                                                name="currentPassword" placeholder="Enter current password" required />
@@ -279,7 +274,7 @@
                             <div class="history-row d-flex justify-content-between align-items-center"
                                  onclick="window.location = '${pageContext.request.contextPath}/readChapter?chapterIndex=${history.chapterIndex}&seriesId=${history.seriesId}'" style="cursor: pointer">
                                 <div class="d-flex align-items-center gap-3">
-                                    <h6 class="fw-bold text-primary mb-0"> ${history.chapterTitle}</h6>
+                                    <h6 class="fw-bold text-primary mb-0"> ${history.chapterIndex}</h6>
                                     <div>
                                         <a class="chapter-title fw-semibold text-dark text-decoration-none">${history.chapterTitle}</a>
                                         <p class="text-muted small mb-0">Series: ${history.seriesTitle}</p>

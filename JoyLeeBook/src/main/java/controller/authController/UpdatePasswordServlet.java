@@ -14,6 +14,7 @@ import jakarta.servlet.http.HttpServletResponse;
 import java.io.IOException;
 import model.User;
 import utils.PasswordUtil;
+import static utils.Validator.isValidPassword;
 
 /**
  *
@@ -63,6 +64,11 @@ public class UpdatePasswordServlet extends HttpServlet {
             if (user == null) {
                 request.setAttribute("error", "User not found.");
                 request.getRequestDispatcher("WEB-INF/views/error.jsp").forward(request, response);
+                return;
+            }
+            if (!isValidPassword(newPassword)) {
+                request.getSession().setAttribute("messageError", "Password must be at least 8 characters, contain a digit, an uppercase letter, and a special character.");
+                response.sendRedirect(request.getContextPath() + "/viewProfile?userId=" + userId);
                 return;
             }
             if (!PasswordUtil.checkPassword(currentPassword, user.getPassword())) {
