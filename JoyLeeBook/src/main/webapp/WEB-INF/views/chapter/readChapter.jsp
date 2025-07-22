@@ -1,7 +1,9 @@
 <%@page import="model.Chapter"%>
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="jakarta.tags.core" %>
-<%@ taglib uri="https://jakarta.ee/tags/functions" prefix="fn" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,7 +13,7 @@
         <meta name="viewport" content="width=device-width, initial-scale=1">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-        <link rel="stylesheet" href="css/style.css">
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
 
         <style>
             .reader-container {
@@ -35,34 +37,12 @@
 
     <body class="bg-white d-flex flex-column min-vh-100">
 
-        <header>
-            <!-- Navbar -->
-            <nav class="navbar navbar-expand-lg border-bottom sticky-top">
-                <div class="container">
-                    <a class="navbar-brand fw-bold text-white" href="#"><i class="bi bi-book"></i>
-                        <strong>JoyLeeBook</strong></a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav me-auto">
-                            <li class="nav-item"><a class="nav-link  text-white" href="home.html">Home</a></li>
-                            <li class="nav-item"><a class="nav-link text-white" href="genre.html">Genres</a></li>
-                            <li class="nav-item"><a class="nav-link text-white" href="#">History</a></li>
-                            <li class="nav-item"><a class="nav-link text-white" href="#">Library</a></li>
-                        </ul>
-                        <form class="d-flex me-3">
-                            <input class="form-control me-2" type="search" placeholder="Search manga..." aria-label="Search">
-                        </form>
-                        <a class="btn me-2 login" href="#">LOGIN</a>
-                        <a class="btn signup " href="#">SIGN UP</a>
-                    </div>
-                </div>
-            </nav>
-        </header>
-
+        <jsp:include page="/WEB-INF/views/components/_header.jsp" />
         <main class="flex-grow-1">
             <div class="reader-container">
+                <div class="d-flex align-items-center">
+                    <h4 class=" mb-4 mx-4">Read</h4> <a href="viewSeriesInfo?seriesId=${chapter.seriesId}" class="text-primary fw-bold fs-4 mx-4 mb-4 link-offset-2 link-underline link-underline-opacity-0">Chapter ${chapter.chapterIndex} - ${chapter.seriesTitle}</a>
+                </div>
                 <div class="nav-reader d-flex justify-content-between align-items-center">
                     <c:choose>
                         <c:when test="${chapter.chapterIndex eq firstIndex}">
@@ -138,44 +118,11 @@
 
                 </div>
             </div>
-
         </main>
-        <footer class="mt-5">
-            <!-- Section About -->
-            <div class="text-white py-4" style="background-color: #8DA7C0;">
-                <div class="container text-center">
-                    <h5 class="fw-bold mb-3">ABOUT US</h5>
-                    <p class="mx-auto mb-0" style="max-width: 1000px;">
-                        JoyLeeBook is a Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                        incididunt ut
-                        labore et dolore magna aliqua.
-                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                        consequat.
-                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Section Social + Back to top -->
-            <div class="py-3 w-100" style="background-color: #517594;  justify-self: center;">
-                <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
-
-                    <!-- Social icons -->
-                    <div class="offset-md-2 col-md-7 d-flex justify-content-center gap-4 mb-3 mb-md-0">
-                        <a href="#" class="text-dark fs-4"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="text-dark fs-4"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="text-dark fs-4"><i class="fab fa-tiktok"></i></a>
-                    </div>
-
-                    <!-- Back to top -->
-                    <a href="#header" class="btn btn-light rounded-circle d-flex align-items-center justify-content-center"
-                       style="width: 40px; height: 40px;">
-                        <i class="fas fa-arrow-up text-dark"></i>
-                    </a>
-                </div>
-            </div>
-        </footer>
-
+        <br>
+        <script src="${pageContext.request.contextPath}/js/index.js"></script> 
+        <script src="${pageContext.request.contextPath}/js/jQuery.js"></script>
+        <jsp:include page="/WEB-INF/views/components/_footer.jsp" />
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     </body>
 
@@ -189,7 +136,7 @@
 
             <!-- Header -->
             <div class="modal-header">
-                <h5 class="modal-title" id="chapterModalLabel">List of Chapters</h5>
+                <h5 class="modal-title" id="chapterModalLabel">List Chapters</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
             </div>
 
@@ -197,14 +144,17 @@
             <div class="modal-body">
                 <ul class="list-group">
                     <c:forEach var="chapterOfList" items="${chapters}">
-                        <li class="list-group-item <c:if test="${chapterOfList.chapterIndex eq chapter.chapterIndex}">active</c:if>">Chapter ${chapterOfList.chapterIndex}</li>
-                        </c:forEach>
+                        <a href="readChapter?chapterIndex=${chapterOfList.chapterIndex}&seriesId=${chapterOfList.seriesId}" class="list-group-item list-group-item-action
+                           <c:if test='${chapterOfList.chapterIndex eq chapter.chapterIndex}'>active</c:if>">
+                            Chapter ${chapterOfList.chapterIndex}
+                        </a>
+                    </c:forEach>
                 </ul>
             </div>
 
             <!-- Footer -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
             </div>
         </div>
     </div>

@@ -1,9 +1,9 @@
 <%@page import="model.Genre"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" session="true" %>
-<%@ page import="java.util.ArrayList, model.Series, model.Chapter" %>
-<%@ taglib uri="https://jakarta.ee/tags/core" prefix="c" %>
-<%@ taglib uri="https://jakarta.ee/tags/fmt" prefix="fmt" %>
-<%@ taglib uri="https://jakarta.ee/tags/functions" prefix="fn" %>
+<%@ page import="java.util.List, model.Series, model.Chapter" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/functions" prefix="fn" %>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -46,32 +46,14 @@
         </style>
     </head>
     <body>
-        <header>
-            <nav class="navbar navbar-expand-lg border-bottom sticky-top">
-                <div class="container">
-                    <a class="navbar-brand fw-bold text-white" href="${pageContext.request.contextPath}/home"><strong class="fs-3">JoyLeeBook</strong></a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <div class="d-flex ms-auto justify-content-center" style="max-width: 600px; width: 100%;">
-                            <form class="d-flex flex-grow-1 me-2">
-                                <input class="form-control w-100 me-3" type="search" placeholder="Search manga..." aria-label="Search" />
-                            </form>
-                            <a class="btn me-2 login" href="${pageContext.request.contextPath}/authorization/login.html">LOGIN</a>
-                            <a class="btn signup" href="${pageContext.request.contextPath}/authorization/register.html">SIGN UP</a>
-                        </div>
-                    </div>
-                </div>
-            </nav>
-        </header>
+        <jsp:include page="/WEB-INF/views/components/_header.jsp"/>
 
         <main>
             <div class="container mt-5">
 
                 <div class="row g-1 border border-2 rounded-4 p-4 bg-white" style="background-color: #f7f8f9">
                     <div class="col-md-4 m-0 p-0">
-                        <img src="https://tse3.mm.bing.net/th/id/OIP.F3yrH-SyeJJnLN7GQrA7kQHaJ4?rs=1&pid=ImgDetMain&o=7&rm=3"
+                        <img src="${pageContext.request.contextPath}/${series.coverImageUrl}"
                              class="img-fluid rounded shadow" alt="${series.seriesTitle}" style="width: 370px;" />
                     </div>
                     <div class="col-md-8 pr-3">
@@ -103,7 +85,7 @@
                             <p class="mb-0">${fn:escapeXml(series.description)}</p>
                         </div>
                         <c:choose>
-                            <c:when test="${sessionScope.role != null and sessionScope.role eq 'admin'}">
+                            <c:when test="${sessionScope.loggedInUser != null and sessionScope.loggedInUser.roleName eq 'admin'}">
                                 <div class="d-flex gap-2 my-5">
                                     <a class="btn btn-warning" href="${pageContext.request.contextPath}/updateSeries?seriesId=${series.seriesId}"><i class="bi bi-pen"></i> Edit</a>
                                     <button type="button" class="btn btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
@@ -130,8 +112,8 @@
                             <h4 class="fw-bold">Chapters</h4>
                             <h5 class="text-muted small mt-1">Total: ${fn:length(listChapter)}</h5>
                         </div>
-                        <c:if test="${sessionScope.role != null and sessionScope.role eq 'admin'}">
-                            <a href="${pageContext.request.contextPath}/add-story.html" class="btn btn-success">+ Add new chapter</a>
+                        <c:if test="${sessionScope.loggedInUser != null and sessionScope.loggedInUser.roleName eq 'admin'}">
+                            <a href="${pageContext.request.contextPath}/addChapter?seriesId=${series.seriesId}" class="btn btn-success">+ Add new chapter</a>
                         </c:if>
                     </div>
                     <c:if test="${not empty sessionScope.message}">
@@ -157,50 +139,31 @@
                                         <div class="text-muted small mt-1"><fmt:formatDate value="${chapter.createdAt}" pattern="dd/MM/yyyy" /></div>
                                     </div>
                                 </div>
-                                <c:if test="${sessionScope.role != null and sessionScope.role eq 'admin'}">
-                                    <div class="action-buttons gap-2">
-                                        <a href="${pageContext.request.contextPath}/updateChapter?chapterId=${chapter.chapterId}" class="btn btn-sm btn-outline-warning" onclick="event.stopPropagation()"><i class="bi bi-pen"></i></a>
-                                        <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
-                                                data-id="${chapter.chapterId}" data-series-id="${chapter.seriesId}" data-type="chapter" data-url="deleteChapter" onclick="event.stopPropagation()">
-                                            <i class="bi bi-trash3-fill"></i>
-                                        </button>
-                                    </div>
-                                </c:if>
+                                <c:choose>
+                                    <c:when test="${sessionScope.loggedInUser != null and sessionScope.loggedInUser.roleName eq 'admin'}">
+                                        <div class="action-buttons gap-2">
+                                            <a href="${pageContext.request.contextPath}/updateChapter?chapterId=${chapter.chapterId}" class="btn btn-sm btn-outline-warning" onclick="event.stopPropagation()"><i class="bi bi-pen"></i></a>
+                                            <button type="button" class="btn btn-sm btn-outline-danger" data-bs-toggle="modal" data-bs-target="#deleteModal"
+                                                    data-id="${chapter.chapterId}" data-series-id="${chapter.seriesId}" data-type="chapter" data-url="deleteChapter" onclick="event.stopPropagation()">
+                                                <i class="bi bi-trash3-fill"></i>
+                                            </button>
+                                        </div>
+                                    </c:when>
+                                </c:choose>
+
                             </div>
                         </c:forEach>
                     </div>
                 </div>
             </div>
         </main>
-
-        <footer class="mt-5">
-            <div class="text-white py-4" style="background-color: #8da7c0">
-                <div class="container text-center">
-                    <h5 class="fw-bold mb-3">ABOUT US</h5>
-                    <p class="mx-auto mb-0" style="max-width: 1000px">
-                        JoyLeeBook is a Lorem ipsum dolor sit amet, consectetur adipiscing
-                        elit, sed do eiusmod tempor incididunt ut labore et dolore magna
-                        aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco
-                        laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure
-                        dolor in reprehenderit in voluptate velit esse cillum dolore eu
-                        fugiat nulla pariatur.
-                    </p>
-                </div>
-            </div>
-            <div class="py-3 w-100" style="background-color: #517594; justify-self: center">
-                <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
-                    <div class="offset-md-2 col-md-7 d-flex justify-content-center gap-4 mb-3 mb-md-0">
-                        <a href="#" class="text-dark fs-4"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="text-dark fs-4"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="text-dark fs-4"><i class="fab fa-tiktok"></i></a>
-                    </div>
-                    <a href="#header" class="btn btn-light rounded-circle d-flex align-items-center justify-content-center"
-                       style="width: 40px; height: 40px">
-                        <i class="fas fa-arrow-up text-dark"></i>
-                    </a>
-                </div>
-            </div>
-        </footer>
+        <br>
+        <script src="${pageContext.request.contextPath}/js/index.js"></script> 
+        <script src="${pageContext.request.contextPath}/js/jQuery.js"></script>
+        <jsp:include page="/WEB-INF/views/components/_footer.jsp"/>
+        <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
         <!-- Delete Confirmation Modal -->
         <div class="modal fade" id="deleteModal" tabindex="-1" aria-labelledby="deleteModalLabel" aria-hidden="true">
@@ -227,24 +190,28 @@
         <!-- Bootstrap JS -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <script>
-                                               const deleteModal = document.getElementById('deleteModal');
-                                                deleteModal.addEventListener('show.bs.modal', function (event) {
-                                                    const button = event.relatedTarget;
-                                                    const itemId = button.getAttribute('data-id');
-                                                    const itemType = button.getAttribute('data-type');
-                                                    const url = button.getAttribute('data-url');
-                                                    const seriesId = button.getAttribute('data-series-id');
+                                                        const deleteModal = document.getElementById('deleteModal');
+                                                        deleteModal.addEventListener('show.bs.modal', function (event) {
+                                                            const button = event.relatedTarget;
+                                                            const itemId = button.getAttribute('data-id');
+                                                            const itemType = button.getAttribute('data-type');
+                                                            const url = button.getAttribute('data-url');
+                                                            const seriesId = button.getAttribute('data-series-id');
 
-                                                    const input = deleteModal.querySelector('#deleteId');
-                                                    input.name = itemType + "Id";
-                                                    input.value = itemId;
+                                                            const input = deleteModal.querySelector('#deleteId');
+                                                            input.name = itemType + "Id";
+                                                            input.value = itemId;
 
-                                                    const seriesInput = deleteModal.querySelector('#seriesIdHidden');
-                                                    seriesInput.value = (itemType === 'chapter' && seriesId) ? seriesId : '';
+                                                            const seriesInput = deleteModal.querySelector('#seriesIdHidden');
+                                                            seriesInput.value = (itemType === 'chapter' && seriesId) ? seriesId : '';
 
-                                                    const form = deleteModal.querySelector('#deleteForm');
-                                                    form.action = url;
-                                                });
+                                                            const form = deleteModal.querySelector('#deleteForm');
+                                                            form.action = url;
+                                                        });
         </script>
+
+
     </body>
+</html>
+</body>
 </html>

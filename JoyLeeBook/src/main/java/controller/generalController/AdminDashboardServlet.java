@@ -15,31 +15,32 @@ import java.sql.Connection;
 import java.sql.SQLException;
 
 import java.util.ArrayList;
+import java.util.List;
 import static utils.Validator.*;
 
 /**
  *
  * @author PC
  */
-@WebServlet(name = "AdminDashboardServlet", urlPatterns = {"/adminDashboard"})
+@WebServlet(name = "AdminDashboardServlet", urlPatterns = { "/adminDashboard" })
 public class AdminDashboardServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Connection  conn = null;
+        Connection conn = null;
         try {
             conn = DBConnection.getConnection();
             SeriesDAO seriesDao = new SeriesDAO(conn);
             ChapterDAO chapterDao = new ChapterDAO(conn);
-            ArrayList<Series> allSeries = seriesDao.getAllSeries();
+            ArrayList<Series> allSeries = (ArrayList<Series>) seriesDao.getAllSeries();
             for (Series series : allSeries) {
                 series.setTotalChapters(chapterDao.getTotalChaptersBySeriesId(series.getSeriesId()));
             }
@@ -53,14 +54,16 @@ public class AdminDashboardServlet extends HttpServlet {
             int currentPage = 1;
             if (isValidInteger(pageParam)) {
                 currentPage = Integer.parseInt(pageParam);
-                if (currentPage < 1) currentPage = 1;
-                if (currentPage > totalPages) currentPage = totalPages;
+                if (currentPage < 1)
+                    currentPage = 1;
+                if (currentPage > totalPages)
+                    currentPage = totalPages;
             }
 
             int startIndex = (currentPage - 1) * itemsPerPage;
             int endIndex = Math.min(startIndex + itemsPerPage, totalItems);
 
-            ArrayList<Series> paginatedSeries = (ArrayList<Series>) allSeries.subList(startIndex, endIndex);
+            List<Series> paginatedSeries =  allSeries.subList(startIndex, endIndex);
 
             request.setAttribute("allSeries", paginatedSeries);
             request.setAttribute("currentPage", currentPage);

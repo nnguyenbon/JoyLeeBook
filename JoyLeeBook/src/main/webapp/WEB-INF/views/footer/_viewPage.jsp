@@ -1,1 +1,0 @@
-<a href="#header" class="d-flex align-items-center justify-content-center"><i class="fas fa-arrow-up fa-md"></i></a>

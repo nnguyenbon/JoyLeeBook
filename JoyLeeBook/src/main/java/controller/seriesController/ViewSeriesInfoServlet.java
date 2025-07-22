@@ -1,5 +1,9 @@
 package controller.seriesController;
 
+import java.io.IOException;
+import java.sql.Connection;
+import java.util.ArrayList;
+
 import dao.CategoryDAO;
 import dao.ChapterDAO;
 import dao.SeriesDAO;
@@ -9,13 +13,10 @@ import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import java.io.IOException;
-import java.sql.Connection;
-import java.util.ArrayList;
 import model.Chapter;
 import model.Genre;
 import model.Series;
-import static utils.Validator.*;
+import static utils.Validator.isValidInteger;
 
 /**
  * This servlet handles requests to view detailed information about a specific
@@ -25,7 +26,7 @@ import static utils.Validator.*;
  * 
  * @author
  */
-@WebServlet(name = "ViewSeriesInfoServlet", urlPatterns = {"/viewSeriesInfo"})
+@WebServlet(name = "ViewSeriesInfoServlet", urlPatterns = { "/viewSeriesInfo" })
 public class ViewSeriesInfoServlet extends HttpServlet {
 
     // JSP path constant
@@ -35,10 +36,10 @@ public class ViewSeriesInfoServlet extends HttpServlet {
     /**
      * Handles the HTTP GET method.
      *
-     * @param request The HTTP request object.
+     * @param request  The HTTP request object.
      * @param response The HTTP response object.
      * @throws ServletException If a servlet-specific error occurs.
-     * @throws IOException If an I/O error occurs.
+     * @throws IOException      If an I/O error occurs.
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -75,11 +76,11 @@ public class ViewSeriesInfoServlet extends HttpServlet {
 
                 // Define genre colors
                 String[] colorGenre = {
-                    "bg-primary-subtle text-primary",
-                    "bg-secondary-subtle text-secondary",
-                    "bg-danger-subtle text-danger",
-                    "bg-info-subtle text-info",
-                    "bg-light-subtle text-dark"
+                        "bg-primary-subtle text-primary",
+                        "bg-secondary-subtle text-secondary",
+                        "bg-danger-subtle text-danger",
+                        "bg-info-subtle text-info",
+                        "bg-light-subtle text-dark"
                 };
                 request.setAttribute("colors", colorGenre);
 
@@ -99,10 +100,10 @@ public class ViewSeriesInfoServlet extends HttpServlet {
     /**
      * Handles the HTTP POST method. Currently not implemented.
      *
-     * @param request servlet request
+     * @param request  servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException if an I/O error occurs
+     * @throws IOException      if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)

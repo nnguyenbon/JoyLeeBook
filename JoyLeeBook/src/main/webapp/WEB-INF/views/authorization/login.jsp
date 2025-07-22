@@ -4,6 +4,7 @@
          session="true"
          errorPage=""
          isErrorPage="false" %>
+<%@taglib prefix="c" uri="jakarta.tags.core" %>
 <%
     /*
     Note:
@@ -29,26 +30,46 @@
 
     <body>
 
+        <header>
+            <!-- Navbar -->
+            <nav class="navbar navbar-expand-lg w-100 sticky-top">
+                <div class="navbar-layout w-100 pt-2 pb-2 ps-4 pe-4 d-flex align-items-center justify-content-center">
+                    <div class="mobile-header d-flex align-items-center justify-content-center">
+                        <a class="navbar-brand fw-bold text-white" href="home"><i class="bi bi-book"></i>
+                            <strong>JoyLeeBook</strong>
+                        </a>
+                    </div>
+                </div>
+            </nav>
+        </header>
+
+
         <main class="main-main d-flex align-items-center justify-content-center">
             <div class="content mt-4 mb-4 d-flex align-items-center justify-content-center">
 
-                <div id="sub-authentication-layout" class="login-layout w-50 sub-authentication-layout">
+                <div id="sub-authentication-layout" class="login-layout w-50 sub-authentication-layout d-flex flex-column align-items-center justify-content-center">
                     <div class="login-header w-100 mb-4">
                         <h1 class="text-center" name="login">WELCOME BACK</h1>
                     </div>
                     <div class="login-body w-100 d-flex flex-column gap-4 align-items-center justify-content-center">
                         <p class="w-75 mb-2">It's great to see you again. We hope you will have an enjoyable and chill moment here.</p>
                         <p class="w-75">Don't have an account?</p>
-                        <a href="/register" class="w-75 d-flex align-items-center justify-content-center">SIGNUP</a>
+                        <a href="${pageContext.request.contextPath}/register" class="w-75 d-flex align-items-center justify-content-center">SIGNUP</a>
                     </div>
                 </div>
 
-                <div id="authentication-layout" class="login-layout w-50 authentication-layout">
+                <div id="authentication-layout" class="login-layout w-50 authentication-layout d-flex flex-column align-items-center justify-content-center">
+                    <c:if test="${not empty success}">
+                            <div class="alert alert-success">${success}</div>
+                        </c:if>
                     <div class="login-header w-100 mb-4">
                         <h1 class="text-center">LOGIN</h1>
                     </div>
 
                     <div class="login-body w-100">
+                        <c:if test="${not empty message}">
+                            <div class="alert alert-danger">${message}</div>
+                        </c:if>
                         <form action="${pageContext.request.contextPath}/login" method="POST" class="w-100 d-flex flex-column gap-4 align-items-center justify-content-center">
                             <input type="text" class="w-75 ps-4" name="username" placeholder="Username" value="${rememberedUser != null ? rememberedUser : ''}" required>
                             <input type="password" class="w-75 ps-4" name="password" placeholder="Password" required>
@@ -62,11 +83,11 @@
                         </form>
                     </div>
                 </div>
-
             </div>
-
         </main>
-        <%--<jsp:include page="/views/footer/_footer.jsp" />--%>
+
+        <jsp:include page="/WEB-INF/views/components/_footer.jsp" />
+
         <script lang="text/javascript" src="${pageContext.request.contextPath}/js/index.js?v=<%= System.currentTimeMillis()%>"></script>
 
     </body>

@@ -3,6 +3,13 @@
     Created on : Jul 5, 2025, 10:40:54 AM
     Author     : PC
 --%>
+<%@page import="model.User"%>
+<%    User user = (User) session.getAttribute("loggedInUser");
+    if (user == null || !"admin".equals(user.getRoleName())) {
+        response.sendRedirect(request.getContextPath() + "/login");
+        return;
+    }
+%>
 
 <%@page contentType="text/html" pageEncoding="UTF-8"%>
 <%@taglib prefix="c" uri="jakarta.tags.core" %>
@@ -11,44 +18,26 @@
 
     <head>
         <meta charset="UTF-8">
-        <title>Edit - Azure Realm</title>
-        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <!-- jQuery -->
+        <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
         <!-- Bootstrap CDN -->
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- AJAX Icon -->
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
-        <link rel="stylesheet" href="css/style.css">
         <!-- Select2 CSS -->
         <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+        <!-- Select2 JS -->
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
+        <!-- Style CSS -->
+        <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=<%= System.currentTimeMillis()%>">
+        <title>Edit - Azure Realm</title>
 
     </head>
 
     <body class="bg-white">
-        <header>
-            <!-- Navbar -->
-            <nav class="navbar navbar-expand-lg border-bottom sticky-top">
-                <div class="container">
-                    <a class="navbar-brand fw-bold text-white" href="#"><i class="bi bi-book"></i>
-                        <strong>JoyLeeBook</strong></a>
-                    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                        <span class="navbar-toggler-icon"></span>
-                    </button>
-                    <div class="collapse navbar-collapse" id="navbarNav">
-                        <ul class="navbar-nav me-auto">
-                            <li class="nav-item"><a class="nav-link  text-white" href="homeAdmin.html">Home</a></li>
-                            <li class="nav-item"><a class="nav-link text-white" href="genre.html">Genres</a></li>
-                            <li class="nav-item"><a class="nav-link text-white" href="#">History</a></li>
-                            <li class="nav-item"><a class="nav-link text-white" href="#">Library</a></li>
-                        </ul>
-                        <form class="d-flex me-3">
-                            <input class="form-control me-2" type="search" placeholder="Search manga..."
-                                   aria-label="Search">
-                        </form>
-                        <a class="btn me-2 login" href="#">LOGIN</a>
-                        <a class="btn signup " href="#">SIGN UP</a>
-                    </div>
-                </div>
-            </nav>
-        </header>
+        <jsp:include page="/WEB-INF/views/components/_header.jsp" />
+
         <main>
             <div class="container my-5">
                 <h3 class="fw-bold mb-4">Edit Story</h3>
@@ -133,9 +122,12 @@
 
                             <!-- Action Buttons -->
                             <div class="d-flex gap-2">
-                                <button type="submit" class="btn btn-success">Save</button> 
+                                <form action="updateSeries" method="post" style="display: inline;">
+                                    <input type="hidden" name="seriesId" value="${series.seriesId}">
+                                    <button type="submit" class="btn btn-success">Save</button>
+                                </form>
                                 <!--<a href="detailAdmin.html">Lưu</a>-->
-                                <a href="updateSeries?seriesId=${series.seriesId}" class="btn btn-secondary">Cancel</a>
+                                <a href="adminDashboard" class="btn btn-secondary">Cancel</a>
                                 <a href="deleteSeries?seriesId=${series.seriesId}" class="btn btn-danger" 
                                    onclick="return confirm('Xác nhận xoá truyện này?');">Delete</a>
                             </div>
@@ -144,44 +136,9 @@
                 </form>
             </div>
         </main>
-
-        <footer class="mt-5">
-            <!-- Section About -->
-            <div class="text-white py-4" style="background-color: #8DA7C0;">
-                <div class="container text-center">
-                    <h5 class="fw-bold mb-3">ABOUT US</h5>
-                    <p class="mx-auto mb-0" style="max-width: 1000px;">
-                        JoyLeeBook is a Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor
-                        incididunt ut
-                        labore et dolore magna aliqua.
-                        Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo
-                        consequat.
-                        Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla
-                        pariatur.
-                    </p>
-                </div>
-            </div>
-
-            <!-- Section Social + Back to top -->
-            <div class="py-3 w-100" style="background-color: #517594;  justify-self: center;">
-                <div class="container d-flex flex-column flex-md-row justify-content-between align-items-center">
-
-                    <!-- Social icons -->
-                    <div class="offset-md-2 col-md-7 d-flex justify-content-center gap-4 mb-3 mb-md-0">
-                        <a href="#" class="text-dark fs-4"><i class="fab fa-instagram"></i></a>
-                        <a href="#" class="text-dark fs-4"><i class="fab fa-facebook"></i></a>
-                        <a href="#" class="text-dark fs-4"><i class="fab fa-tiktok"></i></a>
-                    </div>
-
-                    <!-- Back to top -->
-                    <a href="#header" class="btn btn-light rounded-circle d-flex align-items-center justify-content-center"
-                       style="width: 40px; height: 40px;">
-                        <i class="fas fa-arrow-up text-dark"></i>
-                    </a>
-                </div>
-            </div>
-        </footer>
-
+        <script src="${pageContext.request.contextPath}/js/index.js"></script> 
+        <script src="${pageContext.request.contextPath}/js/jQuery.js"></script>
+        <jsp:include page="/WEB-INF/views/components/_footer.jsp" />
 
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
         <!-- jQuery + Select2 JS -->
@@ -189,15 +146,22 @@
         <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
         <script>
+                                       $(document).ready(function () {
+                                           $('#genreSelect').select2({
+                                               placeholder: "Select genres"
+                                           });
 
-                                               $(document).ready(function () {
-                                                   $('#genreSelect').select2({
-                                                       placeholder: "Choose genre",
-                                                       allowClear: true
-                                                   });
-                                               });
-
-
+                                           $('#coverImage').on('change', function (event) {
+                                               const file = event.target.files[0];
+                                               if (file) {
+                                                   const reader = new FileReader();
+                                                   reader.onload = function (e) {
+                                                       $('img').first().attr('src', e.target.result);
+                                                   };
+                                                   reader.readAsDataURL(file);
+                                               }
+                                           });
+                                       });
         </script>
 
     </body>

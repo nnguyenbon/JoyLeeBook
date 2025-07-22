@@ -50,8 +50,10 @@ public class AddChapterServlet extends HttpServlet {
             SeriesDAO seriesDao = new SeriesDAO(conn);
             ChapterDAO chapterDao = new ChapterDAO(conn);
             CategoryDAO categoryDAO = new CategoryDAO(conn);
-            request.setAttribute("seriesId", seriesId);
-            request.getRequestDispatcher("/WEB-INF/views/addChapter.jsp").forward(request, response);
+            
+            Series series = seriesDao.getSeriesById(seriesId);
+            request.setAttribute("series", series);
+            request.getRequestDispatcher("/WEB-INF/views/chapter/addChapter.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Cannot get the Series Id.");
@@ -78,11 +80,10 @@ public class AddChapterServlet extends HttpServlet {
             String content = request.getParameter("content");
 
             // Validate parameters (basic check)
-            if (!isValidInteger(seriesIdParam) || !isValidInteger(chapterIndexParam)
-                    || !isValidString(chapterTitle) || !isValidString(content)) {
+            if (!isValidInteger(seriesIdParam) || !isValidInteger(chapterIndexParam) || !isValidString(content)) {
 
                 request.setAttribute("message", "All fields are required and must be valid.");
-                request.getRequestDispatcher("/WEB-INF/views/addChapter.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/chapter/addChapter.jsp").forward(request, response);
                 return;
             }
 
@@ -92,7 +93,7 @@ public class AddChapterServlet extends HttpServlet {
 
             if (chapterIndex <= 0) {
                 request.setAttribute("message", "Chapter index must be greater than 0.");
-                request.getRequestDispatcher("/WEB-INF/views/addChapter.jsp").forward(request, response);
+                request.getRequestDispatcher("/WEB-INF/views/chapter/addChapter.jsp").forward(request, response);
                 return;
             }
 
@@ -104,11 +105,11 @@ public class AddChapterServlet extends HttpServlet {
             chapterDAO.insertChapter(newChapter);
 
             // Redirect to the chapter list or series detail page
-            response.sendRedirect(request.getContextPath() + "/adminListChapter?seriesId=" + seriesId);
+            response.sendRedirect(request.getContextPath() + "/viewSeriesInfo?seriesId=" + seriesId);
         } catch (NumberFormatException e) {
             e.printStackTrace();
             request.setAttribute("message", "Invalid chapter index or series ID.");
-            request.getRequestDispatcher("/WEB-INF/views/addChapter.jsp").forward(request, response);
+            request.getRequestDispatcher("/WEB-INF/views/chapter/addChapter.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "An error occurred while adding the chapter.");
