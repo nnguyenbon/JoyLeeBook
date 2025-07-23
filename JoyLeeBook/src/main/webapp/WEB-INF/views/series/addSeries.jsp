@@ -16,11 +16,18 @@
     <meta charset="UTF-8">
     <title>Add New Series</title>
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <!-- jQuery -->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+    <!-- Bootstrap CDN -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
-    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet"/>
+    <!-- AJAX Icon -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+    <!-- Select2 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
+    <!-- Select2 JS -->
     <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
-    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css">
+    <!-- Style CSS -->
+    <link rel="stylesheet" href="${pageContext.request.contextPath}/css/styles.css?v=<%= System.currentTimeMillis()%>">
 </head>
 
 <body class="bg-light">
@@ -41,9 +48,6 @@
 
                 <div class="col-md-4">
                     <label for="coverImage" class="form-label fw-semibold">Cover Image</label>
-                    <img id="imagePreview" src="https://via.placeholder.com/350x500.png?text=Cover+Image"
-                         class="img-fluid rounded shadow-sm mb-2" alt="Cover preview"
-                         style="width: 100%; aspect-ratio: 7/10; object-fit: cover;">
                     <input class="form-control" type="file" id="coverImage" name="coverImage" accept="image/*" required>
                 </div>
 
@@ -94,6 +98,14 @@
 
 <jsp:include page="/WEB-INF/views/components/_footer.jsp"/>
 
+<script src="${pageContext.request.contextPath}/js/index.js"></script>
+<script src="${pageContext.request.contextPath}/js/jQuery.js"></script>
+<jsp:include page="/WEB-INF/views/components/_footer.jsp" />
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+<!-- jQuery + Select2 JS -->
+<script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 <script>
     // Script để khởi tạo Select2 và preview ảnh
     $(document).ready(function () {

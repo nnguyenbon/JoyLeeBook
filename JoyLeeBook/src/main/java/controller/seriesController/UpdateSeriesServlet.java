@@ -148,6 +148,7 @@ public class UpdateSeriesServlet extends HttpServlet {
             if (filePart != null && filePart.getSize() > 0 && filePart.getSubmittedFileName() != null
                     && !filePart.getSubmittedFileName().trim().isEmpty()) {
 
+
                 String uploadPath = getServletContext().getRealPath("/assets/images/") + File.separator;
                 File uploadDir = new File(uploadPath);
                 if (!uploadDir.exists()) {
@@ -166,7 +167,7 @@ public class UpdateSeriesServlet extends HttpServlet {
                 filePart.write(tempImageFile.getAbsolutePath());
 
                 File avifImageFile = new File(uploadPath + avifFileName);
-                String avifencPath = "H:\\InstallApp\\windows-artifacts\\avifenc.exe";
+                String avifencPath = "avifenc";
 
                 ProcessBuilder pb = new ProcessBuilder(
                         avifencPath,
