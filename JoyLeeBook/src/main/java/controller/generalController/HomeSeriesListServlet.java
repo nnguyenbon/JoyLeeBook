@@ -31,19 +31,19 @@ public class HomeSeriesListServlet extends HttpServlet {
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        Connection conn = null;
+        java.sql.Connection conn = null;
         try {
             conn = DBConnection.getConnection();
             SeriesDAO seriesDAO = new SeriesDAO(conn);
             ChapterDAO chapterDAO = new ChapterDAO(conn);
             
-            ArrayList<Series> seriesList = seriesDAO.getAllSeries();
+            ArrayList<Series> seriesList = (ArrayList<Series>) seriesDAO.getAllSeries();
             for (Series series : seriesList) {
                 series.setTotalChapters(chapterDAO.getTotalChaptersBySeriesId(series.getSeriesId()));
                 series.setLatestChapterDate(chapterDAO.getLatestDate(series.getSeriesId()));
             }
             // Sort in day
-            Collections.sort(seriesList, (Series s1, Series s2) -> s2.getLatestChapterDate().compareTo(s1.getLatestChapterDate()));
+            Collections.sort(seriesList, (Series s1, Series s2) -> s2.getCreatedAt().compareTo(s1.getCreatedAt()));
 
             request.setAttribute("seriesList", seriesList);
             System.out.println("home");

@@ -69,10 +69,11 @@ public class RegisterServlet extends HttpServlet {
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         try {
-            String username = request.getParameter("txtUsername");
-            String password = request.getParameter("txtPassword");
+            String username = request.getParameter("username");
+            String password = request.getParameter("password");
             String email = request.getParameter("email");
-
+            request.setAttribute("username", username);
+            request.setAttribute("email", email);
             // Validate input parameters
             if (!isValidString(username)) {
                 request.setAttribute("error", "Username cannot be empty.");
@@ -110,10 +111,10 @@ public class RegisterServlet extends HttpServlet {
             user.setUsername(username);
             user.setPassword(hashedPassword);
             user.setEmail(email);
-            user.setRoleName("user"); // Default role
+            user.setRoleName("reader"); // Default role
             // Insert the user into the database
             if (userDAO.insertUser(user)) {
-                request.setAttribute("message", "Registration successful. Please log in.");
+                request.setAttribute("success", "Registration successful. Please log in.");
                 request.getRequestDispatcher("/WEB-INF/views/authorization/login.jsp").forward(request, response);
             } else {
                 request.setAttribute("error", "Registration failed. Please try again.");
